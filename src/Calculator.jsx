@@ -56,8 +56,7 @@ const DataSourceBadge = ({ sourceCount, sources }) => {
   );
 };
 
-const Calculator = ({ onBackToHome }) => {
-  const [language, setLanguage] = useState('fr');
+const Calculator = ({ onBackToHome, language }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     profession: '',
@@ -392,33 +391,6 @@ const Calculator = ({ onBackToHome }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-100 dark:border-gray-700">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <button 
-            onClick={resetCalculator}
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-          >
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-white" />
-            </div>
-            <div className="text-left">
-			  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-				{t.title}
-			  </h1>
-			  <p className="text-sm text-gray-600 dark:text-gray-400">Calculateur de tarifs intelligent</p>
-			</div>
-          </button>
-          <button
-            onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-200"
-          >
-            <Globe className="w-4 h-4" />
-            <span className="font-medium">{language === 'fr' ? 'EN' : 'FR'}</span>
-          </button>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
         {step === 1 && (

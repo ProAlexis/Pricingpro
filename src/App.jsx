@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import LandingPage from './LandingPage';
 import Calculator from './Calculator';
+import UnifiedHeader from './components/UnifiedHeader';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('landing');
+  const [language, setLanguage] = useState('fr');
   const [darkMode, setDarkMode] = useState(() => {
-    // Charger la préférence dark mode depuis localStorage
     const saved = localStorage.getItem('darkMode');
     return saved ? JSON.parse(saved) : false;
   });
 
-  // Appliquer le dark mode au document
+  // 1. Gestion du Dark Mode
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-    // Sauvegarder la préférence
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
   }, [darkMode]);
 
+  // 2. Gestion du bouton "Retour" du navigateur (Le petit ajout indispensable)
   useEffect(() => {
-    // Écouter les changements d'URL
     const handleHashChange = () => {
       const hash = window.location.hash;
       if (hash === '#calculator') {
@@ -31,10 +31,8 @@ const App = () => {
         setCurrentPage('landing');
       }
     };
-
-    handleHashChange(); // Check initial URL
     window.addEventListener('hashchange', handleHashChange);
-    
+    handleHashChange(); // Vérification au chargement
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
@@ -50,11 +48,31 @@ const App = () => {
     window.scrollTo(0, 0);
   };
 
-  if (currentPage === 'calculator') {
-    return <Calculator onBackToHome={goToHome} darkMode={darkMode} setDarkMode={setDarkMode} />;
-  }
+  return (
+    <div className={`min-h-screen ${darkMode ? 'dark' : ''} bg-white dark:bg-gray-900`}>
+      <UnifiedHeader 
+        language={language} 
+        setLanguage={setLanguage} 
+        darkMode={darkMode} 
+        setDarkMode={setDarkMode}
+        onLogoClick={goToHome}
+      />
 
-  return <LandingPage onStartCalculator={goToCalculator} darkMode={darkMode} setDarkMode={setDarkMode} />;
+      <main className="pt-20">
+        {currentPage === 'calculator' ? (
+          <Calculator 
+            onBackToHome={goToHome} 
+            language={language} 
+          />
+        ) : (
+          <LandingPage 
+            onStartCalculator={goToCalculator} 
+            language={language} 
+          />
+        )}
+      </main>
+    </div>
+  );
 };
 
 export default App;

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { TrendingUp, DollarSign, Globe, Database, Users, CheckCircle, Star, ArrowRight, BarChart3, Shield, Zap } from 'lucide-react';
 
-const LandingPage = ({ onStartCalculator }) => {
-  const [language, setLanguage] = useState('fr');
+const LandingPage = ({ onStartCalculator, language }) => {
 
   const translations = {
     fr: {
@@ -230,28 +229,6 @@ const LandingPage = ({ onStartCalculator }) => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Header */}
-      <header className="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg z-50 border-b border-gray-100 dark:border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-white" />
-            </div>
-            <div className="text-left">
-              <span className="text-xl font-bold text-gray-900 dark:text-white">PricingPro</span>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Calculateur de tarifs intelligent</p>
-            </div>
-          </div>
-          <button
-            onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-200"
-          >
-            <Globe className="w-4 h-4" />
-            <span className="font-medium">{language === 'fr' ? 'EN' : 'FR'}</span>
-          </button>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <div className="max-w-6xl mx-auto text-center">
