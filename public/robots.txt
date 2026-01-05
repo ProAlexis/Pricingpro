@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pricingpro-mauve.vercel.app/sitemap.xml
