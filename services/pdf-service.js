@@ -90,16 +90,16 @@ export function generateRateAnalysisPDF({ results, formData, language = 'fr' }) 
   const lightGray = [156, 163, 175];
   const bgGray = [249, 250, 251];
 
-  // === HEADER ===
+  // === HEADER (Page 1) ===
   // Fond dégradé (simulé avec un rectangle)
   doc.setFillColor(...primaryColor);
   doc.rect(0, 0, pageWidth, 60, 'F');
 
   // Logo et titre
-  doc.setFontSize(28);
+  doc.setFontSize(32);
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
-  doc.text('📊 PricingPro', pageWidth / 2, 25, { align: 'center' });
+  doc.text('PricingPro', pageWidth / 2, 25, { align: 'center' });
 
   doc.setFontSize(16);
   doc.setFont('helvetica', 'normal');
@@ -194,7 +194,7 @@ export function generateRateAnalysisPDF({ results, formData, language = 'fr' }) 
   doc.setFontSize(18);
   doc.setTextColor(...primaryColor);
   doc.setFont('helvetica', 'bold');
-  doc.text(`${results.monthly.toLocaleString()}€`, 25 + 2 * rateBoxWidth + rateBoxWidth / 2, yPosition + 25, { align: 'center' });
+  doc.text(`${results.monthly}€`, 25 + 2 * rateBoxWidth + rateBoxWidth / 2, yPosition + 25, { align: 'center' });
 
   yPosition += 50;
 
@@ -231,9 +231,13 @@ export function generateRateAnalysisPDF({ results, formData, language = 'fr' }) 
     marketY += 10;
   });
 
-  yPosition += 55;
+  // =========================================================
+  // === NOUVELLE PAGE POUR DÉTAIL DU CALCUL ET CONSEILS ===
+  // =========================================================
+  doc.addPage();
+  yPosition = 20; // Réinitialisé à 20 pour être bien en haut de page
 
-  // === SECTION: DÉTAIL DU CALCUL ===
+  // === SECTION: DÉTAIL DU CALCUL (Page 2) ===
   doc.setFontSize(14);
   doc.setTextColor(...primaryColor);
   doc.setFont('helvetica', 'bold');
@@ -242,7 +246,8 @@ export function generateRateAnalysisPDF({ results, formData, language = 'fr' }) 
   yPosition += 10;
 
   doc.setFillColor(...bgGray);
-  const breakdownHeight = results.breakdown.location !== 0 ? 50 : 40;
+  // Hauteur ajustée (45/55) pour laisser respirer le total
+  const breakdownHeight = results.breakdown.location !== 0 ? 55 : 45;
   doc.rect(15, yPosition, pageWidth - 30, breakdownHeight, 'F');
 
   doc.setFontSize(10);
@@ -281,18 +286,21 @@ export function generateRateAnalysisPDF({ results, formData, language = 'fr' }) 
   doc.text(t.total, 20, breakdownY);
   doc.text(`${results.daily}€/jour`, pageWidth - 25, breakdownY, { align: 'right' });
 
-  yPosition += breakdownHeight + 10;
+  // Espacement augmenté (+30) pour décoller "Nos Conseils" du bloc précédent
+  yPosition += breakdownHeight + 30;
 
   // === SECTION: CONSEILS ===
-  if (yPosition > pageHeight - 60) {
-    doc.addPage();
-    yPosition = 20;
-  }
 
   doc.setFontSize(14);
   doc.setTextColor(...primaryColor);
   doc.setFont('helvetica', 'bold');
-  doc.text(`💡 ${t.advice}`, 20, yPosition);
+  
+  // Dessiner un cercle pour symboliser une ampoule
+  doc.setDrawColor(...primaryColor);
+  doc.setFillColor(...primaryColor);
+  doc.circle(17, yPosition - 2, 2, 'F');
+  
+  doc.text(t.advice, 25, yPosition);
 
   yPosition += 10;
 
@@ -312,17 +320,26 @@ export function generateRateAnalysisPDF({ results, formData, language = 'fr' }) 
 
   // Data source badge
   if (results.dataSource === 'real' && results.sourceCount) {
+    // Dessiner un petit carré de vérification
+    doc.setDrawColor(34, 197, 94); // Vert
+    doc.setFillColor(34, 197, 94);
+    doc.rect(18, yPosition - 4, 3, 3, 'F');
+    
     doc.setFontSize(9);
     doc.setTextColor(...lightGray);
     doc.setFont('helvetica', 'italic');
-    doc.text(`✅ ${t.dataSource} ${results.sourceCount} ${t.realData}`, 20, yPosition);
+    doc.text(`${t.dataSource} ${results.sourceCount} ${t.realData}`, 24, yPosition);
   }
 
-  // === FOOTER ===
-  doc.setFontSize(8);
-  doc.setTextColor(...lightGray);
-  doc.setFont('helvetica', 'normal');
-  doc.text(t.footer, pageWidth / 2, pageHeight - 15, { align: 'center' });
+  // === FOOTER (Sur toutes les pages) ===
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(...lightGray);
+    doc.setFont('helvetica', 'normal');
+    doc.text(t.footer, pageWidth / 2, pageHeight - 15, { align: 'center' });
+  }
 
   // Télécharger le PDF
   const fileName = `PricingPro_Analysis_${new Date().toISOString().split('T')[0]}.pdf`;
