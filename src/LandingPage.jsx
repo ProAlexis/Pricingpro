@@ -438,6 +438,55 @@ const LandingPage = ({ onStartCalculator }) => {
           </div>
         </div>
       </section>
+	  
+	  {/* Section FAQ pour SEO */}
+		<section className="py-20 px-4 bg-white dark:bg-gray-800">
+		  <div className="max-w-4xl mx-auto">
+			<h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+			  {language === 'fr' ? 'Questions fréquentes' : 'Frequently Asked Questions'}
+			</h2>
+			<div className="space-y-6">
+			  <div className="border-l-4 border-purple-600 pl-4">
+				<h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+				  {language === 'fr' 
+					? 'Comment PricingPro calcule-t-il les tarifs ?' 
+					: 'How does PricingPro calculate rates?'}
+				</h3>
+				<p className="text-gray-600 dark:text-gray-400">
+				  {language === 'fr'
+					? 'PricingPro analyse 1000+ tarifs réels collectés depuis Malt, Glassdoor et Upwork. Notre algorithme prend en compte votre profession, localisation, niveau d\'expérience et compétences pour vous donner une recommandation précise.'
+					: 'PricingPro analyzes 1000+ real rates collected from Malt, Glassdoor and Upwork. Our algorithm takes into account your profession, location, experience level and skills to give you an accurate recommendation.'}
+				</p>
+			  </div>
+			  
+			  <div className="border-l-4 border-purple-600 pl-4">
+				<h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+				  {language === 'fr' 
+					? 'Quelles professions sont couvertes ?' 
+					: 'Which professions are covered?'}
+				</h3>
+				<p className="text-gray-600 dark:text-gray-400">
+				  {language === 'fr'
+					? 'Développeur Web, Mobile, Full-Stack, Backend, DevOps, Data Analyst, Data Scientist, Designer UI/UX, Graphiste, Rédacteur, Consultant Marketing, Expert SEO, Chef de Projet, Product Manager, Consultant Business.'
+					: 'Web Developer, Mobile, Full-Stack, Backend, DevOps, Data Analyst, Data Scientist, UI/UX Designer, Graphic Designer, Copywriter, Marketing Consultant, SEO Expert, Project Manager, Product Manager, Business Consultant.'}
+				</p>
+			  </div>
+
+			  <div className="border-l-4 border-purple-600 pl-4">
+				<h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+				  {language === 'fr' 
+					? 'Est-ce vraiment gratuit ?' 
+					: 'Is it really free?'}
+				</h3>
+				<p className="text-gray-600 dark:text-gray-400">
+				  {language === 'fr'
+					? 'Oui ! PricingPro est 100% gratuit. Pas de carte bancaire, pas d\'inscription. Accédez instantanément à toutes les données du marché.'
+					: 'Yes! PricingPro is 100% free. No credit card, no signup. Instantly access all market data.'}
+				</p>
+			  </div>
+			</div>
+		  </div>
+		</section>
 
       {/* Footer */}
       <footer className="py-12 px-4 bg-gray-900 text-gray-400">

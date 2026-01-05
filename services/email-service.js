@@ -336,7 +336,7 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
 
       <!-- CTA -->
       <div style="text-align: center;">
-        <a href="https://pricingpro-mauve.vercel.app/#calculator" class="cta-button">
+        <a href="https://pricingpro.fr/#calculator" class="cta-button">
           ${t.cta}
         </a>
       </div>
@@ -357,7 +357,7 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
 
     // Envoyer l'email
     const { data, error } = await resend.emails.send({
-      from: 'PricingPro <onboarding@resend.dev>', // Changez ceci avec votre domaine vérifié
+      from: 'PricingPro <contact@pricingpro.com>',
       to: [email],
       subject: t.subject,
       html: htmlContent,
