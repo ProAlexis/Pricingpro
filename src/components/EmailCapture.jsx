@@ -77,6 +77,7 @@ const EmailCapture = ({ results, formData, language }) => {
           email,
           results,
           formData,
+          language,
           timestamp: new Date().toISOString()
         })
       });

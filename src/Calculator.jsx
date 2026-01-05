@@ -811,12 +811,19 @@ const Calculator = ({ onBackToHome }) => {
                 {t.newCalculation}
               </button>
               <button
-                onClick={() => alert(language === 'fr' ? 'Fonctionnalité d\'export à venir !' : 'Export feature coming soon!')}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
-              >
-                <Download className="w-5 h-5" />
-                {t.exportPDF}
-              </button>
+				  onClick={() => {
+					import('../services/pdf-service.js').then(({ generateRateAnalysisPDF }) => {
+					  generateRateAnalysisPDF({ results, formData, language });
+					}).catch(err => {
+					  console.error('Error generating PDF:', err);
+					  alert(language === 'fr' ? 'Erreur lors de la génération du PDF' : 'Error generating PDF');
+					});
+				  }}
+				  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
+				>
+				  <Download className="w-5 h-5" />
+				  {t.exportPDF}
+				</button>
             </div>
           </div>
         )}

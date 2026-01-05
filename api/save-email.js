@@ -61,12 +61,29 @@ export default async function handler(req, res) {
 
     console.log('✅ Email lead saved:', email);
 
-    // TODO: Envoyer l'email avec le PDF via Resend/SendGrid/EmailJS
-    // await sendEmailWithPDF(email, results, formData);
+    // Envoyer l'email avec Resend
+    try {
+      const { sendRateAnalysisEmail } = await import('../services/email-service.js');
+      const emailResult = await sendRateAnalysisEmail({
+        email,
+        results,
+        formData,
+        language: req.body.language || 'fr'
+      });
+
+      if (emailResult.success) {
+        console.log('✅ Analysis email sent to:', email);
+      } else {
+        console.error('❌ Failed to send email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Email sending error:', emailError);
+      // Ne pas bloquer la réponse si l'email échoue
+    }
 
     return res.status(200).json({ 
       success: true, 
-      message: 'Email saved successfully',
+      message: 'Email saved and analysis sent successfully',
       data: data 
     });
 
