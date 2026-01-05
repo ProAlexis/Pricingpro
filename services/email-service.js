@@ -87,10 +87,10 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
     .rate-label { font-size: 12px; color: #6b7280; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
     .rate-value { font-size: 28px; color: #9333ea; font-weight: 700; }
     .market-comparison { background: #f9fafb; padding: 20px; border-radius: 10px; margin-top: 15px; }
-    .market-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #e5e7eb; }
+    .market-item { display: table; width: 100%; padding: 12px 0; border-bottom: 1px solid #e5e7eb; }
     .market-item:last-child { border-bottom: none; }
-    .market-label { font-size: 14px; color: #6b7280; font-weight: 500; flex: 1; }
-    .market-value { font-size: 16px; color: #111827; font-weight: 600; text-align: right; min-width: 90px; display: inline-block; font-variant-numeric: tabular-nums; }
+    .market-label { display: table-cell; font-size: 14px; color: #6b7280; font-weight: 500; text-align: left; }
+    .market-value { display: table-cell; font-size: 16px; color: #111827; font-weight: 600; text-align: right; width: 100px; font-variant-numeric: tabular-nums; }
     .advice-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 20px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 15px; }
     .advice-box p { margin: 0; color: #78350f; line-height: 1.6; }
     .cta-button { display: inline-block; background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%); color: white !important; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 30px; text-align: center; }
@@ -104,7 +104,6 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
     <div class="header"><h1>📊 ${t.subject.split(' - ')[0]}</h1></div>
     <div class="content">
       <p style="font-size: 16px; color: #111827; margin-bottom: 20px;">${t.greeting},</p>
-      <p style="font-size: 14px; color: #6b7280; margin-bottom: 30px;">${t.intro}</p>
       <div class="section">
         <div class="section-title">${t.profile}</div>
         <div class="profile-grid">
@@ -113,31 +112,18 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
           <div class="profile-item"><div class="profile-label">${t.experienceLevel}</div><div class="profile-value">${formData.experienceLevel || 'N/A'}</div></div>
           <div class="profile-item"><div class="profile-label">${t.experience}</div><div class="profile-value">${formData.experience || 0} ${language === 'fr' ? 'ans' : 'years'}</div></div>
         </div>
-        <div class="profile-item" style="margin-top: 15px;"><div class="profile-label">${t.skills}</div><div class="profile-value">${skillsList}</div></div>
-      </div>
-      <div class="section">
-        <div class="section-title">${t.results}</div>
-        <div class="rates-container">
-          <div class="rate-card"><div class="rate-label">${t.hourly}</div><div class="rate-value">${results.hourly}€</div></div>
-          <div class="rate-card featured"><div class="rate-label">${t.daily}</div><div class="rate-value">${results.daily}€</div></div>
-          <div class="rate-card"><div class="rate-label">${t.monthly}</div><div class="rate-value">${results.monthly.toLocaleString()}€</div></div>
-        </div>
       </div>
       <div class="section">
         <div class="section-title">${t.market}</div>
         <div class="market-comparison">
-          <div class="market-item"><span class="market-label">${t.marketMin}</span><span class="market-value">${results.market.min}€/j</span></div>
-          <div class="market-item"><span class="market-label">${t.marketAvg}</span><span class="market-value">${results.market.avg}€/j</span></div>
-          <div class="market-item"><span class="market-label">${t.marketMax}</span><span class="market-value">${results.market.max}€/j</span></div>
+          <div class="market-item"><div class="market-label">${t.marketMin}</div><div class="market-value">${results.market.min}€/j</div></div>
+          <div class="market-item"><div class="market-label">${t.marketAvg}</div><div class="market-value">${results.market.avg}€/j</div></div>
+          <div class="market-item"><div class="market-label">${t.marketMax}</div><div class="market-value">${results.market.max}€/j</div></div>
         </div>
-      </div>
-      <div class="section">
-        <div class="section-title">💡 ${t.advice}</div>
-        <div class="advice-box"><p>${t.adviceText}</p></div>
       </div>
       <div style="text-align: center;"><a href="https://pricingpro.fr/#calculator" class="cta-button">${t.cta}</a></div>
     </div>
-    <div class="footer"><div class="footer-logo">PricingPro</div><p>${t.footer}</p><p style="font-size: 12px; color: #9ca3af; margin-top: 10px;">${t.footerNote}</p></div>
+    <div class="footer"><div class="footer-logo">PricingPro</div><p>${t.footer}</p></div>
   </div>
 </body>
 </html>
@@ -150,9 +136,6 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
       html: htmlContent,
     });
 
-    if (error) return { success: false, error };
-    return { success: true, data };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
+    return { success: !error, data };
+  } catch (e) { return { success: false }; }
 }
