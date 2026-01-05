@@ -485,7 +485,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
             <a href="#data" className="hover:text-white transition-colors">
               {t.footer.links[2]}
             </a>
-            <a href="mailto:contact@pricingpro.com" className="hover:text-white transition-colors">
+            <a href="mailto:contact@pricingpro.fr" className="hover:text-white transition-colors">
               {t.footer.links[3]}
             </a>
           </div>
