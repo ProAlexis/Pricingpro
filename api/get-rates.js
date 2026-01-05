@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const { profession, location } = req.query;
+  const { profession, location, experience_level } = req.query;
 
   try {
     let query = supabase.from('market_rates').select('*');
@@ -22,9 +22,14 @@ export default async function handler(req, res) {
       query = query.eq('profession', profession);
     }
 
-    // Filtrer par pays au lieu de location exacte
+    // Filtrer par pays
     if (location) {
       query = query.eq('country', location);
+    }
+
+    // NOUVEAU : Filtrer par niveau d'expérience
+    if (experience_level) {
+      query = query.eq('experience_level', experience_level);
     }
 
     const { data, error } = await query;
@@ -42,6 +47,7 @@ export default async function handler(req, res) {
         count: data.length,
         sources: [...new Set(data.map(r => r.source))],
         cities: [...new Set(data.map(r => r.city))],
+        experience_level: experience_level || 'all',
         rates: {
           hourly: Math.round(Math.min(...rates) / 8),
           daily: Math.round(rates.reduce((a, b) => a + b, 0) / rates.length),

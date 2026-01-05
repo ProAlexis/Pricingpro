@@ -8,6 +8,7 @@ const PricingCalculator = () => {
     profession: '',
     location: 'france',
     experience: '',
+    experienceLevel: 'mid',
     skills: [],
     workType: 'freelance'
   });
@@ -28,6 +29,10 @@ const PricingCalculator = () => {
       selectProfession: "Sélectionnez votre métier",
       location: "Localisation",
       experience: "Années d'expérience",
+      experienceLevel: "Niveau d'expérience",
+      junior: "Junior (0-2 ans)",
+      mid: "Confirmé (3-7 ans)",
+      senior: "Senior (8+ ans)",
       workType: "Type de travail",
       freelance: "Freelance",
       employee: "Salarié",
@@ -69,6 +74,10 @@ const PricingCalculator = () => {
       selectProfession: "Select your profession",
       location: "Location",
       experience: "Years of experience",
+      experienceLevel: "Experience level",
+      junior: "Junior (0-2 years)",
+      mid: "Mid-level (3-7 years)",
+      senior: "Senior (8+ years)",
       workType: "Work type",
       freelance: "Freelance",
       employee: "Employee",
@@ -134,7 +143,7 @@ const PricingCalculator = () => {
         : '/api/get-rates';
       
       const response = await fetch(
-        `${apiUrl}?profession=${formData.profession}&location=${formData.location}`
+        `${apiUrl}?profession=${formData.profession}&location=${formData.location}&experience_level=${formData.experienceLevel}`
       );
 
       if (!response.ok) {
@@ -247,6 +256,7 @@ const PricingCalculator = () => {
       profession: '',
       location: 'france',
       experience: '',
+      experienceLevel: 'mid',
       skills: [],
       workType: 'freelance'
     });
@@ -258,7 +268,24 @@ const PricingCalculator = () => {
     const insights = [];
     const professionLabel = professions.find(p => p.value === formData.profession).label[language];
     
-    if (parseInt(formData.experience) < 2) {
+    // Insight sur le niveau d'expérience
+    if (formData.experienceLevel === 'junior') {
+      insights.push({
+        icon: '🚀',
+        text: language === 'fr' 
+          ? 'En tant que Junior, vous pouvez augmenter vos tarifs de 50-80% en passant Mid-level dans 2-3 ans.'
+          : 'As a Junior, you can increase your rates by 50-80% by becoming Mid-level in 2-3 years.'
+      });
+    } else if (formData.experienceLevel === 'senior') {
+      insights.push({
+        icon: '⭐',
+        text: language === 'fr' 
+          ? 'En tant que Senior, vous êtes dans le top 20% du marché. Considérez le consulting ou la formation pour augmenter vos revenus.'
+          : 'As a Senior, you\'re in the top 20% of the market. Consider consulting or training to increase your income.'
+      });
+    }
+    
+    if (parseInt(formData.experience) < 2 && formData.experienceLevel !== 'junior') {
       insights.push({
         icon: '📈',
         text: language === 'fr' 
@@ -279,8 +306,8 @@ const PricingCalculator = () => {
     insights.push({
       icon: '💡',
       text: language === 'fr'
-        ? `Les ${professionLabel}s dans votre profil facturent généralement entre ${results.market.min}€ et ${results.market.max}€/jour.`
-        : `${professionLabel}s with your profile typically charge between €${results.market.min} and €${results.market.max}/day.`
+        ? `Les ${professionLabel}s ${formData.experienceLevel === 'junior' ? 'juniors' : formData.experienceLevel === 'senior' ? 'seniors' : 'confirmés'} facturent généralement entre ${results.market.min}€ et ${results.market.max}€/jour.`
+        : `${formData.experienceLevel.charAt(0).toUpperCase() + formData.experienceLevel.slice(1)} ${professionLabel}s typically charge between €${results.market.min} and €${results.market.max}/day.`
     });
 
     if (formData.location === 'portugal') {
@@ -346,6 +373,44 @@ const PricingCalculator = () => {
               </div>
 
               <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t.experienceLevel}
+                  </label>
+                  <div className="grid grid-cols-3 gap-3">
+                    <button
+                      onClick={() => setFormData({...formData, experienceLevel: 'junior'})}
+                      className={`px-4 py-3 rounded-lg border-2 transition-all text-sm ${
+                        formData.experienceLevel === 'junior'
+                          ? 'border-green-600 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 font-medium'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                      }`}
+                    >
+                      {t.junior}
+                    </button>
+                    <button
+                      onClick={() => setFormData({...formData, experienceLevel: 'mid'})}
+                      className={`px-4 py-3 rounded-lg border-2 transition-all text-sm ${
+                        formData.experienceLevel === 'mid'
+                          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                      }`}
+                    >
+                      {t.mid}
+                    </button>
+                    <button
+                      onClick={() => setFormData({...formData, experienceLevel: 'senior'})}
+                      className={`px-4 py-3 rounded-lg border-2 transition-all text-sm ${
+                        formData.experienceLevel === 'senior'
+                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 font-medium'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                      }`}
+                    >
+                      {t.senior}
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.profession}
