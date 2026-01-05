@@ -1,8 +1,8 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import { getCountryFromCity } from './geo-utils.js';
 
 // Données simulées basées sur l'analyse du marché Malt
-// En production, vous scrapez vraiment Malt (mais ils ont un anti-bot)
 const MALT_MARKET_DATA = {
   'web-dev': { min: 350, avg: 450, max: 650, experience_factor: 1.08 },
   'mobile-dev': { min: 400, avg: 500, max: 700, experience_factor: 1.08 },
@@ -20,22 +20,30 @@ export async function scrapeMaltRates() {
   console.log('🔍 Scraping Malt rates...');
   
   const rates = [];
-  const locations = ['france', 'paris', 'lyon', 'bordeaux'];
+  const cities = ['paris', 'lyon', 'bordeaux', 'marseille', 'toulouse', 'nice', 'nantes', 'lille'];
   
   for (const [professionKey, data] of Object.entries(MALT_MARKET_DATA)) {
-    for (const location of locations) {
-      // Ajustement selon la localisation
-      let locationMultiplier = 1.0;
-      if (location === 'paris') locationMultiplier = 1.15;
-      else if (location === 'lyon') locationMultiplier = 1.05;
-      else if (location === 'bordeaux') locationMultiplier = 1.02;
+    for (const city of cities) {
+      // Obtenir le pays de la ville
+      const geoData = await getCountryFromCity(city);
       
-      const rate_daily = Math.round(data.avg * locationMultiplier);
+      // Ajustement selon la ville
+      let cityMultiplier = 1.0;
+      if (city === 'paris') cityMultiplier = 1.15;
+      else if (city === 'lyon') cityMultiplier = 1.05;
+      else if (city === 'bordeaux') cityMultiplier = 1.02;
+      else if (city === 'marseille') cityMultiplier = 1.03;
+      else if (city === 'toulouse') cityMultiplier = 1.02;
+      else if (city === 'nice') cityMultiplier = 1.04;
+      
+      const rate_daily = Math.round(data.avg * cityMultiplier);
       const rate_hourly = Math.round(rate_daily / 8);
       
       rates.push({
         profession: professionKey,
-        location: location,
+        location: city, // Garde l'ancien champ pour compatibilité
+        city: city,
+        country: geoData.country,
         source: 'malt',
         rate_daily: rate_daily,
         rate_hourly: rate_hourly,
@@ -47,29 +55,4 @@ export async function scrapeMaltRates() {
   
   console.log(`✅ Scraped ${rates.length} rates from Malt`);
   return rates;
-}
-
-// Pour un vrai scraping de Malt (à utiliser avec précaution, respectez les CGU)
-export async function scrapeMaltReal(profession) {
-  try {
-    // Note: Malt a des protections anti-bot, cette approche ne marchera probablement pas
-    // en production sans proxy/headers/delays appropriés
-    const url = `https://www.malt.fr/s?q=${encodeURIComponent(profession)}`;
-    
-    const { data } = await axios.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
-    });
-    
-    const $ = cheerio.load(data);
-    
-    // Parsez les profils et tarifs ici
-    // La structure HTML de Malt change régulièrement
-    
-    return [];
-  } catch (error) {
-    console.error('❌ Error scraping Malt:', error.message);
-    return [];
-  }
 }

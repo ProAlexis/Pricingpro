@@ -22,8 +22,9 @@ export default async function handler(req, res) {
       query = query.eq('profession', profession);
     }
 
+    // Filtrer par pays au lieu de location exacte
     if (location) {
-      query = query.ilike('location', `%${location}%`);
+      query = query.eq('country', location);
     }
 
     const { data, error } = await query;
@@ -40,6 +41,7 @@ export default async function handler(req, res) {
         avg: Math.round(rates.reduce((a, b) => a + b, 0) / rates.length),
         count: data.length,
         sources: [...new Set(data.map(r => r.source))],
+        cities: [...new Set(data.map(r => r.city))],
         rates: {
           hourly: Math.round(Math.min(...rates) / 8),
           daily: Math.round(rates.reduce((a, b) => a + b, 0) / rates.length),
