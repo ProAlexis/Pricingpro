@@ -1,4 +1,15 @@
-// Mapping manuel des villes principales
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// Initialiser Supabase
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
+
+// Mapping manuel des villes principales (pour éviter les appels API)
 const CITY_TO_COUNTRY = {
   // France
   'france': 'france',
@@ -84,31 +95,57 @@ const CITY_TO_COUNTRY = {
   'basel': 'switzerland',
 };
 
-// Cache pour les résultats Nominatim
-const geocodeCache = new Map();
-
 /**
- * Obtenir le pays depuis une ville (avec cache et fallback Nominatim)
+ * Obtenir le pays depuis le cache Supabase
  */
-export async function getCountryFromCity(cityName) {
-  if (!cityName) return null;
-  
+async function getCachedGeocode(cityName) {
   const normalizedCity = cityName.toLowerCase().trim();
   
-  // 1. Checker le mapping manuel d'abord
-  if (CITY_TO_COUNTRY[normalizedCity]) {
-    return {
-      city: cityName,
-      country: CITY_TO_COUNTRY[normalizedCity]
-    };
+  const { data, error } = await supabase
+    .from('city_geocoding')
+    .select('*')
+    .eq('city', normalizedCity)
+    .single();
+  
+  if (error || !data) {
+    return null;
   }
   
-  // 2. Checker le cache
-  if (geocodeCache.has(normalizedCity)) {
-    return geocodeCache.get(normalizedCity);
-  }
+  return {
+    city: cityName,
+    country: data.country,
+    countryCode: data.country_code
+  };
+}
+
+/**
+ * Sauvegarder le résultat dans le cache Supabase
+ */
+async function saveCachedGeocode(cityName, country, countryCode = null) {
+  const normalizedCity = cityName.toLowerCase().trim();
   
-  // 3. Fallback: Appeler Nominatim (gratuit)
+  const { error } = await supabase
+    .from('city_geocoding')
+    .upsert({
+      city: normalizedCity,
+      country: country,
+      country_code: countryCode,
+      last_updated: new Date().toISOString()
+    }, {
+      onConflict: 'city'
+    });
+  
+  if (error) {
+    console.error('❌ Error saving geocode cache:', error);
+  } else {
+    console.log(`✅ Cached: ${cityName} → ${country}`);
+  }
+}
+
+/**
+ * Appeler Nominatim pour géocoder une ville
+ */
+async function geocodeWithNominatim(cityName) {
   try {
     console.log(`🌍 Geocoding "${cityName}" via Nominatim...`);
     
@@ -116,7 +153,7 @@ export async function getCountryFromCity(cityName) {
       `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(cityName)}&format=json&limit=1`,
       {
         headers: {
-          'User-Agent': 'PricingPro/1.0'
+          'User-Agent': 'PricingPro/1.0 (contact@pricingpro.com)'
         }
       }
     );
@@ -127,26 +164,79 @@ export async function getCountryFromCity(cityName) {
     
     const data = await response.json();
     
-    if (data && data.length > 0 && data[0].address) {
-      const country = (data[0].address.country || '').toLowerCase();
-      const result = {
-        city: cityName,
-        country: country || 'unknown'
-      };
+    if (data && data.length > 0) {
+      console.log('📍 Nominatim response:', JSON.stringify(data[0], null, 2));
       
-      // Sauvegarder dans le cache
-      geocodeCache.set(normalizedCity, result);
+      const address = data[0].address || {};
+      const displayName = data[0].display_name || '';
       
-      // Respecter la limite de 1 req/sec de Nominatim
-      await new Promise(resolve => setTimeout(resolve, 1100));
+      // Extraire le pays de plusieurs façons possibles
+      let country = address.country || '';
+      let countryCode = address.country_code || '';
       
-      return result;
+      // Si pas de country, essayer de parser depuis display_name
+      if (!country && displayName) {
+        const parts = displayName.split(',').map(s => s.trim());
+        country = parts[parts.length - 1]; // Dernier élément = pays
+      }
+      
+      country = country.toLowerCase();
+      countryCode = countryCode.toUpperCase();
+      
+      console.log(`📌 Extracted: country="${country}", code="${countryCode}"`);
+      
+      if (country && country !== 'unknown') {
+        // Sauvegarder dans le cache
+        await saveCachedGeocode(cityName, country, countryCode);
+        
+        // Respecter la limite de 1 req/sec de Nominatim
+        await new Promise(resolve => setTimeout(resolve, 1100));
+        
+        return {
+          city: cityName,
+          country: country,
+          countryCode: countryCode
+        };
+      }
     }
   } catch (error) {
     console.error(`❌ Error geocoding "${cityName}":`, error.message);
   }
   
-  // Fallback ultime: retourner null
+  return null;
+}
+
+/**
+ * Obtenir le pays depuis une ville (avec cache persistant et fallback Nominatim)
+ */
+export async function getCountryFromCity(cityName) {
+  if (!cityName) return null;
+  
+  const normalizedCity = cityName.toLowerCase().trim();
+  
+  // 1. Checker le mapping manuel d'abord (plus rapide)
+  if (CITY_TO_COUNTRY[normalizedCity]) {
+    return {
+      city: cityName,
+      country: CITY_TO_COUNTRY[normalizedCity]
+    };
+  }
+  
+  // 2. Checker le cache Supabase
+  const cached = await getCachedGeocode(cityName);
+  if (cached) {
+    console.log(`💾 Cache hit: ${cityName} → ${cached.country}`);
+    return cached;
+  }
+  
+  // 3. Fallback: Appeler Nominatim (gratuit mais lent)
+  const geocoded = await geocodeWithNominatim(cityName);
+  
+  if (geocoded) {
+    return geocoded;
+  }
+  
+  // Fallback ultime
   return {
     city: cityName,
     country: 'unknown'
@@ -162,13 +252,11 @@ export function parseLocation(locationString) {
   const parts = locationString.split(',').map(s => s.trim());
   
   if (parts.length >= 2) {
-    // Format: "Paris, France"
     return {
       city: parts[0],
       country: parts[1].toLowerCase()
     };
   } else {
-    // Format: "Paris" (juste la ville)
     return {
       city: parts[0],
       country: null
