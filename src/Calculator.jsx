@@ -402,12 +402,12 @@ const Calculator = ({ onBackToHome }) => {
             <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {t.title}
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{t.subtitle}</p>
-            </div>
+            <div className="text-left">
+			  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+				{t.title}
+			  </h1>
+			  <p className="text-sm text-gray-600 dark:text-gray-400">Calculateur de tarifs intelligent</p>
+			</div>
           </button>
           <button
             onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
