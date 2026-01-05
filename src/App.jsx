@@ -308,7 +308,7 @@ const PricingCalculator = () => {
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {t.title}
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">{t.subtitle}</p>
@@ -451,7 +451,7 @@ const PricingCalculator = () => {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.skills}
                   </label>
-                  <div className="flex flex-wrap gap-2 mb-3">
+                  <div className="flex flex-wrap gap-2 mb-3 min-h-[32px]">
                     {formData.skills.map((skill, idx) => (
                       <span
                         key={idx}
@@ -467,7 +467,7 @@ const PricingCalculator = () => {
                       </span>
                     ))}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="text"
                       value={skillInput}
