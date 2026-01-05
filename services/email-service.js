@@ -30,7 +30,7 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
         adviceText: 'Vos tarifs sont compétitifs ! Continuez à développer vos compétences pour augmenter votre valeur sur le marché.',
         cta: 'Recalculer mes tarifs',
         footer: 'PricingPro - Le calculateur de tarifs le plus précis du marché',
-        footerNote: 'Cet email vous a été envoyé car vous avez demandé une analyse sur PricingPro.com'
+        footerNote: 'Cet email vous a été envoyé car vous avez demandé une analyse sur pricingpro.fr'
       },
       en: {
         subject: '📊 Your Personalized Rate Analysis - PricingPro',
@@ -54,7 +54,7 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
         adviceText: 'Your rates are competitive! Keep developing your skills to increase your market value.',
         cta: 'Recalculate my rates',
         footer: 'PricingPro - The most accurate pricing calculator on the market',
-        footerNote: 'You received this email because you requested an analysis on PricingPro.com'
+        footerNote: 'You received this email because you requested an analysis on pricingpro.fr'
       }
     };
 
@@ -188,15 +188,19 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
     .market-item:last-child {
       border-bottom: none;
     }
+    /* CORRECTION ICI : Ajout d'un padding-right et d'un display block pour garantir l'espace */
     .market-label {
       font-size: 14px;
       color: #6b7280;
       font-weight: 500;
+      padding-right: 20px; 
     }
     .market-value {
       font-size: 16px;
       color: #111827;
       font-weight: 600;
+      text-align: right;
+      white-space: nowrap;
     }
     .advice-box {
       background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
@@ -213,7 +217,7 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
     .cta-button {
       display: inline-block;
       background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
-      color: white;
+      color: white !important;
       padding: 16px 32px;
       border-radius: 8px;
       text-decoration: none;
@@ -246,14 +250,11 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
     <div class="header">
       <h1>📊 ${t.subject.split(' - ')[0]}</h1>
     </div>
 
-    <!-- Content -->
     <div class="content">
-      <!-- Greeting -->
       <p style="font-size: 16px; color: #111827; margin-bottom: 20px;">
         ${t.greeting},
       </p>
@@ -261,7 +262,6 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
         ${t.intro}
       </p>
 
-      <!-- Profile Section -->
       <div class="section">
         <div class="section-title">${t.profile}</div>
         <div class="profile-grid">
@@ -288,7 +288,6 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
         </div>
       </div>
 
-      <!-- Rates Section -->
       <div class="section">
         <div class="section-title">${t.results}</div>
         <div class="rates-container">
@@ -307,7 +306,6 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
         </div>
       </div>
 
-      <!-- Market Comparison -->
       <div class="section">
         <div class="section-title">${t.market}</div>
         <div class="market-comparison">
@@ -326,7 +324,6 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
         </div>
       </div>
 
-      <!-- Advice -->
       <div class="section">
         <div class="section-title">💡 ${t.advice}</div>
         <div class="advice-box">
@@ -334,7 +331,6 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
         </div>
       </div>
 
-      <!-- CTA -->
       <div style="text-align: center;">
         <a href="https://pricingpro.fr/#calculator" class="cta-button">
           ${t.cta}
@@ -342,7 +338,6 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
       <div class="footer-logo">PricingPro</div>
       <p>${t.footer}</p>
@@ -357,7 +352,7 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
 
     // Envoyer l'email
     const { data, error } = await resend.emails.send({
-      from: 'PricingPro <contact@pricingpro.fr>',
+      from: 'PricingPro <contact@pricingpro.fr>', // ← Domaine mis à jour
       to: [email],
       subject: t.subject,
       html: htmlContent,
@@ -368,7 +363,6 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
       return { success: false, error };
     }
 
-    console.log('✅ Email sent successfully:', data);
     return { success: true, data };
 
   } catch (error) {
