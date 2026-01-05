@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { TrendingUp, DollarSign, Users, Award, Download, Globe, Calculator, Briefcase, MapPin, Clock } from 'lucide-react';
+import { TrendingUp, DollarSign, Users, Award, Download, Globe, Calculator, Briefcase, MapPin, Clock, Loader2 } from 'lucide-react';
 
 const PricingCalculator = () => {
   const [language, setLanguage] = useState('fr');
@@ -12,6 +12,8 @@ const PricingCalculator = () => {
     workType: 'freelance'
   });
   const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState(null);
 
   const translations = {
     fr: {
@@ -113,38 +115,137 @@ const PricingCalculator = () => {
     { value: 'usa', label: { fr: 'États-Unis', en: 'United States' }, multiplier: 1.5 }
   ];
 
-  const calculateRates = () => {
-    const profession = professions.find(p => p.value === formData.profession);
-    const location = locations.find(l => l.value === formData.location);
-    
-    const baseRate = profession.base;
-    const experienceMultiplier = 1 + (parseInt(formData.experience) * 0.08);
-    const skillsBonus = formData.skills.length * 30;
-    const locationMultiplier = location.multiplier;
+  const calculateRates = async () => {
+    setLoading(true);
+    setApiError(null);
 
-    const dailyRate = Math.round((baseRate * experienceMultiplier + skillsBonus) * locationMultiplier);
-    const hourlyRate = Math.round(dailyRate / 8);
-    const monthlyRate = Math.round(dailyRate * 20);
+    try {
+      // Appeler l'API Vercel pour récupérer les vraies données
+      const apiUrl = window.location.hostname === 'localhost'
+        ? 'http://localhost:3000/api/get-rates'
+        : '/api/get-rates';
+      
+      const response = await fetch(
+        `${apiUrl}?profession=${formData.profession}&location=${formData.location}`
+      );
 
-    const marketMin = Math.round(dailyRate * 0.6);
-    const marketAvg = Math.round(dailyRate * 0.85);
-    const marketMax = Math.round(dailyRate * 1.4);
+      if (!response.ok) {
+        throw new Error('Failed to fetch market data');
+      }
 
-    const breakdown = {
-      base: baseRate,
-      experience: Math.round(baseRate * (experienceMultiplier - 1)),
-      skills: skillsBonus,
-      location: Math.round(baseRate * (locationMultiplier - 1))
-    };
+      const marketData = await response.json();
 
-    setResults({
-      hourly: hourlyRate,
-      daily: dailyRate,
-      monthly: monthlyRate,
-      market: { min: marketMin, avg: marketAvg, max: marketMax },
-      breakdown
-    });
-    setStep(3);
+      // Si on a des données du marché
+      if (marketData.count > 0) {
+        const profession = professions.find(p => p.value === formData.profession);
+        const location = locations.find(l => l.value === formData.location);
+        
+        // Utiliser les vraies données du marché comme base
+        const baseRate = marketData.avg;
+        const experienceMultiplier = 1 + (parseInt(formData.experience) * 0.08);
+        const skillsBonus = formData.skills.length * 30;
+
+        const dailyRate = Math.round(baseRate * experienceMultiplier + skillsBonus);
+        const hourlyRate = Math.round(dailyRate / 8);
+        const monthlyRate = Math.round(dailyRate * 20);
+
+        const breakdown = {
+          base: baseRate,
+          experience: Math.round(baseRate * (experienceMultiplier - 1)),
+          skills: skillsBonus,
+          location: 0
+        };
+
+        setResults({
+          hourly: hourlyRate,
+          daily: dailyRate,
+          monthly: monthlyRate,
+          market: { 
+            min: marketData.min, 
+            avg: marketData.avg, 
+            max: marketData.max 
+          },
+          breakdown,
+          dataSource: 'real',
+          sourceCount: marketData.count
+        });
+      } else {
+        // Fallback aux données simulées si pas de données du marché
+        const profession = professions.find(p => p.value === formData.profession);
+        const location = locations.find(l => l.value === formData.location);
+        
+        const baseRate = profession.base;
+        const experienceMultiplier = 1 + (parseInt(formData.experience) * 0.08);
+        const skillsBonus = formData.skills.length * 30;
+        const locationMultiplier = location.multiplier;
+
+        const dailyRate = Math.round((baseRate * experienceMultiplier + skillsBonus) * locationMultiplier);
+        const hourlyRate = Math.round(dailyRate / 8);
+        const monthlyRate = Math.round(dailyRate * 20);
+
+        const marketMin = Math.round(dailyRate * 0.6);
+        const marketAvg = Math.round(dailyRate * 0.85);
+        const marketMax = Math.round(dailyRate * 1.4);
+
+        const breakdown = {
+          base: baseRate,
+          experience: Math.round(baseRate * (experienceMultiplier - 1)),
+          skills: skillsBonus,
+          location: Math.round(baseRate * (locationMultiplier - 1))
+        };
+
+        setResults({
+          hourly: hourlyRate,
+          daily: dailyRate,
+          monthly: monthlyRate,
+          market: { min: marketMin, avg: marketAvg, max: marketMax },
+          breakdown,
+          dataSource: 'simulated'
+        });
+      }
+
+      setStep(3);
+    } catch (error) {
+      console.error('Error calculating rates:', error);
+      setApiError('Unable to fetch market data. Using estimated values.');
+      
+      // Fallback to simulated data on error
+      const profession = professions.find(p => p.value === formData.profession);
+      const location = locations.find(l => l.value === formData.location);
+      
+      const baseRate = profession.base;
+      const experienceMultiplier = 1 + (parseInt(formData.experience) * 0.08);
+      const skillsBonus = formData.skills.length * 30;
+      const locationMultiplier = location.multiplier;
+
+      const dailyRate = Math.round((baseRate * experienceMultiplier + skillsBonus) * locationMultiplier);
+      const hourlyRate = Math.round(dailyRate / 8);
+      const monthlyRate = Math.round(dailyRate * 20);
+
+      const marketMin = Math.round(dailyRate * 0.6);
+      const marketAvg = Math.round(dailyRate * 0.85);
+      const marketMax = Math.round(dailyRate * 1.4);
+
+      const breakdown = {
+        base: baseRate,
+        experience: Math.round(baseRate * (experienceMultiplier - 1)),
+        skills: skillsBonus,
+        location: Math.round(baseRate * (locationMultiplier - 1))
+      };
+
+      setResults({
+        hourly: hourlyRate,
+        daily: dailyRate,
+        monthly: monthlyRate,
+        market: { min: marketMin, avg: marketAvg, max: marketMax },
+        breakdown,
+        dataSource: 'simulated'
+      });
+      
+      setStep(3);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getInsights = () => {
@@ -417,6 +518,20 @@ const PricingCalculator = () => {
 
         {step === 3 && results && (
           <div className="space-y-6">
+            {apiError && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800 text-sm">
+                ⚠️ {apiError}
+              </div>
+            )}
+
+            {results.dataSource === 'real' && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-800 text-sm">
+                ✅ {language === 'fr' 
+                  ? `Données basées sur ${results.sourceCount} tarifs réels du marché`
+                  : `Data based on ${results.sourceCount} real market rates`}
+              </div>
+            )}
+
             {/* Main Results Card */}
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <div className="flex items-center gap-3 mb-6">
