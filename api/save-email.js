@@ -63,7 +63,7 @@ export default async function handler(req, res) {
 
     // Envoyer l'email avec Resend
     try {
-      const { sendRateAnalysisEmail } = await import('../services/email-service.js');
+      const { sendRateAnalysisEmail } = await import('../services/email-service');
       const emailResult = await sendRateAnalysisEmail({
         email,
         results,
