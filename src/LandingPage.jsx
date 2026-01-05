@@ -469,12 +469,13 @@ const LandingPage = ({ onStartCalculator, language }) => {
       <footer className="py-12 px-4 bg-gray-900 text-gray-400">
         <div className="max-w-6xl mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-white" />
-            </div>
+            {/* On utilise ton logo carré ici */}
+            <img src="/logo-square.png" alt="Logo" className="w-10 h-10 object-contain" />
             <span className="text-xl font-bold text-white">PricingPro</span>
           </div>
+          
           <p className="mb-6">{t.footer.tagline}</p>
+          
           <div className="flex flex-wrap justify-center gap-6 mb-6">
             <a href="#about" className="hover:text-white transition-colors">
               {t.footer.links[0]}
@@ -492,7 +493,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
           <p className="text-sm">{t.footer.legal}</p>
         </div>
       </footer>
-    </div>
+    </div>  
   );
 };
 
