@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { sendRateAnalysisEmail } from '../services/email-service.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -63,21 +64,25 @@ export default async function handler(req, res) {
 
     // Envoyer l'email avec Resend
     try {
-      const { sendRateAnalysisEmail } = await import('../services/email-service');
+      console.log('📧 Attempting to send email to:', email);
+      
       const emailResult = await sendRateAnalysisEmail({
         email,
         results,
         formData,
         language: req.body.language || 'fr'
       });
-
+      
+      console.log('📬 Email result:', JSON.stringify(emailResult));
+      
       if (emailResult.success) {
-        console.log('✅ Analysis email sent to:', email);
+        console.log('✅ Analysis email sent successfully to:', email);
       } else {
         console.error('❌ Failed to send email:', emailResult.error);
       }
     } catch (emailError) {
-      console.error('❌ Email sending error:', emailError);
+      console.error('❌ Email sending error:', emailError.message);
+      console.error('❌ Error stack:', emailError.stack);
       // Ne pas bloquer la réponse si l'email échoue
     }
 
