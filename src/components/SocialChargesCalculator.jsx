@@ -1,0 +1,138 @@
+import React from 'react';
+import { Calculator, Info } from 'lucide-react';
+
+// Taux de charges sociales par statut (France 2026)
+const SOCIAL_CHARGES = {
+  'auto-entrepreneur': {
+    name: { fr: 'Auto-entrepreneur', en: 'Self-employed' },
+    rate: 0.22, // 22% du CA pour prestations de service
+    description: { 
+      fr: 'Charges sociales simplifiées', 
+      en: 'Simplified social contributions' 
+    }
+  },
+  'sasu': {
+    name: { fr: 'SASU (Président)', en: 'SASU (President)' },
+    rate: 0.82, // ~82% charges patronales + salariales
+    description: { 
+      fr: 'Assimilé salarié - Sécurité sociale', 
+      en: 'Employee status - Social security' 
+    }
+  },
+  'eurl': {
+    name: { fr: 'EURL (Gérant majoritaire)', en: 'EURL (Majority manager)' },
+    rate: 0.45, // ~45% charges TNS
+    description: { 
+      fr: 'Travailleur non-salarié', 
+      en: 'Self-employed worker' 
+    }
+  },
+  'portage': {
+    name: { fr: 'Portage salarial', en: 'Umbrella company' },
+    rate: 0.50, // ~50% charges + frais de gestion
+    description: { 
+      fr: 'Salarié porté - Tout inclus', 
+      en: 'Employee - All inclusive' 
+    }
+  }
+};
+
+const SocialChargesCalculator = ({ dailyRate, monthlyRate, status, language = 'fr' }) => {
+  const charges = SOCIAL_CHARGES[status];
+  
+  if (!charges) return null;
+
+  // Calcul du net
+  const dailyNet = Math.round(dailyRate * (1 - charges.rate));
+  const monthlyNet = Math.round(monthlyRate * (1 - charges.rate));
+  const yearlyNet = monthlyNet * 12;
+
+  // Calcul des charges
+  const dailyCharges = dailyRate - dailyNet;
+  const monthlyCharges = monthlyRate - monthlyNet;
+
+  const t = {
+    fr: {
+      netInPocket: 'Net dans votre poche',
+      socialCharges: 'Charges sociales',
+      perDay: '/jour',
+      perMonth: '/mois',
+      perYear: '/an',
+      info: 'Estimation basée sur le statut',
+      afterCharges: 'Après charges'
+    },
+    en: {
+      netInPocket: 'Net in your pocket',
+      socialCharges: 'Social contributions',
+      perDay: '/day',
+      perMonth: '/month',
+      perYear: '/year',
+      info: 'Estimate based on status',
+      afterCharges: 'After charges'
+    }
+  }[language];
+
+  return (
+    <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-800 rounded-xl p-6 mt-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+          <Calculator className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+            {t.netInPocket}
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {charges.name[language]} ({Math.round(charges.rate * 100)}% {t.socialCharges.toLowerCase()})
+          </p>
+        </div>
+      </div>
+
+      {/* Net amounts */}
+      <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center">
+          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t.perDay}</div>
+          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+            {dailyNet}€
+          </div>
+        </div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center border-2 border-green-600 dark:border-green-400">
+          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t.perMonth}</div>
+          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+            {monthlyNet.toLocaleString()}€
+          </div>
+        </div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center">
+          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t.perYear}</div>
+          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+            {yearlyNet.toLocaleString()}€
+          </div>
+        </div>
+      </div>
+
+      {/* Breakdown */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 space-y-2">
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600 dark:text-gray-400">Brut mensuel</span>
+          <span className="font-semibold text-gray-900 dark:text-white">{monthlyRate.toLocaleString()}€</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600 dark:text-gray-400">{t.socialCharges}</span>
+          <span className="font-semibold text-red-600 dark:text-red-400">-{monthlyCharges.toLocaleString()}€</span>
+        </div>
+        <div className="flex justify-between text-sm pt-2 border-t border-gray-200 dark:border-gray-700">
+          <span className="font-bold text-gray-900 dark:text-white">{t.netInPocket}</span>
+          <span className="font-bold text-green-600 dark:text-green-400">{monthlyNet.toLocaleString()}€</span>
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="flex items-start gap-2 mt-4 text-xs text-gray-600 dark:text-gray-400">
+        <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+        <p>{t.info}. {charges.description[language]}.</p>
+      </div>
+    </div>
+  );
+};
+
+export { SocialChargesCalculator, SOCIAL_CHARGES };
