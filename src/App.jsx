@@ -16,6 +16,7 @@ const PricingCalculator = () => {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [skillInput, setSkillInput] = useState('');
+  const [professionSearch, setProfessionSearch] = useState('');
 
   const translations = {
     fr: {
@@ -39,6 +40,7 @@ const PricingCalculator = () => {
       skills: "Compétences spécifiques",
       addSkill: "Ajouter",
       skillPlaceholder: "Ex: React, TypeScript...",
+      searchProfession: "Rechercher une profession...",
       next: "Suivant",
       back: "Retour",
       calculate: "Calculer mes tarifs",
@@ -84,6 +86,7 @@ const PricingCalculator = () => {
       skills: "Specific skills",
       addSkill: "Add",
       skillPlaceholder: "E.g. React, TypeScript...",
+      searchProfession: "Search profession...",
       next: "Next",
       back: "Back",
       calculate: "Calculate my rates",
@@ -115,13 +118,18 @@ const PricingCalculator = () => {
   const professions = [
     { value: 'web-dev', label: { fr: 'Développeur Web', en: 'Web Developer' }, base: 400 },
     { value: 'mobile-dev', label: { fr: 'Développeur Mobile', en: 'Mobile Developer' }, base: 450 },
+    { value: 'fullstack-dev', label: { fr: 'Développeur Full-Stack', en: 'Full-Stack Developer' }, base: 400 },
+    { value: 'backend-dev', label: { fr: 'Développeur Backend', en: 'Backend Developer' }, base: 400 },
     { value: 'data-analyst', label: { fr: 'Data Analyst', en: 'Data Analyst' }, base: 500 },
+    { value: 'data-scientist', label: { fr: 'Data Scientist', en: 'Data Scientist' }, base: 550 },
+    { value: 'devops', label: { fr: 'DevOps Engineer', en: 'DevOps Engineer' }, base: 500 },
     { value: 'ui-designer', label: { fr: 'Designer UI/UX', en: 'UI/UX Designer' }, base: 400 },
     { value: 'graphic-designer', label: { fr: 'Graphiste', en: 'Graphic Designer' }, base: 300 },
     { value: 'copywriter', label: { fr: 'Rédacteur', en: 'Copywriter' }, base: 250 },
     { value: 'marketing', label: { fr: 'Consultant Marketing', en: 'Marketing Consultant' }, base: 450 },
     { value: 'seo', label: { fr: 'Expert SEO', en: 'SEO Expert' }, base: 400 },
     { value: 'project-manager', label: { fr: 'Chef de Projet', en: 'Project Manager' }, base: 500 },
+    { value: 'product-manager', label: { fr: 'Product Manager', en: 'Product Manager' }, base: 550 },
     { value: 'consultant', label: { fr: 'Consultant Business', en: 'Business Consultant' }, base: 600 }
   ];
 
