@@ -1,5 +1,60 @@
 import React, { useState, useMemo } from 'react';
-import { TrendingUp, DollarSign, Users, Award, Download, Globe, Calculator as CalculatorIcon, Briefcase, MapPin, Clock, Loader2, X } from 'lucide-react';
+import { TrendingUp, DollarSign, Users, Award, Download, Globe, Calculator as CalculatorIcon, Briefcase, MapPin, Clock, Loader2, X, Database } from 'lucide-react';
+import EmailCapture from './components/EmailCapture';
+
+// Composant pour afficher les sources de données
+const DataSourceBadge = ({ sourceCount, sources }) => {
+  const getSourceIcon = (source) => {
+    const icons = {
+      'malt': '🟣',
+      'glassdoor': '🟢',
+      'upwork': '🔵'
+    };
+    return icons[source] || '📊';
+  };
+
+  const getSourceName = (source) => {
+    const names = {
+      'malt': 'Malt',
+      'glassdoor': 'Glassdoor',
+      'upwork': 'Upwork'
+    };
+    return names[source] || source;
+  };
+
+  return (
+    <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-200 dark:border-purple-800 rounded-xl p-4 mb-6">
+      <div className="flex items-start gap-3">
+        <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+          <Database className="w-5 h-5 text-white" />
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm font-bold text-purple-700 dark:text-purple-300">
+              ✅ Données vérifiées et fiables
+            </span>
+          </div>
+          <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+            <strong className="text-purple-600 dark:text-purple-400">{sourceCount} tarifs réels</strong> analysés depuis plusieurs plateformes professionnelles
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {sources?.map((source, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700"
+              >
+                <span className="text-lg">{getSourceIcon(source)}</span>
+                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                  {getSourceName(source)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Calculator = ({ onBackToHome }) => {
   const [language, setLanguage] = useState('fr');
@@ -188,7 +243,9 @@ const Calculator = ({ onBackToHome }) => {
           },
           breakdown,
           dataSource: 'real',
-          sourceCount: marketData.count
+          sourceCount: marketData.count,
+          sources: marketData.sources || ['malt', 'glassdoor', 'upwork'],
+          cities: marketData.cities || []
         });
       } else {
         fallbackToSimulated();
@@ -235,7 +292,8 @@ const Calculator = ({ onBackToHome }) => {
       monthly: monthlyRate,
       market: { min: marketMin, avg: marketAvg, max: marketMax },
       breakdown,
-      dataSource: 'simulated'
+      dataSource: 'simulated',
+      sources: ['malt', 'glassdoor', 'upwork']
     });
   };
 
@@ -257,11 +315,11 @@ const Calculator = ({ onBackToHome }) => {
   };
 
   const resetCalculator = () => {
-	if (onBackToHome) {
-		onBackToHome();
-	}
-	setStep(1);
-	setResults(null);
+    if (onBackToHome) {
+      onBackToHome();
+    }
+    setStep(1);
+    setResults(null);
     setApiError(null);
     setFormData({
       profession: '',
@@ -279,7 +337,6 @@ const Calculator = ({ onBackToHome }) => {
     const insights = [];
     const professionLabel = professions.find(p => p.value === formData.profession).label[language];
     
-    // Insight sur le niveau d'expérience
     if (formData.experienceLevel === 'junior') {
       insights.push({
         icon: '🚀',
@@ -608,10 +665,12 @@ const Calculator = ({ onBackToHome }) => {
               </div>
             )}
 
-            {results.dataSource === 'real' && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 text-green-800 dark:text-green-200 text-sm">
-                ✅ {t.realDataBadge.replace('{count}', results.sourceCount)}
-              </div>
+            {/* NOUVEAU : Badge multi-sources */}
+            {results.dataSource === 'real' && results.sources && (
+              <DataSourceBadge 
+                sourceCount={results.sourceCount} 
+                sources={results.sources}
+              />
             )}
 
             {/* Main Results Card */}
@@ -721,20 +780,27 @@ const Calculator = ({ onBackToHome }) => {
             </div>
 
             {/* Insights */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-8">
-              <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
-                <Users className="w-5 h-5 text-purple-600 dark:text-purple-300" />
-                {t.insights}
-              </h4>
-              <div className="space-y-4">
-                {getInsights().map((insight, idx) => (
-                  <div key={idx} className="flex gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                    <span className="text-2xl">{insight.icon}</span>
-                    <p className="text-gray-700 dark:text-gray-300">{insight.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+			<div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-8">
+			  <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+				<Users className="w-5 h-5 text-purple-600 dark:text-purple-300" />
+				{t.insights}
+			  </h4>
+			  <div className="space-y-4">
+				{getInsights().map((insight, idx) => (
+				  <div key={idx} className="flex gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+					<span className="text-2xl">{insight.icon}</span>
+					<p className="text-gray-700 dark:text-gray-300">{insight.text}</p>
+				  </div>
+				))}
+			  </div>
+			</div>
+
+			{/* Email Capture */}
+			<EmailCapture 
+			  results={results}
+			  formData={formData}
+			  language={language}
+			/>
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4">
