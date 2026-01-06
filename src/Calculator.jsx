@@ -3,8 +3,8 @@ import { TrendingUp, DollarSign, Users, Award, Download, Globe, Calculator as Ca
 import EmailCapture from './components/EmailCapture';
 import { SocialChargesCalculator } from './components/SocialChargesCalculator';
 import { generateRateAnalysisPDF } from '../services/pdf-service';
-import QuoteGenerator from './components/QuoteGenerator';
 import { generateQuotePDF } from '../services/quote-pdf-service';
+import QuoteGenerator from './components/QuoteGenerator';
 
 // Composant pour afficher les sources de données
 const DataSourceBadge = ({ sourceCount, sources }) => {

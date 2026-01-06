@@ -98,12 +98,8 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   validDate.setDate(validDate.getDate() + quoteData.validityDays);
   doc.text(`${labels.validUntil}: ${validDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}`, pageWidth - 15, yPos, { align: 'right' });
 
-  yPos = 65;
-
   // Section FROM (Freelance ou Portage)
-  doc.setFontSize(11);
-  doc.setTextColor(147, 51, 234);
-  doc.text(labels.from.toUpperCase(), 15, yPos);
+  yPos = 65;
   
   doc.setFontSize(10);
   doc.setTextColor(0, 0, 0);
@@ -175,9 +171,6 @@ export function generateQuotePDF(quoteData, language = 'fr') {
 
   // Section TO (Client)
   yPos = 65;
-  doc.setFontSize(11);
-  doc.setTextColor(147, 51, 234);
-  doc.text(labels.to.toUpperCase(), pageWidth - 90, yPos);
   
   doc.setFontSize(10);
   doc.setTextColor(0, 0, 0);
