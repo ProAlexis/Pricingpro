@@ -12,8 +12,6 @@ export function generateQuotePDF(quoteData, language = 'fr') {
       quoteNumber: 'Devis N°',
       date: 'Date',
       validUntil: 'Valable jusqu\'au',
-      from: 'De',
-      to: 'À',
       description: 'Description',
       quantity: 'Quantité',
       unitPrice: 'Prix unitaire',
@@ -38,8 +36,6 @@ export function generateQuotePDF(quoteData, language = 'fr') {
       quoteNumber: 'Quote #',
       date: 'Date',
       validUntil: 'Valid until',
-      from: 'From',
-      to: 'To',
       description: 'Description',
       quantity: 'Quantity',
       unitPrice: 'Unit price',
@@ -99,11 +95,10 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   doc.text(`${labels.validUntil}: ${validDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}`, pageWidth - 15, yPos, { align: 'right' });
 
   // Section FROM (Freelance ou Portage)
-  yPos = 65;
+  yPos = 60;
   
   doc.setFontSize(10);
   doc.setTextColor(0, 0, 0);
-  yPos += 7;
   doc.setFont(undefined, 'bold');
 
   // 1. GESTION DU NOM ET DU TITRE
@@ -149,49 +144,54 @@ export function generateQuotePDF(quoteData, language = 'fr') {
     yPos += 5;
   }
 
-  // Infos spécifiques EURL / SASU (TVA et Capital)
+  // Infos spécifiques EURL / SASU (TVA, RCS et Capital)
     if (quoteData.legalStatus === 'eurl' || quoteData.legalStatus === 'sasu') {
       if (quoteData.vatNumber) {
         doc.text(`TVA: ${quoteData.vatNumber}`, 15, yPos);
         yPos += 5;
       }
+      
+      // AJOUT DU RCS ICI
+      if (quoteData.rcs) {
+        doc.text(quoteData.rcs, 15, yPos);
+        yPos += 5;
+      }
+
       if (quoteData.capital) {
-        // Cette ligne affiche déjà "SASU au capital de 1000€"
         doc.text(`${quoteData.legalStatus.toUpperCase()} au capital de ${quoteData.capital}€`, 15, yPos);
         yPos += 5;
       } else {
-        // Si pas de capital renseigné, on affiche juste le statut
         doc.text(labels.legalStatus[quoteData.legalStatus] || quoteData.legalStatus, 15, yPos);
         yPos += 5;
       }
     } else if (quoteData.legalStatus) {
+      // Pour les autres statuts (AE, Portage)
       doc.text(labels.legalStatus[quoteData.legalStatus] || quoteData.legalStatus, 15, yPos);
       yPos += 5;
     }
 
   // Section TO (Client)
-  yPos = 65;
+  yPos = 75;
   
   doc.setFontSize(10);
   doc.setTextColor(0, 0, 0);
-  yPos += 7;
   doc.setFont(undefined, 'bold');
-  doc.text(quoteData.clientName, pageWidth - 90, yPos);
+  doc.text(quoteData.clientName, pageWidth - 80, yPos);
   doc.setFont(undefined, 'normal');
   yPos += 5;
   
   doc.setTextColor(100, 100, 100);
   if (quoteData.clientCompany) {
-    doc.text(quoteData.clientCompany, pageWidth - 90, yPos);
+    doc.text(quoteData.clientCompany, pageWidth - 80, yPos);
     yPos += 5;
   }
-  doc.text(quoteData.clientEmail, pageWidth - 90, yPos);
+  doc.text(quoteData.clientEmail, pageWidth - 80, yPos);
   yPos += 5;
   
   const clientAddressLines = doc.splitTextToSize(quoteData.clientAddress, 80);
-  doc.text(clientAddressLines, pageWidth - 90, yPos);
+  doc.text(clientAddressLines, pageWidth - 80, yPos);
 
-  yPos = 120;
+  yPos = 115;
 
   // Titre de la mission
   doc.setFontSize(14);

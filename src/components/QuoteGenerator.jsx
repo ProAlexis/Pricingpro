@@ -80,12 +80,12 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
         name: "Jean Dupont",
         email: "contact@exemple.fr",
         phone: "+33 6 12 34 56 78",
-        address: "123 Rue Example, 75001 Paris",
-        siret: "123 456 789 00012",
-        vatNumber: "ex: FR 12 123456789",
-        capital: "ex: 1000",
-        rcs: "ex: Paris",
-        portageCompany: "ex: Jump, ITG...",
+        address: "123 rue Exemple, 75001 Paris",
+        siret: "siret (ex: 123 456 789 00012)",
+        vatNumber: "N° de TVA Intracommunautaire (ex: FR 12...)",
+        capital: "Capital social (ex: 1000)",
+        rcs: "Ville du Greffe (ex: RCS Paris)",
+        portageCompany: "Société (ex: Jump, ITG...)",
         clientName: "Marie Martin",
         clientCompany: "Entreprise SARL Martin",
         missionTitle: "Développement site web e-commerce",
@@ -131,17 +131,17 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
       placeholders: {
         name: "John Doe",
         email: "contact@example.com",
-        phone: "+1 234 567 890",
-        address: "123 Example St, City",
-        siret: "123456789",
-        vatNumber: "e.g. FR 12 123456789",
-        capital: "e.g. 1000",
-        rcs: "e.g. London",
-        portageCompany: "e.g. Umbrella Corp",
+        phone: "+1 202-555-0123",
+        address: "123 Business Ave, New York, NY 10001",
+        siret: "Tax ID / Business ID (e.g., 123456789)",
+        vatNumber: "VAT Number (e.g., US123456789)",
+        capital: "Share Capital (e.g., 1000)",
+        rcs: "Registration City (e.g., New York)",
+        portageCompany: "Umbrella Company (e.g., Jump, ITG...)",
         clientName: "Jane Smith",
         clientCompany: "Company LLC Smith",
         missionTitle: "E-commerce website development",
-        missionDescription: "Creation of responsive e-commerce website with integrated payment system"
+        missionDescription: "Full creation of a responsive e-commerce platform with integrated payment systems"
       }
     }
   };
@@ -246,24 +246,26 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 <>
                   <input
                     type="text"
-                    placeholder="N° de TVA Intracommunautaire (ex: FR 12...)"
+                    placeholder={labels.placeholders.vatNumber}
                     value={quoteData.vatNumber}
                     onChange={(e) => setQuoteData({...quoteData, vatNumber: e.target.value})}
-                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900"
+                    className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <input
                     type="text"
-                    placeholder="Capital social (ex: 1000)"
+                    placeholder={labels.placeholders.capital}
                     value={quoteData.capital}
                     onChange={(e) => setQuoteData({...quoteData, capital: e.target.value})}
-                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900"
+                    className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <input
                     type="text"
-                    placeholder="Ville du Greffe (ex: RCS Paris)"
+                    name="random-rcs-field"
+                    autoComplete="one-time-code"
+                    placeholder={labels.placeholders.rcs}
                     value={quoteData.rcs}
                     onChange={(e) => setQuoteData({...quoteData, rcs: e.target.value})}
-                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 md:col-span-2"
+                    className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white md:col-span-2"
                   />
                 </>
               )}
@@ -275,21 +277,21 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                     placeholder={labels.placeholders.portageCompany}
                     value={quoteData.companyPortageName}
                     onChange={(e) => setQuoteData({...quoteData, companyPortageName: e.target.value})}
-                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 md:col-span-2"
+                    className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white md:col-span-2"
                   />
                   <input
                     type="text"
                     placeholder={labels.portageSiret}
                     value={quoteData.companyPortageSiret}
                     onChange={(e) => setQuoteData({...quoteData, companyPortageSiret: e.target.value})}
-                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900"
+                    className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <input
                     type="text"
                     placeholder={labels.address}
                     value={quoteData.companyPortageAddress}
                     onChange={(e) => setQuoteData({...quoteData, companyPortageAddress: e.target.value})}
-                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900"
+                    className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </>
               )}

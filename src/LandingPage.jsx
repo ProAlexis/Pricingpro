@@ -6,9 +6,9 @@ const LandingPage = ({ onStartCalculator, language }) => {
   const translations = {
     fr: {
       hero: {
-        title: "Découvrez Votre Vraie Valeur",
-        subtitle: "Calculateur de Tarifs Intelligent",
-        description: "Basé sur 1000+ tarifs réels du marché, notre outil IA vous dit exactement combien facturer selon votre profil.",
+        title: "Découvrez votre vraie valeur",
+        subtitle: "Calculateur de tarifs intelligent",
+        description: "Basé sur 1000+ tarifs réels du marché, notre outil vous dit exactement combien facturer selon votre profil.",
         cta: "Calculer mes tarifs gratuitement",
         badge: "✨ 100% Gratuit · Données réelles · Sans inscription"
       },
