@@ -6,6 +6,9 @@ import { generateRateAnalysisPDF } from '../services/pdf-service';
 import { generateQuotePDF } from '../services/quote-pdf-service';
 import QuoteGenerator from './components/QuoteGenerator';
 import RateTrendChart from './components/RateTrendChart';
+import CalculationHistory, { saveCalculationToHistory } from './components/CalculationHistory';
+import ShareButton from './components/ShareButton';
+import Tooltip, { TooltipContent } from './components/Tooltip';
 
 // Composant pour afficher les sources de données
 const DataSourceBadge = ({ sourceCount, sources }) => {
@@ -71,6 +74,7 @@ const Calculator = ({ onBackToHome, language }) => {
     skills: [],
     workType: 'freelance'
   });
+  const [loadedFromHistory, setLoadedFromHistory] = useState(false);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
@@ -237,6 +241,7 @@ const Calculator = ({ onBackToHome, language }) => {
       const marketData = await response.json();
 
       if (marketData.count > 0) {
+        // ✅ DONNÉES RÉELLES DE L'API
         const profession = professions.find(p => p.value === formData.profession);
         const baseRate = marketData.avg;
         const experienceMultiplier = 1 + (parseInt(formData.experience) * 0.08);
@@ -253,31 +258,38 @@ const Calculator = ({ onBackToHome, language }) => {
           location: 0
         };
 
-        setResults({
+        const finalResults = {
           hourly: hourlyRate,
           daily: dailyRate,
           monthly: monthlyRate,
           market: { 
-            min: marketData.min, 
-            avg: marketData.avg, 
-            max: marketData.max 
+            min: marketData.min,
+            avg: marketData.avg,
+            max: marketData.max
           },
           breakdown,
           dataSource: 'real',
           sourceCount: marketData.count,
           sources: marketData.sources || ['malt', 'glassdoor', 'upwork'],
           cities: marketData.cities || []
-        });
+        };
+
+        setResults(finalResults);
+        
+        // 🔥 NOUVEAU: Sauvegarder dans l'historique
+        saveCalculationToHistory(finalResults, formData);
+
+        setStep(3);
       } else {
+        // Aucune donnée réelle, utiliser le fallback
         fallbackToSimulated();
       }
 
-      setStep(3);
     } catch (error) {
       console.error('Error calculating rates:', error);
       setApiError(t.apiErrorMsg);
+      // En cas d'erreur, utiliser le fallback
       fallbackToSimulated();
-      setStep(3);
     } finally {
       setLoading(false);
     }
@@ -307,15 +319,31 @@ const Calculator = ({ onBackToHome, language }) => {
       location: Math.round(baseRate * (locationMultiplier - 1))
     };
 
-    setResults({
+    const fallbackResults = {
       hourly: hourlyRate,
       daily: dailyRate,
       monthly: monthlyRate,
-      market: { min: marketMin, avg: marketAvg, max: marketMax },
+      market: { 
+        min: marketMin, 
+        avg: marketAvg, 
+        max: marketMax 
+      },
       breakdown,
       dataSource: 'simulated',
       sources: ['malt', 'glassdoor', 'upwork']
-    });
+    };
+
+    setResults(fallbackResults);
+    saveCalculationToHistory(fallbackResults, formData);
+    setStep(3);
+  };
+
+  const handleLoadCalculation = (results, formData) => {
+    setFormData(formData);
+    setResults(results);
+    setStep(3); // Aller directement aux résultats
+    setLoadedFromHistory(true);
+    window.scrollTo(0, 0);
   };
 
   const addSkill = () => {
@@ -882,6 +910,12 @@ const Calculator = ({ onBackToHome, language }) => {
                     }}
                   />
                 )}
+
+      {/* Historique des calculs */}
+      <CalculationHistory 
+        language={language} 
+        onLoadCalculation={handleLoadCalculation} 
+      />
 
       {/* Footer */}
       <div className="text-center py-8 text-gray-600 dark:text-gray-400 text-sm px-4">
