@@ -3,7 +3,15 @@ import jsPDF from 'jspdf';
 export function generateQuotePDF(quoteData, language = 'fr') {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
-  const pageHeight = doc.internal.pageSize.height;
+  
+  // Fonction utilitaire pour formater les prix proprement
+  const formatPrice = (amount) => {
+    return Number(amount).toLocaleString('fr-FR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).replace(/\s/g, ' '); 
+  };
+
   let yPos = 20;
 
   const t = {
@@ -11,12 +19,12 @@ export function generateQuotePDF(quoteData, language = 'fr') {
       quote: 'DEVIS',
       quoteNumber: 'Devis N°',
       date: 'Date',
-      validUntil: 'Valable jusqu\'au',
-      from: 'De',
-      to: 'À',
+      validUntil: "Valable jusqu'au",
+      from: 'Émetteur',
+      to: 'Client',
       description: 'Description',
-      quantity: 'Quantité',
-      unitPrice: 'Prix unitaire',
+      quantity: 'Qté',
+      unitPrice: 'Prix unit.',
       total: 'Total',
       subtotal: 'Sous-total HT',
       vat: 'TVA',
@@ -24,7 +32,7 @@ export function generateQuotePDF(quoteData, language = 'fr') {
       paymentTerms: 'Conditions de paiement',
       footer: 'Merci de votre confiance',
       siret: 'SIRET',
-      days: 'jours',
+      days: 'j',
       legalStatus: {
         'auto-entrepreneur': 'Auto-entrepreneur',
         'sasu': 'SASU',
@@ -40,16 +48,16 @@ export function generateQuotePDF(quoteData, language = 'fr') {
       from: 'From',
       to: 'To',
       description: 'Description',
-      quantity: 'Quantity',
+      quantity: 'Qty',
       unitPrice: 'Unit price',
       total: 'Total',
       subtotal: 'Subtotal',
       vat: 'VAT',
       totalTTC: 'Total',
       paymentTerms: 'Payment terms',
-      footer: 'Thank you for your trust',
-      siret: 'Business ID',
-      days: 'days',
+      footer: 'Thank you for your business',
+      siret: 'Registration #',
+      days: 'd',
       legalStatus: {
         'auto-entrepreneur': 'Self-employed',
         'sasu': 'SASU',
@@ -61,159 +69,157 @@ export function generateQuotePDF(quoteData, language = 'fr') {
 
   const labels = t[language];
 
-  // Logo (si présent)
-  if (quoteData.logo) {
-    try {
-      doc.addImage(quoteData.logo, 'PNG', 15, yPos, 30, 30);
-    } catch (e) {
-      console.error('Error adding logo:', e);
-    }
-  }
-
-  // Titre DEVIS
-  doc.setFontSize(28);
-  doc.setTextColor(147, 51, 234); // Purple
-  doc.text(labels.quote, pageWidth - 15, yPos + 10, { align: 'right' });
-
-  yPos += 40;
-
-  // Informations du devis
+  // --- EN-TÊTE ---
+  
+  // Logo (si présent) ou Titre
+  doc.setFontSize(24);
+  doc.setTextColor(147, 51, 234); // Purple-600
+  doc.setFont(undefined, 'bold');
+  doc.text(labels.quote, 15, yPos);
+  
+  // Infos du Devis (Numéro, Date...) à droite
   doc.setFontSize(10);
   doc.setTextColor(100, 100, 100);
-  doc.text(`${labels.quoteNumber}: ${quoteData.quoteNumber}`, pageWidth - 15, yPos, { align: 'right' });
-  yPos += 6;
+  doc.setFont(undefined, 'normal');
   
-  const today = new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US');
-  doc.text(`${labels.date}: ${today}`, pageWidth - 15, yPos, { align: 'right' });
-  yPos += 6;
+  const rightColX = pageWidth - 80;
+  doc.text(`${labels.quoteNumber}:`, rightColX, yPos);
+  doc.setTextColor(0, 0, 0);
+  doc.text(quoteData.quoteNumber, pageWidth - 15, yPos, { align: 'right' });
   
+  yPos += 6;
+  doc.setTextColor(100, 100, 100);
+  doc.text(`${labels.date}:`, rightColX, yPos);
+  doc.setTextColor(0, 0, 0);
+  doc.text(new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-GB'), pageWidth - 15, yPos, { align: 'right' });
+
+  yPos += 6;
+  doc.setTextColor(100, 100, 100);
+  doc.text(`${labels.validUntil}:`, rightColX, yPos);
+  doc.setTextColor(0, 0, 0);
   const validDate = new Date();
-  validDate.setDate(validDate.getDate() + quoteData.validityDays);
-  doc.text(`${labels.validUntil}: ${validDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}`, pageWidth - 15, yPos, { align: 'right' });
+  validDate.setDate(validDate.getDate() + parseInt(quoteData.validityDays));
+  doc.text(validDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-GB'), pageWidth - 15, yPos, { align: 'right' });
 
-  yPos = 70;
 
-  // Section FROM (Freelance)
-  doc.setFontSize(11);
-  doc.setTextColor(147, 51, 234);
-  doc.text(labels.from.toUpperCase(), 15, yPos);
+  yPos += 25;
+
+  // --- BLOCS ÉMETTEUR / CLIENT ---
+  const leftColX = 15;
+  const clientColX = pageWidth / 2 + 10;
   
+  // Titres des colonnes
   doc.setFontSize(10);
-  doc.setTextColor(0, 0, 0);
-  yPos += 7;
+  doc.setTextColor(150, 150, 150);
   doc.setFont(undefined, 'bold');
-  doc.text(quoteData.freelanceName, 15, yPos);
-  doc.setFont(undefined, 'normal');
-  yPos += 5;
+  doc.text(labels.from.toUpperCase(), leftColX, yPos);
+  doc.text(labels.to.toUpperCase(), clientColX, yPos);
   
-  doc.setTextColor(100, 100, 100);
-  doc.text(quoteData.freelanceEmail, 15, yPos);
-  yPos += 5;
-  doc.text(quoteData.freelancePhone, 15, yPos);
-  yPos += 5;
-  
-  const addressLines = doc.splitTextToSize(quoteData.freelanceAddress, 80);
-  doc.text(addressLines, 15, yPos);
-  yPos += addressLines.length * 5;
-  
-  if (quoteData.freelanceSiret) {
-    doc.text(`${labels.siret}: ${quoteData.freelanceSiret}`, 15, yPos);
-    yPos += 5;
-  }
-  
-  if (quoteData.legalStatus) {
-    doc.text(labels.legalStatus[quoteData.legalStatus] || quoteData.legalStatus, 15, yPos);
-  }
-
-  // Section TO (Client)
-  yPos = 70;
+  yPos += 8;
+  doc.setTextColor(0, 0, 0);
   doc.setFontSize(11);
-  doc.setTextColor(147, 51, 234);
-  doc.text(labels.to.toUpperCase(), pageWidth - 90, yPos);
-  
-  doc.setFontSize(10);
-  doc.setTextColor(0, 0, 0);
-  yPos += 7;
   doc.setFont(undefined, 'bold');
-  doc.text(quoteData.clientName, pageWidth - 90, yPos);
-  doc.setFont(undefined, 'normal');
-  yPos += 5;
+
+  // Nom Freelance & Client
+  doc.text(quoteData.freelanceName || 'Votre Nom', leftColX, yPos);
+  doc.text(quoteData.clientName || 'Nom du Client', clientColX, yPos);
   
-  doc.setTextColor(100, 100, 100);
+  yPos += 6;
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'normal');
+  
+  // Entreprise (si applicable)
   if (quoteData.clientCompany) {
-    doc.text(quoteData.clientCompany, pageWidth - 90, yPos);
+    doc.text(quoteData.clientCompany, clientColX, yPos);
+  }
+
+  // Adresses et Emails (Multilignes)
+  const freelanceDetails = [
+    quoteData.freelanceEmail,
+    quoteData.freelancePhone,
+    quoteData.freelanceAddress,
+    `${labels.legalStatus[quoteData.legalStatus] || quoteData.legalStatus}`,
+    quoteData.freelanceSiret ? `${labels.siret}: ${quoteData.freelanceSiret}` : null
+  ].filter(Boolean);
+
+  const clientDetails = [
+    quoteData.clientCompany ? null : '',
+    quoteData.clientEmail,
+    quoteData.clientAddress
+  ].filter(Boolean);
+
+  // On écrit ligne par ligne
+  let maxLines = Math.max(freelanceDetails.length, clientDetails.length);
+  
+  for (let i = 0; i < maxLines; i++) {
+    if (freelanceDetails[i]) doc.text(freelanceDetails[i], leftColX, yPos);
+    if (clientDetails[i]) doc.text(clientDetails[i], clientColX, yPos);
     yPos += 5;
   }
-  doc.text(quoteData.clientEmail, pageWidth - 90, yPos);
-  yPos += 5;
-  
-  const clientAddressLines = doc.splitTextToSize(quoteData.clientAddress, 80);
-  doc.text(clientAddressLines, pageWidth - 90, yPos);
 
-  yPos = 140;
-
-  // Titre de la mission
-  doc.setFontSize(14);
-  doc.setTextColor(0, 0, 0);
-  doc.setFont(undefined, 'bold');
-  doc.text(quoteData.missionTitle, 15, yPos);
-  doc.setFont(undefined, 'normal');
-  yPos += 10;
-
-  // Description
-  doc.setFontSize(10);
-  doc.setTextColor(100, 100, 100);
-  const descLines = doc.splitTextToSize(quoteData.missionDescription, pageWidth - 30);
-  doc.text(descLines, 15, yPos);
-  yPos += descLines.length * 5 + 10;
-
-  // Table header
-  doc.setFillColor(147, 51, 234);
-  doc.rect(15, yPos, pageWidth - 30, 10, 'F');
-  
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(10);
-  doc.setFont(undefined, 'bold');
-  doc.text(labels.description, 20, yPos + 7);
-  doc.text(labels.quantity, pageWidth - 90, yPos + 7);
-  doc.text(labels.unitPrice, pageWidth - 60, yPos + 7);
-  doc.text(labels.total, pageWidth - 25, yPos + 7, { align: 'right' });
-  doc.setFont(undefined, 'normal');
-  
   yPos += 15;
 
-  // Table content
-  doc.setTextColor(0, 0, 0);
-  doc.text(quoteData.missionTitle, 20, yPos);
-  doc.text(`${quoteData.daysCount} ${labels.days}`, pageWidth - 90, yPos);
-  doc.text(`${quoteData.dailyRate}€`, pageWidth - 60, yPos);
-  doc.text(`${quoteData.totalHT.toLocaleString()}€`, pageWidth - 25, yPos, { align: 'right' });
+  // --- TABLEAU ---
   
-  yPos += 10;
+  // En-têtes du tableau
+  doc.setFillColor(243, 232, 255); // Purple-50
+  doc.rect(15, yPos, pageWidth - 30, 10, 'F');
+  
+  doc.setFont(undefined, 'bold');
+  doc.setTextColor(147, 51, 234); // Purple-600
+  doc.text(labels.description, 20, yPos + 7);
+  doc.text(labels.quantity, pageWidth - 90, yPos + 7, { align: 'right' }); // Ajusté
+  doc.text(labels.unitPrice, pageWidth - 55, yPos + 7, { align: 'right' }); // Ajusté
+  doc.text(labels.total, pageWidth - 20, yPos + 7, { align: 'right' });
+  
+  yPos += 18;
+  
+  // Ligne de prestation
+  doc.setFont(undefined, 'bold');
+  doc.setTextColor(0, 0, 0);
+  doc.text(quoteData.missionTitle || 'Mission', 20, yPos);
+  
+  // === CORRECTION 2 : Utilisation de formatPrice() ===
+  doc.setFont(undefined, 'normal');
+  doc.text(`${quoteData.daysCount} ${labels.days}`, pageWidth - 90, yPos, { align: 'right' });
+  doc.text(`${formatPrice(quoteData.dailyRate)}€`, pageWidth - 55, yPos, { align: 'right' });
+  doc.text(`${formatPrice(quoteData.daysCount * quoteData.dailyRate)}€`, pageWidth - 20, yPos, { align: 'right' });
+  
+  yPos += 6;
+  doc.setFontSize(9);
+  doc.setTextColor(100, 100, 100);
+  
+  // Description multiligne
+  if (quoteData.missionDescription) {
+    const splitDesc = doc.splitTextToSize(quoteData.missionDescription, 110);
+    doc.text(splitDesc, 20, yPos);
+    yPos += (splitDesc.length * 5) + 10;
+  } else {
+    yPos += 10;
+  }
 
-  // Line separator
-  doc.setDrawColor(200, 200, 200);
+  // Ligne de séparation
+  doc.setDrawColor(230, 230, 230);
   doc.line(15, yPos, pageWidth - 15, yPos);
   yPos += 10;
 
-  // Totals
-  doc.setFontSize(11);
+  // --- TOTAUX ---
+  const totalHT = quoteData.daysCount * quoteData.dailyRate;
   
-  // Subtotal
-  doc.setTextColor(100, 100, 100);
-  doc.text(labels.subtotal, pageWidth - 70, yPos);
+  doc.setFontSize(10);
   doc.setTextColor(0, 0, 0);
-  doc.setFont(undefined, 'bold');
-  doc.text(`${quoteData.totalHT.toLocaleString()}€`, pageWidth - 25, yPos, { align: 'right' });
-  doc.setFont(undefined, 'normal');
+  
+  // Sous-total
+  doc.text(labels.subtotal, pageWidth - 70, yPos);
+  doc.text(`${formatPrice(totalHT)}€`, pageWidth - 25, yPos, { align: 'right' });
   yPos += 8;
 
-  // VAT
+  // TVA
   if (quoteData.vatApplicable) {
     doc.setTextColor(100, 100, 100);
     doc.text(`${labels.vat} (${quoteData.vatRate}%)`, pageWidth - 70, yPos);
     doc.setTextColor(0, 0, 0);
-    doc.text(`${quoteData.totalTVA.toLocaleString()}€`, pageWidth - 25, yPos, { align: 'right' });
+    doc.text(`${formatPrice(quoteData.totalTVA)}€`, pageWidth - 25, yPos, { align: 'right' });
     yPos += 8;
   }
 
@@ -225,12 +231,14 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   doc.setTextColor(147, 51, 234);
   doc.setFont(undefined, 'bold');
   doc.text(labels.totalTTC, pageWidth - 70, yPos + 3);
-  doc.text(`${quoteData.totalTTC.toLocaleString()}€`, pageWidth - 25, yPos + 3, { align: 'right' });
+  doc.text(`${formatPrice(quoteData.totalTTC)}€`, pageWidth - 25, yPos + 3, { align: 'right' });
   doc.setFont(undefined, 'normal');
   
-  yPos += 20;
+  yPos += 25;
 
-  // Payment terms
+  // --- PIED DE PAGE ---
+  
+  // Conditions
   doc.setFontSize(10);
   doc.setTextColor(0, 0, 0);
   doc.setFont(undefined, 'bold');
@@ -239,21 +247,18 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   yPos += 6;
   
   doc.setTextColor(100, 100, 100);
-  const paymentText = quoteData.paymentTerms === '100%' 
-    ? '100% à la livraison'
-    : quoteData.paymentTerms === '50/50'
-    ? '50% d\'acompte, 50% à la livraison'
-    : '30% d\'acompte, 70% à la livraison';
+  const paymentText = quoteData.paymentTerms === '50/50' 
+    ? (language === 'fr' ? "50% à la commande, 50% à la livraison" : "50% upfront, 50% on delivery")
+    : (language === 'fr' ? "100% à la livraison" : "100% on delivery");
   doc.text(paymentText, 15, yPos);
 
-  // Footer
-  yPos = pageHeight - 30;
-  doc.setFontSize(9);
+  // Footer centré
+  doc.setFontSize(10);
   doc.setTextColor(150, 150, 150);
-  doc.text(labels.footer, pageWidth / 2, yPos, { align: 'center' });
-  yPos += 5;
-  doc.text(quoteData.freelanceName, pageWidth / 2, yPos, { align: 'center' });
+  const footerY = doc.internal.pageSize.height - 20;
+  doc.text(labels.footer, pageWidth / 2, footerY, { align: 'center' });
 
-  // Save
-  doc.save(`Devis_${quoteData.quoteNumber}_${quoteData.clientName.replace(/\s/g, '_')}.pdf`);
+  // Génération du fichier
+  const fileName = `Devis_${quoteData.quoteNumber}_${quoteData.clientName.replace(/\s+/g, '_')}.pdf`;
+  doc.save(fileName);
 }
