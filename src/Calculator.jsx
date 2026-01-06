@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { TrendingUp, DollarSign, Users, Award, Download, Globe, Calculator as CalculatorIcon, Briefcase, MapPin, Clock, Loader2, X, Database } from 'lucide-react';
+import { TrendingUp, DollarSign, Users, Award, Download, Globe, Calculator as CalculatorIcon, Briefcase, MapPin, Clock, Loader2, X, Database, FileText } from 'lucide-react';
 import EmailCapture from './components/EmailCapture';
 import { SocialChargesCalculator } from './components/SocialChargesCalculator';
 import LogoUpload from './components/LogoUpload';
 import { generateRateAnalysisPDF } from '../services/pdf-service';
+import QuoteGenerator from './components/QuoteGenerator';
+import { generateQuotePDF } from '../services/quote-pdf-service';
 
 // Composant pour afficher les sources de données
 const DataSourceBadge = ({ sourceCount, sources }) => {
@@ -76,6 +78,7 @@ const Calculator = ({ onBackToHome, language }) => {
   const [professionSearch, setProfessionSearch] = useState('');
   const [logo, setLogo] = useState(null);
   const [legalStatus, setLegalStatus] = useState('auto-entrepreneur');
+  const [showQuoteGenerator, setShowQuoteGenerator] = useState(false);
 
   const translations = {
     fr: {
@@ -850,10 +853,32 @@ const Calculator = ({ onBackToHome, language }) => {
                 <Download className="w-5 h-5" />
                 {t.exportPDF}
               </button>
+              <button
+                onClick={() => setShowQuoteGenerator(true)}
+                className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                <FileText className="w-5 h-5" />
+                {language === 'fr' ? 'Créer mon devis' : 'Create quote'}
+              </button>
             </div>
           </div>
         )}
       </div>
+
+                {showQuoteGenerator && (
+                  <QuoteGenerator
+                    results={results}
+                    formData={formData}
+                    language={language}
+                    logo={logo}
+                    legalStatus={legalStatus}
+                    onClose={() => setShowQuoteGenerator(false)}
+                    onGenerate={(quoteData) => {
+                      generateQuotePDF(quoteData, language);
+                      setShowQuoteGenerator(false);
+                    }}
+                  />
+                )}
 
       {/* Footer */}
       <div className="text-center py-8 text-gray-600 dark:text-gray-400 text-sm px-4">
