@@ -469,7 +469,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
       <footer className="py-12 px-4 bg-gray-900 text-gray-400">
         <div className="max-w-6xl mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-6">
-            {/* On utilise ton logo carré ici */}
             <img src="/logo-square.png" alt="Logo" className="w-10 h-10 object-contain" />
             <span className="text-xl font-bold text-white">PricingPro</span>
           </div>
