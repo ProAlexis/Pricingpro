@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { TrendingUp, DollarSign, Users, Award, Download, Globe, Calculator as CalculatorIcon, Briefcase, MapPin, Clock, Loader2, X, Database, FileText } from 'lucide-react';
 import EmailCapture from './components/EmailCapture';
 import { SocialChargesCalculator } from './components/SocialChargesCalculator';
-import LogoUpload from './components/LogoUpload';
 import { generateRateAnalysisPDF } from '../services/pdf-service';
 import QuoteGenerator from './components/QuoteGenerator';
 import { generateQuotePDF } from '../services/quote-pdf-service';
@@ -131,7 +130,7 @@ const Calculator = ({ onBackToHome, language }) => {
       sasu: "SASU",
       eurl: "EURL",
       portage: "Portage salarial",
-      uploadLogo: "Logo pour PDF (optionnel)",
+      uploadLogo: "Logo pour le Devis (optionnel)",
       apiErrorMsg: "Impossible de récupérer les données du marché. Utilisation de valeurs estimées."
     },
     en: {
@@ -184,7 +183,7 @@ const Calculator = ({ onBackToHome, language }) => {
       sasu: "SASU",
       eurl: "EURL", 
       portage: "Umbrella company",
-      uploadLogo: "Logo for PDF (optional)",
+      uploadLogo: "Logo for the quote (optional)",
       apiErrorMsg: "Unable to fetch market data. Using estimated values."
     }
   };
@@ -625,11 +624,6 @@ const Calculator = ({ onBackToHome, language }) => {
                 </div>
               </div>
 
-              {/* Logo Upload */}
-              <div className="mb-6">
-                <LogoUpload logo={logo} setLogo={setLogo} language={language} />
-              </div>
-
               {/* Legal Status */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -871,6 +865,7 @@ const Calculator = ({ onBackToHome, language }) => {
                     formData={formData}
                     language={language}
                     logo={logo}
+                    setLogo={setLogo}
                     legalStatus={legalStatus}
                     onClose={() => setShowQuoteGenerator(false)}
                     onGenerate={(quoteData) => {

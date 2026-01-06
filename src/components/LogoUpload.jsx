@@ -6,15 +6,15 @@ const LogoUpload = ({ logo, setLogo, language = 'fr' }) => {
 
   const t = {
     fr: {
-      title: 'Logo pour le PDF',
-      subtitle: 'Ajoutez votre logo pour personnaliser le PDF',
+      title: 'Logo pour le devis (optionnel)',
+      subtitle: 'Ajoutez votre logo pour personnaliser le devis',
       upload: 'Choisir un logo',
       remove: 'Supprimer',
       formats: 'PNG, JPG (max 2MB)'
     },
     en: {
-      title: 'Logo for PDF',
-      subtitle: 'Add your logo to personalize the PDF',
+      title: 'Logo for the quote (optional)',
+      subtitle: 'Add your logo to personalize the quote',
       upload: 'Choose a logo',
       remove: 'Remove',
       formats: 'PNG, JPG (max 2MB)'

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { X, FileText, Building, User, Mail, Phone, MapPin, Briefcase, Calendar, CreditCard } from 'lucide-react';
+import LogoUpload from './LogoUpload';
 
-const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClose, onGenerate }) => {
+const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatus, onClose, onGenerate }) => {
   const [quoteData, setQuoteData] = useState({
     // Freelance info
     freelanceName: '',
@@ -9,6 +10,12 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
     freelancePhone: '',
     freelanceAddress: '',
     freelanceSiret: '',
+    vatNumber: '',
+    capital: '',
+    rcs: '',
+    companyPortageName: '',
+    companyPortageSiret: '',
+    companyPortageAddress: '',
     
     // Client info
     clientName: '',
@@ -57,6 +64,12 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
       payment30: "30% acompte / 70% livraison",
       vatApplicable: "TVA applicable",
       vatRate: "Taux TVA (%)",
+      vatNumber: "N° de TVA Intracommunautaire",
+      capital: "Capital social (€)",
+      rcs: "Ville d'immatriculation (RCS)",
+      portageCompany: "Nom de la société de portage",
+      portageAddress: "Adresse de la société de portage",
+      portageSiret: "SIRET de la société de portage",
       quoteNumber: "Numéro de devis",
       validityDays: "Validité (jours)",
       totalHT: "Total HT",
@@ -69,6 +82,10 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
         phone: "+33 6 12 34 56 78",
         address: "123 Rue Example, 75001 Paris",
         siret: "123 456 789 00012",
+        vatNumber: "ex: FR 12 123456789",
+        capital: "ex: 1000",
+        rcs: "ex: Paris",
+        portageCompany: "ex: Jump, ITG...",
         clientName: "Marie Martin",
         clientCompany: "Entreprise SARL Martin",
         missionTitle: "Développement site web e-commerce",
@@ -99,6 +116,12 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
       payment30: "30% deposit / 70% delivery",
       vatApplicable: "VAT applicable",
       vatRate: "VAT rate (%)",
+      vatNumber: "VAT Number",
+      capital: "Share Capital (€)",
+      rcs: "Registration City (RCS)",
+      portageCompany: "Umbrella company name",
+      portageAddress: "Umbrella company address",
+      portageSiret: "Umbrella company Business ID",
       quoteNumber: "Quote number",
       validityDays: "Validity (days)",
       totalHT: "Total excl. VAT",
@@ -111,6 +134,10 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
         phone: "+1 234 567 890",
         address: "123 Example St, City",
         siret: "123456789",
+        vatNumber: "e.g. FR 12 123456789",
+        capital: "e.g. 1000",
+        rcs: "e.g. London",
+        portageCompany: "e.g. Umbrella Corp",
         clientName: "Jane Smith",
         clientCompany: "Company LLC Smith",
         missionTitle: "E-commerce website development",
@@ -162,6 +189,9 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
               <User className="w-5 h-5 text-purple-600" />
               {labels.freelanceInfo}
             </h3>
+            <div className="mb-6">
+              <LogoUpload logo={logo} setLogo={setLogo} language={language} />
+            </div>
             <div className="grid md:grid-cols-2 gap-4">
               <input
                 type="text"
@@ -211,6 +241,58 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
                 onChange={(e) => setQuoteData({...quoteData, freelanceSiret: e.target.value})}
                 className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white md:col-span-2"
               />
+              {/*Champs spécifiques EURL / SASU */}
+              {['eurl', 'sasu'].includes(legalStatus) && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="N° de TVA Intracommunautaire (ex: FR 12...)"
+                    value={quoteData.vatNumber}
+                    onChange={(e) => setQuoteData({...quoteData, vatNumber: e.target.value})}
+                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Capital social (ex: 1000)"
+                    value={quoteData.capital}
+                    onChange={(e) => setQuoteData({...quoteData, capital: e.target.value})}
+                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Ville du Greffe (ex: RCS Paris)"
+                    value={quoteData.rcs}
+                    onChange={(e) => setQuoteData({...quoteData, rcs: e.target.value})}
+                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 md:col-span-2"
+                  />
+                </>
+              )}
+              {/* Champs spécifiques Portage Salarial */}
+              {legalStatus === 'portage' && (
+                <>
+                  <input
+                    type="text"
+                    placeholder={labels.placeholders.portageCompany}
+                    value={quoteData.companyPortageName}
+                    onChange={(e) => setQuoteData({...quoteData, companyPortageName: e.target.value})}
+                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 md:col-span-2"
+                  />
+                  <input
+                    type="text"
+                    placeholder={labels.portageSiret}
+                    value={quoteData.companyPortageSiret}
+                    onChange={(e) => setQuoteData({...quoteData, companyPortageSiret: e.target.value})}
+                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900"
+                  />
+                  <input
+                    type="text"
+                    placeholder={labels.address}
+                    value={quoteData.companyPortageAddress}
+                    onChange={(e) => setQuoteData({...quoteData, companyPortageAddress: e.target.value})}
+                    className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900"
+                  />
+                </>
+              )}
             </div>
           </section>
 
