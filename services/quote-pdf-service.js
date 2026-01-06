@@ -222,7 +222,7 @@ export function generateQuotePDF(quoteData, language = 'fr') {
 
   // Total TTC
   doc.setFillColor(243, 232, 255);
-  doc.rect(pageWidth - 95, yPos - 5, 80, 12, 'F');
+  doc.rect(pageWidth - 80, yPos - 5, 65, 12, 'F');
   
   doc.setFontSize(13);
   doc.setTextColor(147, 51, 234);
