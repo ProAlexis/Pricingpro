@@ -175,18 +175,18 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   doc.setFontSize(10);
   doc.setFont(undefined, 'bold');
   doc.text(labels.description, 20, yPos + 6.4);
-  doc.text(labels.quantity, pageWidth - 90, yPos + 6.4);
-  doc.text(labels.unitPrice, pageWidth - 60, yPos + 6.4);
+  doc.text(labels.quantity, pageWidth - 82, yPos + 6.4, { align: 'center' });
+  doc.text(labels.unitPrice, pageWidth - 50, yPos + 6.4, { align: 'center' });
   doc.text(labels.total, pageWidth - 25, yPos + 6.4, { align: 'right' });
   doc.setFont(undefined, 'normal');
   
-  yPos += 15;
+  yPos += 20;
 
   // Table content
   doc.setTextColor(0, 0, 0);
   doc.text(quoteData.missionTitle, 20, yPos);
-  doc.text(`${quoteData.daysCount} ${labels.days}`, pageWidth - 90, yPos);
-  doc.text(`${quoteData.dailyRate}€`, pageWidth - 60, yPos);
+  doc.text(`${quoteData.daysCount} ${labels.days}`, pageWidth - 82, yPos, { align: 'center' });
+  doc.text(`${quoteData.dailyRate}€`, pageWidth - 50, yPos, { align: 'center' });
   doc.text(`${quoteData.totalHT.toLocaleString('fr-FR').replace(/\s/g, ' ')}€`, pageWidth - 25, yPos, { align: 'right' });
   
   yPos += 10;
@@ -194,7 +194,7 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   // Line separator
   doc.setDrawColor(200, 200, 200);
   doc.line(15, yPos, pageWidth - 15, yPos);
-  yPos += 10;
+  yPos += 12;
 
   // Totals
   doc.setFontSize(11);
