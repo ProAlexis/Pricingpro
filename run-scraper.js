@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { runMasterScraper } from './scrapers/master-scraper.js';
 
 runMasterScraper()

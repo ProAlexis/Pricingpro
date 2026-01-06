@@ -95,12 +95,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
         title: "À propos de PricingPro",
         description: "PricingPro est le calculateur de tarifs le plus précis du marché pour les freelances et consultants. Nos données proviennent de milliers de tarifs réels collectés sur les principales plateformes freelance."
       },
-      dataSources: {
-        title: "Nos sources de données",
-        malt: "Plateforme #1 en France",
-        glassdoor: "Salaires vérifiés",
-        upwork: "Marché international"
-      },
       footer: {
         tagline: "PricingPro - Le calculateur de tarifs le plus précis du marché",
         links: ["À propos", "Comment ça marche", "Données", "Contact"],
@@ -197,12 +191,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
       about: {
         title: "About PricingPro",
         description: "PricingPro is the most accurate pricing calculator on the market for freelancers and consultants. Our data comes from thousands of real rates collected from major freelance platforms."
-      },
-      dataSources: {
-        title: "Our data sources",
-        malt: "#1 Platform in France",
-        glassdoor: "Verified salaries",
-        upwork: "International market"
       },
       footer: {
         tagline: "PricingPro - The most accurate pricing calculator on the market",
@@ -373,7 +361,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
       </section>
 
       {/* Section À propos */}
-      <section id="about" className="py-20 px-4 bg-white dark:bg-gray-800">
+      <section id="about" className="py-20 px-4 bg-white dark:bg-gray-900">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900 dark:text-white">
             {t.about.title}
@@ -381,38 +369,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
           <p className="text-lg text-gray-600 dark:text-gray-400 text-center mb-6">
             {t.about.description}
           </p>
-        </div>
-      </section>
-
-      {/* Section Données */}
-      <section id="data" className="py-20 px-4 bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900 dark:text-white">
-            {t.dataSources.title}
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl text-center">
-              <div className="text-4xl mb-3">🟣</div>
-              <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">Malt</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t.dataSources.malt}
-              </p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl text-center">
-              <div className="text-4xl mb-3">🟢</div>
-              <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">Glassdoor</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t.dataSources.glassdoor}
-              </p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl text-center">
-              <div className="text-4xl mb-3">🔵</div>
-              <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">Upwork</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t.dataSources.upwork}
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 	  
@@ -468,28 +424,23 @@ const LandingPage = ({ onStartCalculator, language }) => {
       {/* Footer */}
       <footer className="py-12 px-4 bg-gray-900 text-gray-400">
         <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <img src="/logo-square.png" alt="Logo" className="w-10 h-10 object-contain" />
-            <span className="text-xl font-bold text-white">PricingPro</span>
-          </div>
-          
-          <p className="mb-6">{t.footer.tagline}</p>
-          
+          {/* ... */}
           <div className="flex flex-wrap justify-center gap-6 mb-6">
-            <a href="#about" className="hover:text-white transition-colors">
-              {t.footer.links[0]}
-            </a>
-            <a href="#how-it-works" className="hover:text-white transition-colors">
-              {t.footer.links[1]}
-            </a>
-            <a href="#data" className="hover:text-white transition-colors">
-              {t.footer.links[2]}
-            </a>
-            <a href="mailto:contact@pricingpro.fr" className="hover:text-white transition-colors">
-              {t.footer.links[3]}
+            {t.footer.links.map((link, idx) => (
+              <a key={idx} href="#" className="hover:text-white transition-colors">
+                {link}
+              </a>
+            ))}
+            {/* AJOUTEZ CE LIEN */}
+            <a 
+              href="#sources" 
+              onClick={() => window.location.hash = '#sources'}
+              className="hover:text-white transition-colors"
+            >
+              {language === 'fr' ? 'Sources de données' : 'Data sources'}
             </a>
           </div>
-          <p className="text-sm">{t.footer.legal}</p>
+          {/* ... */}
         </div>
       </footer>
     </div>  

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LandingPage from './LandingPage';
 import Calculator from './Calculator';
 import UnifiedHeader from './components/UnifiedHeader';
+import DataSources from './components/DataSources';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('landing');
@@ -27,6 +28,8 @@ const App = () => {
       const hash = window.location.hash;
       if (hash === '#calculator') {
         setCurrentPage('calculator');
+      } else if (hash === '#sources') {
+        setCurrentPage('sources');
       } else {
         setCurrentPage('landing');
       }
@@ -48,6 +51,12 @@ const App = () => {
     window.scrollTo(0, 0);
   };
 
+  const goToSources = () => {
+  window.location.hash = '#sources';
+  setCurrentPage('sources');
+  window.scrollTo(0, 0);
+  };
+
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''} bg-white dark:bg-gray-900`}>
       <UnifiedHeader 
@@ -59,14 +68,25 @@ const App = () => {
       />
 
       <main className="pt-20">
-        {currentPage === 'calculator' ? (
+        {/* Page d'accueil */}
+        {currentPage === 'landing' && (
+          <LandingPage 
+            onStartCalculator={goToCalculator} 
+            language={language} 
+          />
+        )}
+
+        {/* Page du Calculateur */}
+        {currentPage === 'calculator' && (
           <Calculator 
             onBackToHome={goToHome} 
             language={language} 
           />
-        ) : (
-          <LandingPage 
-            onStartCalculator={goToCalculator} 
+        )}
+
+        {/* Page des Sources de données */}
+        {currentPage === 'sources' && (
+          <DataSources 
             language={language} 
           />
         )}

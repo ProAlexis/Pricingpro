@@ -5,6 +5,7 @@ import { SocialChargesCalculator } from './components/SocialChargesCalculator';
 import { generateRateAnalysisPDF } from '../services/pdf-service';
 import { generateQuotePDF } from '../services/quote-pdf-service';
 import QuoteGenerator from './components/QuoteGenerator';
+import RateTrendChart from './components/RateTrendChart';
 
 // Composant pour afficher les sources de données
 const DataSourceBadge = ({ sourceCount, sources }) => {
@@ -817,6 +818,13 @@ const Calculator = ({ onBackToHome, language }) => {
       				))}
       			  </div>
       			</div>
+
+            {/* Trend Chart */}
+            <RateTrendChart 
+              formData={formData}
+              results={results}
+              language={language}
+            />
 
       			{/* Email Capture */}
       			<EmailCapture 

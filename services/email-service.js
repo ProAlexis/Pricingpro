@@ -358,7 +358,7 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
 
     // Envoyer l'email
     const { data, error } = await resend.emails.send({
-      from: 'PricingPro <contact@pricingpro.com>', // ← Changez avec votre domaine vérifié
+      from: 'PricingPro <contact@pricingpro.fr>', // ← Changez avec votre domaine vérifié
       to: [email],
       subject: t.subject,
       html: htmlContent,
