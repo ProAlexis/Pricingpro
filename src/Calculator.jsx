@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { TrendingUp, DollarSign, Users, Award, Download, Globe, Calculator as CalculatorIcon, Briefcase, MapPin, Clock, Loader2, X, Database } from 'lucide-react';
 import EmailCapture from './components/EmailCapture';
+import { SocialChargesCalculator } from './components/SocialChargesCalculator';
+import LogoUpload from './components/LogoUpload';
+import { generateRateAnalysisPDF } from '../../services/pdf-service';
 
 // Composant pour afficher les sources de données
 const DataSourceBadge = ({ sourceCount, sources }) => {
@@ -71,6 +74,8 @@ const Calculator = ({ onBackToHome, language }) => {
   const [apiError, setApiError] = useState(null);
   const [skillInput, setSkillInput] = useState('');
   const [professionSearch, setProfessionSearch] = useState('');
+  const [logo, setLogo] = useState(null);
+  const [legalStatus, setLegalStatus] = useState('auto-entrepreneur');
 
   const translations = {
     fr: {
@@ -117,6 +122,13 @@ const Calculator = ({ onBackToHome, language }) => {
       locationAdjustment: "Ajustement géographique",
       recommendation: "Recommandation",
       realDataBadge: "Données basées sur {count} tarifs réels du marché",
+      legalStatus: "Statut juridique",
+      autoEntrepreneur: "Auto-entrepreneur",
+      autoentrepreneur: "Auto-entrepreneur",
+      sasu: "SASU",
+      eurl: "EURL",
+      portage: "Portage salarial",
+      uploadLogo: "Logo pour PDF (optionnel)",
       apiErrorMsg: "Impossible de récupérer les données du marché. Utilisation de valeurs estimées."
     },
     en: {
@@ -163,6 +175,13 @@ const Calculator = ({ onBackToHome, language }) => {
       locationAdjustment: "Location adjustment",
       recommendation: "Recommendation",
       realDataBadge: "Data based on {count} real market rates",
+      legalStatus: "Legal status",
+      autoEntrepreneur: "Self-employed",
+      autoentrepreneur: "Self-employed",
+      sasu: "SASU",
+      eurl: "EURL", 
+      portage: "Umbrella company",
+      uploadLogo: "Logo for PDF (optional)",
       apiErrorMsg: "Unable to fetch market data. Using estimated values."
     }
   };
@@ -603,6 +622,33 @@ const Calculator = ({ onBackToHome, language }) => {
                 </div>
               </div>
 
+              {/* Logo Upload */}
+              <div className="mb-6">
+                <LogoUpload logo={logo} setLogo={setLogo} language={language} />
+              </div>
+
+              {/* Legal Status */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t.legalStatus}
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {['auto-entrepreneur', 'sasu', 'eurl', 'portage'].map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => setLegalStatus(status)}
+                      className={`px-4 py-3 rounded-lg border-2 transition-all text-sm ${
+                        legalStatus === status
+                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900 text-purple-600 dark:text-purple-300 font-medium'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 text-gray-700 dark:text-gray-300'
+                      }`}
+                    >
+                      {t[status.replace('-', '')]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => setStep(1)}
@@ -637,7 +683,7 @@ const Calculator = ({ onBackToHome, language }) => {
               </div>
             )}
 
-            {/* NOUVEAU : Badge multi-sources */}
+            {/* Badge multi-sources */}
             {results.dataSource === 'real' && results.sources && (
               <DataSourceBadge 
                 sourceCount={results.sourceCount} 
@@ -751,28 +797,36 @@ const Calculator = ({ onBackToHome, language }) => {
               </div>
             </div>
 
-            {/* Insights */}
-			<div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-8">
-			  <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
-				<Users className="w-5 h-5 text-purple-600 dark:text-purple-300" />
-				{t.insights}
-			  </h4>
-			  <div className="space-y-4">
-				{getInsights().map((insight, idx) => (
-				  <div key={idx} className="flex gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-					<span className="text-2xl">{insight.icon}</span>
-					<p className="text-gray-700 dark:text-gray-300">{insight.text}</p>
-				  </div>
-				))}
-			  </div>
-			</div>
+            {/* Social Charges Calculator */}
+            <SocialChargesCalculator 
+              dailyRate={results.daily}
+              monthlyRate={results.monthly}
+              status={legalStatus}
+              language={language}
+            />
 
-			{/* Email Capture */}
-			<EmailCapture 
-			  results={results}
-			  formData={formData}
-			  language={language}
-			/>
+            {/* Insights */}
+      			<div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-8">
+      			  <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+      				<Users className="w-5 h-5 text-purple-600 dark:text-purple-300" />
+      				{t.insights}
+      			  </h4>
+      			  <div className="space-y-4">
+      				{getInsights().map((insight, idx) => (
+      				  <div key={idx} className="flex gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+      					<span className="text-2xl">{insight.icon}</span>
+      					<p className="text-gray-700 dark:text-gray-300">{insight.text}</p>
+      				  </div>
+      				))}
+      			  </div>
+      			</div>
+
+      			{/* Email Capture */}
+      			<EmailCapture 
+      			  results={results}
+      			  formData={formData}
+      			  language={language}
+      			/>
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4">
@@ -783,19 +837,19 @@ const Calculator = ({ onBackToHome, language }) => {
                 {t.newCalculation}
               </button>
               <button
-				  onClick={() => {
-					import('../services/pdf-service.js').then(({ generateRateAnalysisPDF }) => {
-					  generateRateAnalysisPDF({ results, formData, language });
-					}).catch(err => {
-					  console.error('Error generating PDF:', err);
-					  alert(language === 'fr' ? 'Erreur lors de la génération du PDF' : 'Error generating PDF');
-					});
-				  }}
-				  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
-				>
-				  <Download className="w-5 h-5" />
-				  {t.exportPDF}
-				</button>
+                onClick={() => {
+                  try {
+                    generateRateAnalysisPDF({ results, formData, language, logo });
+                  } catch (err) {
+                    console.error('Error generating PDF:', err);
+                    alert(language === 'fr' ? 'Erreur lors de la génération du PDF' : 'Error generating PDF');
+                  }
+                }}
+                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                <Download className="w-5 h-5" />
+                {t.exportPDF}
+              </button>
             </div>
           </div>
         )}
