@@ -23,7 +23,7 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
     dailyRate: results.daily,
     
     // Payment & VAT
-    paymentTerms: '50/50',
+    paymentTerms: '30/70',
     vatApplicable: legalStatus !== 'auto-entrepreneur',
     vatRate: 20,
     
@@ -70,7 +70,7 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
         address: "123 Rue Example, 75001 Paris",
         siret: "123 456 789 00012",
         clientName: "Marie Martin",
-        clientCompany: "Entreprise SARL",
+        clientCompany: "Entreprise SARL Martin",
         missionTitle: "Développement site web e-commerce",
         missionDescription: "Création d'un site e-commerce responsive avec système de paiement intégré"
       }
@@ -112,7 +112,7 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
         address: "123 Example St, City",
         siret: "123456789",
         clientName: "Jane Smith",
-        clientCompany: "Company LLC",
+        clientCompany: "Company LLC Smith",
         missionTitle: "E-commerce website development",
         missionDescription: "Creation of responsive e-commerce website with integrated payment system"
       }
@@ -121,6 +121,7 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
 
   const labels = t[language];
 
+  // Calculs en temps réel
   const totalHT = quoteData.daysCount * quoteData.dailyRate;
   const totalTVA = quoteData.vatApplicable ? (totalHT * quoteData.vatRate / 100) : 0;
   const totalTTC = totalHT + totalTVA;
@@ -164,6 +165,8 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
             <div className="grid md:grid-cols-2 gap-4">
               <input
                 type="text"
+                name="freelanceName" 
+                autoComplete="name"
                 required
                 placeholder={labels.placeholders.name}
                 value={quoteData.freelanceName}
@@ -172,6 +175,8 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
               />
               <input
                 type="email"
+                name="freelanceEmail"
+                autoComplete="email"
                 required
                 placeholder={labels.placeholders.email}
                 value={quoteData.freelanceEmail}
@@ -180,6 +185,8 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
               />
               <input
                 type="tel"
+                name="freelancePhone"
+                autoComplete="tel"
                 required
                 placeholder={labels.placeholders.phone}
                 value={quoteData.freelancePhone}
@@ -188,6 +195,8 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
               />
               <input
                 type="text"
+                name="freelanceAddress"
+                autoComplete="street-address"
                 required
                 placeholder={labels.placeholders.address}
                 value={quoteData.freelanceAddress}
@@ -196,6 +205,7 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
               />
               <input
                 type="text"
+                name="freelanceSiret"
                 placeholder={labels.placeholders.siret}
                 value={quoteData.freelanceSiret}
                 onChange={(e) => setQuoteData({...quoteData, freelanceSiret: e.target.value})}
@@ -213,6 +223,8 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
             <div className="grid md:grid-cols-2 gap-4">
               <input
                 type="text"
+                name="clientName"
+                autoComplete="off"
                 required
                 placeholder={labels.placeholders.clientName}
                 value={quoteData.clientName}
@@ -221,6 +233,8 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
               />
               <input
                 type="text"
+                name="clientCompany"
+                autoComplete="organization"
                 placeholder={labels.placeholders.clientCompany}
                 value={quoteData.clientCompany}
                 onChange={(e) => setQuoteData({...quoteData, clientCompany: e.target.value})}
@@ -228,6 +242,7 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
               />
               <input
                 type="email"
+                name="clientEmail"
                 required
                 placeholder={labels.placeholders.email}
                 value={quoteData.clientEmail}
@@ -236,6 +251,7 @@ const QuoteGenerator = ({ results, formData, language, logo, legalStatus, onClos
               />
               <input
                 type="text"
+                name="clientAddress"
                 required
                 placeholder={labels.placeholders.address}
                 value={quoteData.clientAddress}
