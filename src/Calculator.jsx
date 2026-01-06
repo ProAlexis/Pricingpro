@@ -1,31 +1,48 @@
-import React, { useState, useMemo } from 'react';
-import { TrendingUp, DollarSign, Users, Award, Download, Globe, Calculator as CalculatorIcon, Briefcase, MapPin, Clock, Loader2, X, Database, FileText } from 'lucide-react';
-import EmailCapture from './components/EmailCapture';
-import { SocialChargesCalculator } from './components/SocialChargesCalculator';
-import { generateRateAnalysisPDF } from '../services/pdf-service';
-import { generateQuotePDF } from '../services/quote-pdf-service';
-import QuoteGenerator from './components/QuoteGenerator';
-import RateTrendChart from './components/RateTrendChart';
-import CalculationHistory, { saveCalculationToHistory } from './components/CalculationHistory';
-import ShareButton from './components/ShareButton';
-import Tooltip, { TooltipContent } from './components/Tooltip';
+import React, { useState, useMemo } from "react";
+import {
+  TrendingUp,
+  DollarSign,
+  Users,
+  Award,
+  Download,
+  Globe,
+  Calculator as CalculatorIcon,
+  Briefcase,
+  MapPin,
+  Clock,
+  Loader2,
+  X,
+  Database,
+  FileText,
+} from "lucide-react";
+import EmailCapture from "./components/EmailCapture";
+import { SocialChargesCalculator } from "./components/SocialChargesCalculator";
+import { generateRateAnalysisPDF } from "../services/pdf-service";
+import { generateQuotePDF } from "../services/quote-pdf-service";
+import QuoteGenerator from "./components/QuoteGenerator";
+import RateTrendChart from "./components/RateTrendChart";
+import CalculationHistory, {
+  saveCalculationToHistory,
+} from "./components/CalculationHistory";
+import ShareButton from "./components/ShareButton";
+import Tooltip, { TooltipContent } from "./components/Tooltip";
 
 // Composant pour afficher les sources de données
 const DataSourceBadge = ({ sourceCount, sources }) => {
   const getSourceIcon = (source) => {
     const icons = {
-      'malt': '🟣',
-      'glassdoor': '🟢',
-      'upwork': '🔵'
+      malt: "🟣",
+      glassdoor: "🟢",
+      upwork: "🔵",
     };
-    return icons[source] || '📊';
+    return icons[source] || "📊";
   };
 
   const getSourceName = (source) => {
     const names = {
-      'malt': 'Malt',
-      'glassdoor': 'Glassdoor',
-      'upwork': 'Upwork'
+      malt: "Malt",
+      glassdoor: "Glassdoor",
+      upwork: "Upwork",
     };
     return names[source] || source;
   };
@@ -43,7 +60,10 @@ const DataSourceBadge = ({ sourceCount, sources }) => {
             </span>
           </div>
           <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-            <strong className="text-purple-600 dark:text-purple-400">{sourceCount} tarifs réels</strong> analysés depuis plusieurs plateformes professionnelles
+            <strong className="text-purple-600 dark:text-purple-400">
+              {sourceCount} tarifs réels
+            </strong>{" "}
+            analysés depuis plusieurs plateformes professionnelles
           </p>
           <div className="flex flex-wrap gap-2">
             {sources?.map((source, idx) => (
@@ -67,21 +87,21 @@ const DataSourceBadge = ({ sourceCount, sources }) => {
 const Calculator = ({ onBackToHome, language }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    profession: '',
-    location: 'france',
-    experience: '',
-    experienceLevel: 'mid',
+    profession: "",
+    location: "france",
+    experience: "",
+    experienceLevel: "mid",
     skills: [],
-    workType: 'freelance'
+    workType: "freelance",
   });
   const [loadedFromHistory, setLoadedFromHistory] = useState(false);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
-  const [skillInput, setSkillInput] = useState('');
-  const [professionSearch, setProfessionSearch] = useState('');
+  const [skillInput, setSkillInput] = useState("");
+  const [professionSearch, setProfessionSearch] = useState("");
   const [logo, setLogo] = useState(null);
-  const [legalStatus, setLegalStatus] = useState('auto-entrepreneur');
+  const [legalStatus, setLegalStatus] = useState("auto-entrepreneur");
   const [showQuoteGenerator, setShowQuoteGenerator] = useState(false);
 
   const translations = {
@@ -136,7 +156,8 @@ const Calculator = ({ onBackToHome, language }) => {
       eurl: "EURL",
       portage: "Portage salarial",
       uploadLogo: "Logo pour le Devis (optionnel)",
-      apiErrorMsg: "Impossible de récupérer les données du marché. Utilisation de valeurs estimées."
+      apiErrorMsg:
+        "Impossible de récupérer les données du marché. Utilisation de valeurs estimées.",
     },
     en: {
       title: "PricingPro",
@@ -186,39 +207,111 @@ const Calculator = ({ onBackToHome, language }) => {
       autoEntrepreneur: "Self-employed",
       autoentrepreneur: "Self-employed",
       sasu: "SASU",
-      eurl: "EURL", 
+      eurl: "EURL",
       portage: "Umbrella company",
       uploadLogo: "Logo for the quote (optional)",
-      apiErrorMsg: "Unable to fetch market data. Using estimated values."
-    }
+      apiErrorMsg: "Unable to fetch market data. Using estimated values.",
+    },
   };
 
   const t = translations[language];
 
   const professions = [
-    { value: 'web-dev', label: { fr: 'Développeur Web', en: 'Web Developer' }, base: 400 },
-    { value: 'mobile-dev', label: { fr: 'Développeur Mobile', en: 'Mobile Developer' }, base: 450 },
-    { value: 'fullstack-dev', label: { fr: 'Développeur Full-Stack', en: 'Full-Stack Developer' }, base: 400 },
-    { value: 'backend-dev', label: { fr: 'Développeur Backend', en: 'Backend Developer' }, base: 400 },
-    { value: 'data-analyst', label: { fr: 'Data Analyst', en: 'Data Analyst' }, base: 500 },
-    { value: 'data-scientist', label: { fr: 'Data Scientist', en: 'Data Scientist' }, base: 550 },
-    { value: 'devops', label: { fr: 'DevOps Engineer', en: 'DevOps Engineer' }, base: 500 },
-    { value: 'ui-designer', label: { fr: 'Designer UI/UX', en: 'UI/UX Designer' }, base: 400 },
-    { value: 'graphic-designer', label: { fr: 'Graphiste', en: 'Graphic Designer' }, base: 300 },
-    { value: 'copywriter', label: { fr: 'Rédacteur', en: 'Copywriter' }, base: 250 },
-    { value: 'marketing', label: { fr: 'Consultant Marketing', en: 'Marketing Consultant' }, base: 450 },
-    { value: 'seo', label: { fr: 'Expert SEO', en: 'SEO Expert' }, base: 400 },
-    { value: 'project-manager', label: { fr: 'Chef de Projet', en: 'Project Manager' }, base: 500 },
-    { value: 'product-manager', label: { fr: 'Product Manager', en: 'Product Manager' }, base: 550 },
-    { value: 'consultant', label: { fr: 'Consultant Business', en: 'Business Consultant' }, base: 600 }
+    {
+      value: "web-dev",
+      label: { fr: "Développeur Web", en: "Web Developer" },
+      base: 400,
+    },
+    {
+      value: "mobile-dev",
+      label: { fr: "Développeur Mobile", en: "Mobile Developer" },
+      base: 450,
+    },
+    {
+      value: "fullstack-dev",
+      label: { fr: "Développeur Full-Stack", en: "Full-Stack Developer" },
+      base: 400,
+    },
+    {
+      value: "backend-dev",
+      label: { fr: "Développeur Backend", en: "Backend Developer" },
+      base: 400,
+    },
+    {
+      value: "data-analyst",
+      label: { fr: "Data Analyst", en: "Data Analyst" },
+      base: 500,
+    },
+    {
+      value: "data-scientist",
+      label: { fr: "Data Scientist", en: "Data Scientist" },
+      base: 550,
+    },
+    {
+      value: "devops",
+      label: { fr: "DevOps Engineer", en: "DevOps Engineer" },
+      base: 500,
+    },
+    {
+      value: "ui-designer",
+      label: { fr: "Designer UI/UX", en: "UI/UX Designer" },
+      base: 400,
+    },
+    {
+      value: "graphic-designer",
+      label: { fr: "Graphiste", en: "Graphic Designer" },
+      base: 300,
+    },
+    {
+      value: "copywriter",
+      label: { fr: "Rédacteur", en: "Copywriter" },
+      base: 250,
+    },
+    {
+      value: "marketing",
+      label: { fr: "Consultant Marketing", en: "Marketing Consultant" },
+      base: 450,
+    },
+    { value: "seo", label: { fr: "Expert SEO", en: "SEO Expert" }, base: 400 },
+    {
+      value: "project-manager",
+      label: { fr: "Chef de Projet", en: "Project Manager" },
+      base: 500,
+    },
+    {
+      value: "product-manager",
+      label: { fr: "Product Manager", en: "Product Manager" },
+      base: 550,
+    },
+    {
+      value: "consultant",
+      label: { fr: "Consultant Business", en: "Business Consultant" },
+      base: 600,
+    },
   ];
 
   const locations = [
-    { value: 'france', label: { fr: 'France', en: 'France' }, multiplier: 1 },
-    { value: 'portugal', label: { fr: 'Portugal', en: 'Portugal' }, multiplier: 0.7 },
-    { value: 'uk', label: { fr: 'Royaume-Uni', en: 'United Kingdom' }, multiplier: 1.3 },
-    { value: 'germany', label: { fr: 'Allemagne', en: 'Germany' }, multiplier: 1.2 },
-    { value: 'usa', label: { fr: 'États-Unis', en: 'United States' }, multiplier: 1.5 }
+    { value: "france", label: { fr: "France", en: "France" }, multiplier: 1 },
+    {
+      value: "portugal",
+      label: { fr: "Portugal", en: "Portugal" },
+      multiplier: 0.7,
+    },
+    {
+      value: "uk",
+      label: { fr: "Royaume-Uni", en: "United Kingdom" },
+      multiplier: 1.3,
+    },
+    {
+      value: "germany",
+      label: { fr: "Allemagne", en: "Germany" },
+      multiplier: 1.2,
+    },
+    {
+      value: "usa",
+      label: { fr: "États-Unis", en: "United States" },
+      multiplier: 1.5,
+    },
   ];
 
   const calculateRates = async () => {
@@ -226,28 +319,34 @@ const Calculator = ({ onBackToHome, language }) => {
     setApiError(null);
 
     try {
-      const apiUrl = window.location.hostname === 'localhost'
-        ? 'http://localhost:3000/api/get-rates'
-        : '/api/get-rates';
-      
+      const apiUrl =
+        window.location.hostname === "localhost"
+          ? "http://localhost:3000/api/get-rates"
+          : "/api/get-rates";
+
       const response = await fetch(
         `${apiUrl}?profession=${formData.profession}&location=${formData.location}&experience_level=${formData.experienceLevel}`
       );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch market data');
+        throw new Error("Failed to fetch market data");
       }
 
       const marketData = await response.json();
 
       if (marketData.count > 0) {
         // ✅ DONNÉES RÉELLES DE L'API
-        const profession = professions.find(p => p.value === formData.profession);
+        const profession = professions.find(
+          (p) => p.value === formData.profession
+        );
         const baseRate = marketData.avg;
-        const experienceMultiplier = 1 + (parseInt(formData.experience) * 0.08);
+        const experienceMultiplier =
+          1 + parseInt(formData.experience || 0) * 0.08;
         const skillsBonus = formData.skills.length * 30;
 
-        const dailyRate = Math.round(baseRate * experienceMultiplier + skillsBonus);
+        const dailyRate = Math.round(
+          baseRate * experienceMultiplier + skillsBonus
+        );
         const hourlyRate = Math.round(dailyRate / 8);
         const monthlyRate = Math.round(dailyRate * 20);
 
@@ -255,27 +354,27 @@ const Calculator = ({ onBackToHome, language }) => {
           base: baseRate,
           experience: Math.round(baseRate * (experienceMultiplier - 1)),
           skills: skillsBonus,
-          location: 0
+          location: 0,
         };
 
         const finalResults = {
           hourly: hourlyRate,
           daily: dailyRate,
           monthly: monthlyRate,
-          market: { 
+          market: {
             min: marketData.min,
             avg: marketData.avg,
-            max: marketData.max
+            max: marketData.max,
           },
           breakdown,
-          dataSource: 'real',
+          dataSource: "real",
           sourceCount: marketData.count,
-          sources: marketData.sources || ['malt', 'glassdoor', 'upwork'],
-          cities: marketData.cities || []
+          sources: marketData.sources || ["malt", "glassdoor", "upwork"],
+          cities: marketData.cities || [],
         };
 
         setResults(finalResults);
-        
+
         // 🔥 NOUVEAU: Sauvegarder dans l'historique
         saveCalculationToHistory(finalResults, formData);
 
@@ -284,9 +383,8 @@ const Calculator = ({ onBackToHome, language }) => {
         // Aucune donnée réelle, utiliser le fallback
         fallbackToSimulated();
       }
-
     } catch (error) {
-      console.error('Error calculating rates:', error);
+      console.error("Error calculating rates:", error);
       setApiError(t.apiErrorMsg);
       // En cas d'erreur, utiliser le fallback
       fallbackToSimulated();
@@ -296,15 +394,17 @@ const Calculator = ({ onBackToHome, language }) => {
   };
 
   const fallbackToSimulated = () => {
-    const profession = professions.find(p => p.value === formData.profession);
-    const location = locations.find(l => l.value === formData.location);
-    
+    const profession = professions.find((p) => p.value === formData.profession);
+    const location = locations.find((l) => l.value === formData.location);
+
     const baseRate = profession.base;
-    const experienceMultiplier = 1 + (parseInt(formData.experience) * 0.08);
+    const experienceMultiplier = 1 + parseInt(formData.experience) * 0.08;
     const skillsBonus = formData.skills.length * 30;
     const locationMultiplier = location.multiplier;
 
-    const dailyRate = Math.round((baseRate * experienceMultiplier + skillsBonus) * locationMultiplier);
+    const dailyRate = Math.round(
+      (baseRate * experienceMultiplier + skillsBonus) * locationMultiplier
+    );
     const hourlyRate = Math.round(dailyRate / 8);
     const monthlyRate = Math.round(dailyRate * 20);
 
@@ -316,21 +416,21 @@ const Calculator = ({ onBackToHome, language }) => {
       base: baseRate,
       experience: Math.round(baseRate * (experienceMultiplier - 1)),
       skills: skillsBonus,
-      location: Math.round(baseRate * (locationMultiplier - 1))
+      location: Math.round(baseRate * (locationMultiplier - 1)),
     };
 
     const fallbackResults = {
       hourly: hourlyRate,
       daily: dailyRate,
       monthly: monthlyRate,
-      market: { 
-        min: marketMin, 
-        avg: marketAvg, 
-        max: marketMax 
+      market: {
+        min: marketMin,
+        avg: marketAvg,
+        max: marketMax,
       },
       breakdown,
-      dataSource: 'simulated',
-      sources: ['malt', 'glassdoor', 'upwork']
+      dataSource: "simulated",
+      sources: ["malt", "glassdoor", "upwork"],
     };
 
     setResults(fallbackResults);
@@ -350,16 +450,16 @@ const Calculator = ({ onBackToHome, language }) => {
     if (skillInput.trim() && formData.skills.length < 10) {
       setFormData({
         ...formData,
-        skills: [...formData.skills, skillInput.trim()]
+        skills: [...formData.skills, skillInput.trim()],
       });
-      setSkillInput('');
+      setSkillInput("");
     }
   };
 
   const removeSkill = (index) => {
     setFormData({
       ...formData,
-      skills: formData.skills.filter((_, i) => i !== index)
+      skills: formData.skills.filter((_, i) => i !== index),
     });
   };
 
@@ -371,68 +471,92 @@ const Calculator = ({ onBackToHome, language }) => {
     setResults(null);
     setApiError(null);
     setFormData({
-      profession: '',
-      location: 'france',
-      experience: '',
-      experienceLevel: 'mid',
+      profession: "",
+      location: "france",
+      experience: "",
+      experienceLevel: "mid",
       skills: [],
-      workType: 'freelance'
+      workType: "freelance",
     });
   };
 
   const getInsights = () => {
     if (!results) return [];
-    
+
     const insights = [];
-    const professionLabel = professions.find(p => p.value === formData.profession).label[language];
-    
-    if (formData.experienceLevel === 'junior') {
+    const professionLabel = professions.find(
+      (p) => p.value === formData.profession
+    ).label[language];
+
+    if (formData.experienceLevel === "junior") {
       insights.push({
-        icon: '🚀',
-        text: language === 'fr' 
-          ? 'En tant que Junior, vous pouvez augmenter vos tarifs de 50-80% en passant Mid-level dans 2-3 ans.'
-          : 'As a Junior, you can increase your rates by 50-80% by becoming Mid-level in 2-3 years.'
+        icon: "🚀",
+        text:
+          language === "fr"
+            ? "En tant que Junior, vous pouvez augmenter vos tarifs de 50-80% en passant Mid-level dans 2-3 ans."
+            : "As a Junior, you can increase your rates by 50-80% by becoming Mid-level in 2-3 years.",
       });
-    } else if (formData.experienceLevel === 'senior') {
+    } else if (formData.experienceLevel === "senior") {
       insights.push({
-        icon: '⭐',
-        text: language === 'fr' 
-          ? 'En tant que Senior, vous êtes dans le top 20% du marché. Considérez le consulting ou la formation pour augmenter vos revenus.'
-          : 'As a Senior, you\'re in the top 20% of the market. Consider consulting or training to increase your income.'
+        icon: "⭐",
+        text:
+          language === "fr"
+            ? "En tant que Senior, vous êtes dans le top 20% du marché. Considérez le consulting ou la formation pour augmenter vos revenus."
+            : "As a Senior, you're in the top 20% of the market. Consider consulting or training to increase your income.",
       });
     }
-    
-    if (parseInt(formData.experience) < 2 && formData.experienceLevel !== 'junior') {
+
+    if (
+      parseInt(formData.experience) < 2 &&
+      formData.experienceLevel !== "junior"
+    ) {
       insights.push({
-        icon: '📈',
-        text: language === 'fr' 
-          ? 'Avec plus d\'expérience, vous pourriez augmenter vos tarifs de 40-60% dans les 2 prochaines années.'
-          : 'With more experience, you could increase your rates by 40-60% in the next 2 years.'
+        icon: "📈",
+        text:
+          language === "fr"
+            ? "Avec plus d'expérience, vous pourriez augmenter vos tarifs de 40-60% dans les 2 prochaines années."
+            : "With more experience, you could increase your rates by 40-60% in the next 2 years.",
       });
     }
 
     if (formData.skills.length < 3) {
       insights.push({
-        icon: '🎯',
-        text: language === 'fr'
-          ? 'Développer 2-3 compétences complémentaires pourrait augmenter vos tarifs de 20-30%.'
-          : 'Developing 2-3 complementary skills could increase your rates by 20-30%.'
+        icon: "🎯",
+        text:
+          language === "fr"
+            ? "Développer 2-3 compétences complémentaires pourrait augmenter vos tarifs de 20-30%."
+            : "Developing 2-3 complementary skills could increase your rates by 20-30%.",
       });
     }
 
     insights.push({
-      icon: '💡',
-      text: language === 'fr'
-        ? `Les ${professionLabel}s ${formData.experienceLevel === 'junior' ? 'juniors' : formData.experienceLevel === 'senior' ? 'seniors' : 'confirmés'} facturent généralement entre ${results.market.min}€ et ${results.market.max}€/jour.`
-        : `${formData.experienceLevel.charAt(0).toUpperCase() + formData.experienceLevel.slice(1)} ${professionLabel}s typically charge between €${results.market.min} and €${results.market.max}/day.`
+      icon: "💡",
+      text:
+        language === "fr"
+          ? `Les ${professionLabel}s ${
+              formData.experienceLevel === "junior"
+                ? "juniors"
+                : formData.experienceLevel === "senior"
+                ? "seniors"
+                : "confirmés"
+            } facturent généralement entre ${results.market.min}€ et ${
+              results.market.max
+            }€/jour.`
+          : `${
+              formData.experienceLevel.charAt(0).toUpperCase() +
+              formData.experienceLevel.slice(1)
+            } ${professionLabel}s typically charge between €${
+              results.market.min
+            } and €${results.market.max}/day.`,
     });
 
-    if (formData.location === 'portugal') {
+    if (formData.location === "portugal") {
       insights.push({
-        icon: '🌍',
-        text: language === 'fr'
-          ? 'Le marché portugais est en croissance. Cibler des clients internationaux peut vous permettre de facturer 50% de plus.'
-          : 'The Portuguese market is growing. Targeting international clients can allow you to charge 50% more.'
+        icon: "🌍",
+        text:
+          language === "fr"
+            ? "Le marché portugais est en croissance. Cibler des clients internationaux peut vous permettre de facturer 50% de plus."
+            : "The Portuguese market is growing. Targeting international clients can allow you to charge 50% more.",
       });
     }
 
@@ -446,11 +570,13 @@ const Calculator = ({ onBackToHome, language }) => {
         {step === 1 && (
           <div className="space-y-8">
             <div className="text-center space-y-4">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">{t.tagline}</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                {t.tagline}
+              </h2>
               <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                {language === 'fr' 
-                  ? 'Obtenez une analyse personnalisée de vos tarifs basée sur le marché réel et votre profil unique.'
-                  : 'Get a personalized analysis of your rates based on real market data and your unique profile.'}
+                {language === "fr"
+                  ? "Obtenez une analyse personnalisée de vos tarifs basée sur le marché réel et votre profil unique."
+                  : "Get a personalized analysis of your rates based on real market data and your unique profile."}
               </p>
             </div>
 
@@ -459,41 +585,54 @@ const Calculator = ({ onBackToHome, language }) => {
                 <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
                   <Briefcase className="w-5 h-5 text-purple-600 dark:text-purple-300" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{t.step1Title}</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                  {t.step1Title}
+                </h3>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                     {t.experienceLevel}
+                    <Tooltip
+                      content={TooltipContent.experienceLevel[language]}
+                      language={language}
+                      position="top"
+                    />
                   </label>
                   <div className="grid grid-cols-3 gap-3">
                     <button
-                      onClick={() => setFormData({...formData, experienceLevel: 'junior'})}
+                      onClick={() =>
+                        setFormData({ ...formData, experienceLevel: "junior" })
+                      }
                       className={`px-4 py-3 rounded-lg border-2 transition-all text-sm ${
-                        formData.experienceLevel === 'junior'
-                          ? 'border-green-600 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 font-medium'
-                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                        formData.experienceLevel === "junior"
+                          ? "border-green-600 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 font-medium"
+                          : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300"
                       }`}
                     >
                       {t.junior}
                     </button>
                     <button
-                      onClick={() => setFormData({...formData, experienceLevel: 'mid'})}
+                      onClick={() =>
+                        setFormData({ ...formData, experienceLevel: "mid" })
+                      }
                       className={`px-4 py-3 rounded-lg border-2 transition-all text-sm ${
-                        formData.experienceLevel === 'mid'
-                          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium'
-                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                        formData.experienceLevel === "mid"
+                          ? "border-blue-600 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium"
+                          : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300"
                       }`}
                     >
                       {t.mid}
                     </button>
                     <button
-                      onClick={() => setFormData({...formData, experienceLevel: 'senior'})}
+                      onClick={() =>
+                        setFormData({ ...formData, experienceLevel: "senior" })
+                      }
                       className={`px-4 py-3 rounded-lg border-2 transition-all text-sm ${
-                        formData.experienceLevel === 'senior'
-                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 font-medium'
-                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                        formData.experienceLevel === "senior"
+                          ? "border-purple-600 bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 font-medium"
+                          : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300"
                       }`}
                     >
                       {t.senior}
@@ -502,16 +641,23 @@ const Calculator = ({ onBackToHome, language }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                     {t.profession}
+                    <Tooltip
+                      content={TooltipContent.profession[language]}
+                      language={language}
+                      position="top"
+                    />
                   </label>
                   <select
                     value={formData.profession}
-                    onChange={(e) => setFormData({...formData, profession: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, profession: e.target.value })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.selectProfession}</option>
-                    {professions.map(prof => (
+                    {professions.map((prof) => (
                       <option key={prof.value} value={prof.value}>
                         {prof.label[language]}
                       </option>
@@ -520,15 +666,22 @@ const Calculator = ({ onBackToHome, language }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                     {t.location}
+                    <Tooltip
+                      content={TooltipContent.location[language]}
+                      language={language}
+                      position="top"
+                    />
                   </label>
                   <select
                     value={formData.location}
-                    onChange={(e) => setFormData({...formData, location: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, location: e.target.value })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
-                    {locations.map(loc => (
+                    {locations.map((loc) => (
                       <option key={loc.value} value={loc.value}>
                         {loc.label[language]}
                       </option>
@@ -537,15 +690,22 @@ const Calculator = ({ onBackToHome, language }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                     {t.experience}
+                    <Tooltip
+                      content={TooltipContent.experience[language]}
+                      language={language}
+                      position="top"
+                    />
                   </label>
                   <input
                     type="number"
                     min="0"
                     max="30"
                     value={formData.experience}
-                    onChange={(e) => setFormData({...formData, experience: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, experience: e.target.value })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="0-30"
                   />
@@ -557,21 +717,25 @@ const Calculator = ({ onBackToHome, language }) => {
                   </label>
                   <div className="grid grid-cols-2 gap-4">
                     <button
-                      onClick={() => setFormData({...formData, workType: 'freelance'})}
+                      onClick={() =>
+                        setFormData({ ...formData, workType: "freelance" })
+                      }
                       className={`px-4 py-3 rounded-lg border-2 transition-all ${
-                        formData.workType === 'freelance'
-                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900 text-purple-600 dark:text-purple-300 font-medium'
-                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                        formData.workType === "freelance"
+                          ? "border-purple-600 bg-purple-50 dark:bg-purple-900 text-purple-600 dark:text-purple-300 font-medium"
+                          : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300"
                       }`}
                     >
                       {t.freelance}
                     </button>
                     <button
-                      onClick={() => setFormData({...formData, workType: 'employee'})}
+                      onClick={() =>
+                        setFormData({ ...formData, workType: "employee" })
+                      }
                       className={`px-4 py-3 rounded-lg border-2 transition-all ${
-                        formData.workType === 'employee'
-                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900 text-purple-600 dark:text-purple-300 font-medium'
-                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                        formData.workType === "employee"
+                          ? "border-purple-600 bg-purple-50 dark:bg-purple-900 text-purple-600 dark:text-purple-300 font-medium"
+                          : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300"
                       }`}
                     >
                       {t.employee}
@@ -598,13 +762,20 @@ const Calculator = ({ onBackToHome, language }) => {
                 <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center">
                   <Award className="w-5 h-5 text-pink-600 dark:text-pink-300" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{t.step2Title}</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                  {t.step2Title}
+                </h3>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.skills}
+                    <Tooltip
+                      content={TooltipContent.skills[language]}
+                      language={language}
+                      position="top"
+                    />
                   </label>
                   <div className="flex flex-wrap gap-2 mb-3 min-h-[32px]">
                     {formData.skills.map((skill, idx) => (
@@ -628,7 +799,7 @@ const Calculator = ({ onBackToHome, language }) => {
                       value={skillInput}
                       onChange={(e) => setSkillInput(e.target.value)}
                       onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
+                        if (e.key === "Enter") {
                           e.preventDefault();
                           addSkill();
                         }
@@ -639,14 +810,16 @@ const Calculator = ({ onBackToHome, language }) => {
                     />
                     <button
                       onClick={addSkill}
-                      disabled={!skillInput.trim() || formData.skills.length >= 10}
+                      disabled={
+                        !skillInput.trim() || formData.skills.length >= 10
+                      }
                       className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                     >
                       {t.addSkill}
                     </button>
                   </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {language === 'fr' 
+                    {language === "fr"
                       ? `${formData.skills.length}/10 compétences`
                       : `${formData.skills.length}/10 skills`}
                   </p>
@@ -657,21 +830,28 @@ const Calculator = ({ onBackToHome, language }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   {t.legalStatus}
+                  <Tooltip
+                    content={TooltipContent.legalStatus[language]}
+                    language={language}
+                    position="top"
+                  />
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {['auto-entrepreneur', 'sasu', 'eurl', 'portage'].map((status) => (
-                    <button
-                      key={status}
-                      onClick={() => setLegalStatus(status)}
-                      className={`px-4 py-3 rounded-lg border-2 transition-all text-sm ${
-                        legalStatus === status
-                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900 text-purple-600 dark:text-purple-300 font-medium'
-                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 text-gray-700 dark:text-gray-300'
-                      }`}
-                    >
-                      {t[status.replace('-', '')]}
-                    </button>
-                  ))}
+                  {["auto-entrepreneur", "sasu", "eurl", "portage"].map(
+                    (status) => (
+                      <button
+                        key={status}
+                        onClick={() => setLegalStatus(status)}
+                        className={`px-4 py-3 rounded-lg border-2 transition-all text-sm ${
+                          legalStatus === status
+                            ? "border-purple-600 bg-purple-50 dark:bg-purple-900 text-purple-600 dark:text-purple-300 font-medium"
+                            : "border-gray-300 dark:border-gray-600 hover:border-gray-400 text-gray-700 dark:text-gray-300"
+                        }`}
+                      >
+                        {t[status.replace("-", "")]}
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
 
@@ -710,9 +890,9 @@ const Calculator = ({ onBackToHome, language }) => {
             )}
 
             {/* Badge multi-sources */}
-            {results.dataSource === 'real' && results.sources && (
-              <DataSourceBadge 
-                sourceCount={results.sourceCount} 
+            {results.dataSource === "real" && results.sources && (
+              <DataSourceBadge
+                sourceCount={results.sourceCount}
                 sources={results.sources}
               />
             )}
@@ -723,24 +903,38 @@ const Calculator = ({ onBackToHome, language }) => {
                 <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
                   <DollarSign className="w-5 h-5 text-green-600 dark:text-green-300" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{t.yourRate}</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                  {t.yourRate}
+                </h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
                 <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl">
                   <Clock className="w-8 h-8 text-purple-600 dark:text-purple-300 mx-auto mb-2" />
-                  <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">{results.hourly}€</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">{t.perHour}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                    {results.hourly}€
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.perHour}
+                  </div>
                 </div>
                 <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border-2 border-purple-600 dark:border-purple-400">
                   <CalculatorIcon className="w-8 h-8 text-purple-600 dark:text-purple-300 mx-auto mb-2" />
-                  <div className="text-3xl md:text-4xl font-bold text-purple-600 dark:text-purple-300 mb-1">{results.daily}€</div>
-                  <div className="text-sm text-purple-600 dark:text-purple-300 font-medium">{t.perDay}</div>
+                  <div className="text-3xl md:text-4xl font-bold text-purple-600 dark:text-purple-300 mb-1">
+                    {results.daily}€
+                  </div>
+                  <div className="text-sm text-purple-600 dark:text-purple-300 font-medium">
+                    {t.perDay}
+                  </div>
                 </div>
                 <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl">
                   <Briefcase className="w-8 h-8 text-purple-600 dark:text-purple-300 mx-auto mb-2" />
-                  <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">{results.monthly.toLocaleString()}€</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">{t.perMonth}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                    {results.monthly.toLocaleString()}€
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.perMonth}
+                  </div>
                 </div>
               </div>
 
@@ -752,79 +946,134 @@ const Calculator = ({ onBackToHome, language }) => {
                 </h4>
                 <div className="space-y-3">
                   <div className="flex items-center gap-4">
-                    <span className="text-sm font-medium w-32 text-gray-700 dark:text-gray-300">{t.marketMin}</span>
+                    <span className="text-sm font-medium w-32 text-gray-700 dark:text-gray-300">
+                      {t.marketMin}
+                    </span>
                     <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                       <div
                         className="bg-red-400 h-3 rounded-full"
-                        style={{ width: `${(results.market.min / results.market.max) * 100}%` }}
+                        style={{
+                          width: `${
+                            (results.market.min / results.market.max) * 100
+                          }%`,
+                        }}
                       />
                     </div>
-                    <span className="text-sm font-bold w-24 text-right text-gray-900 dark:text-white">{results.market.min}€/j</span>
+                    <span className="text-sm font-bold w-24 text-right text-gray-900 dark:text-white">
+                      {results.market.min}€/j
+                    </span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-sm font-medium w-32 text-gray-700 dark:text-gray-300">{t.marketAvg}</span>
+                    <span className="text-sm font-medium w-32 text-gray-700 dark:text-gray-300">
+                      {t.marketAvg}
+                    </span>
                     <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                       <div
                         className="bg-yellow-400 h-3 rounded-full"
-                        style={{ width: `${(results.market.avg / results.market.max) * 100}%` }}
+                        style={{
+                          width: `${
+                            (results.market.avg / results.market.max) * 100
+                          }%`,
+                        }}
                       />
                     </div>
-                    <span className="text-sm font-bold w-24 text-right text-gray-900 dark:text-white">{results.market.avg}€/j</span>
+                    <span className="text-sm font-bold w-24 text-right text-gray-900 dark:text-white">
+                      {results.market.avg}€/j
+                    </span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-sm font-medium w-32 text-gray-700 dark:text-gray-300">{t.yourRate}</span>
+                    <span className="text-sm font-medium w-32 text-gray-700 dark:text-gray-300">
+                      {t.yourRate}
+                    </span>
                     <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                       <div
                         className="bg-gradient-to-r from-purple-600 to-pink-600 h-3 rounded-full"
-                        style={{ width: `${(results.daily / results.market.max) * 100}%` }}
+                        style={{
+                          width: `${
+                            (results.daily / results.market.max) * 100
+                          }%`,
+                        }}
                       />
                     </div>
-                    <span className="text-sm font-bold w-24 text-right text-gray-900 dark:text-white">{results.daily}€/j</span>
+                    <span className="text-sm font-bold w-24 text-right text-gray-900 dark:text-white">
+                      {results.daily}€/j
+                    </span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-sm font-medium w-32 text-gray-700 dark:text-gray-300">{t.marketMax}</span>
+                    <span className="text-sm font-medium w-32 text-gray-700 dark:text-gray-300">
+                      {t.marketMax}
+                    </span>
                     <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                       <div className="bg-green-400 h-3 rounded-full w-full" />
                     </div>
-                    <span className="text-sm font-bold w-24 text-right text-gray-900 dark:text-white">{results.market.max}€/j</span>
+                    <span className="text-sm font-bold w-24 text-right text-gray-900 dark:text-white">
+                      {results.market.max}€/j
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* Rate Breakdown */}
               <div className="border-t dark:border-gray-700 pt-6">
-                <h4 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t.rateBreakdown}</h4>
+                <h4 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                  {t.rateBreakdown}
+                </h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t.baseRate}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{results.breakdown.base}€</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      {t.baseRate}
+                    </span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {results.breakdown.base}€
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t.experienceBonus}</span>
-                    <span className="font-medium text-green-600 dark:text-green-400">+{results.breakdown.experience}€</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      {t.experienceBonus}
+                    </span>
+                    <span className="font-medium text-green-600 dark:text-green-400">
+                      +{results.breakdown.experience}€
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t.skillsBonus}</span>
-                    <span className="font-medium text-green-600 dark:text-green-400">+{results.breakdown.skills}€</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      {t.skillsBonus}
+                    </span>
+                    <span className="font-medium text-green-600 dark:text-green-400">
+                      +{results.breakdown.skills}€
+                    </span>
                   </div>
                   {results.breakdown.location !== 0 && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">{t.locationAdjustment}</span>
-                      <span className={`font-medium ${results.breakdown.location >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                        {results.breakdown.location >= 0 ? '+' : ''}{results.breakdown.location}€
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {t.locationAdjustment}
+                      </span>
+                      <span
+                        className={`font-medium ${
+                          results.breakdown.location >= 0
+                            ? "text-green-600 dark:text-green-400"
+                            : "text-red-600 dark:text-red-400"
+                        }`}
+                      >
+                        {results.breakdown.location >= 0 ? "+" : ""}
+                        {results.breakdown.location}€
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between pt-2 border-t-2 border-purple-600 dark:border-purple-400">
-                    <span className="font-bold text-purple-600 dark:text-purple-400">{t.recommendation}</span>
-                    <span className="font-bold text-purple-600 dark:text-purple-400">{results.daily}€/jour</span>
+                    <span className="font-bold text-purple-600 dark:text-purple-400">
+                      {t.recommendation}
+                    </span>
+                    <span className="font-bold text-purple-600 dark:text-purple-400">
+                      {results.daily}€/jour
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Social Charges Calculator */}
-            <SocialChargesCalculator 
+            <SocialChargesCalculator
               dailyRate={results.daily}
               monthlyRate={results.monthly}
               status={legalStatus}
@@ -832,34 +1081,39 @@ const Calculator = ({ onBackToHome, language }) => {
             />
 
             {/* Insights */}
-      			<div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-8">
-      			  <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
-      				<Users className="w-5 h-5 text-purple-600 dark:text-purple-300" />
-      				{t.insights}
-      			  </h4>
-      			  <div className="space-y-4">
-      				{getInsights().map((insight, idx) => (
-      				  <div key={idx} className="flex gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-      					<span className="text-2xl">{insight.icon}</span>
-      					<p className="text-gray-700 dark:text-gray-300">{insight.text}</p>
-      				  </div>
-      				))}
-      			  </div>
-      			</div>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-8">
+              <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+                <Users className="w-5 h-5 text-purple-600 dark:text-purple-300" />
+                {t.insights}
+              </h4>
+              <div className="space-y-4">
+                {getInsights().map((insight, idx) => (
+                  <div
+                    key={idx}
+                    className="flex gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg"
+                  >
+                    <span className="text-2xl">{insight.icon}</span>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      {insight.text}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             {/* Trend Chart */}
-            <RateTrendChart 
+            <RateTrendChart
               formData={formData}
               results={results}
               language={language}
             />
 
-      			{/* Email Capture */}
-      			<EmailCapture 
-      			  results={results}
-      			  formData={formData}
-      			  language={language}
-      			/>
+            {/* Email Capture */}
+            <EmailCapture
+              results={results}
+              formData={formData}
+              language={language}
+            />
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4">
@@ -872,10 +1126,19 @@ const Calculator = ({ onBackToHome, language }) => {
               <button
                 onClick={() => {
                   try {
-                    generateRateAnalysisPDF({ results, formData, language, logo });
+                    generateRateAnalysisPDF({
+                      results,
+                      formData,
+                      language,
+                      logo,
+                    });
                   } catch (err) {
-                    console.error('Error generating PDF:', err);
-                    alert(language === 'fr' ? 'Erreur lors de la génération du PDF' : 'Error generating PDF');
+                    console.error("Error generating PDF:", err);
+                    alert(
+                      language === "fr"
+                        ? "Erreur lors de la génération du PDF"
+                        : "Error generating PDF"
+                    );
                   }
                 }}
                 className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
@@ -888,41 +1151,47 @@ const Calculator = ({ onBackToHome, language }) => {
                 className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
               >
                 <FileText className="w-5 h-5" />
-                {language === 'fr' ? 'Créer mon devis' : 'Create quote'}
+                {language === "fr" ? "Créer mon devis" : "Create quote"}
               </button>
             </div>
+            {/* Bouton de partage social */}
+            <ShareButton
+              results={results}
+              formData={formData}
+              language={language}
+            />
           </div>
         )}
       </div>
 
-                {showQuoteGenerator && (
-                  <QuoteGenerator
-                    results={results}
-                    formData={formData}
-                    language={language}
-                    logo={logo}
-                    setLogo={setLogo}
-                    legalStatus={legalStatus}
-                    onClose={() => setShowQuoteGenerator(false)}
-                    onGenerate={(quoteData) => {
-                      generateQuotePDF(quoteData, language);
-                      setShowQuoteGenerator(false);
-                    }}
-                  />
-                )}
+      {showQuoteGenerator && (
+        <QuoteGenerator
+          results={results}
+          formData={formData}
+          language={language}
+          logo={logo}
+          setLogo={setLogo}
+          legalStatus={legalStatus}
+          onClose={() => setShowQuoteGenerator(false)}
+          onGenerate={(quoteData) => {
+            generateQuotePDF(quoteData, language);
+            setShowQuoteGenerator(false);
+          }}
+        />
+      )}
 
       {/* Historique des calculs */}
-      <CalculationHistory 
-        language={language} 
-        onLoadCalculation={handleLoadCalculation} 
+      <CalculationHistory
+        language={language}
+        onLoadCalculation={handleLoadCalculation}
       />
 
       {/* Footer */}
       <div className="text-center py-8 text-gray-600 dark:text-gray-400 text-sm px-4">
         <p>
-          {language === 'fr' 
-            ? '💡 Les tarifs sont basés sur des données de marché réelles et ajustés selon votre profil.'
-            : '💡 Rates are based on real market data and adjusted according to your profile.'}
+          {language === "fr"
+            ? "💡 Les tarifs sont basés sur des données de marché réelles et ajustés selon votre profil."
+            : "💡 Rates are based on real market data and adjusted according to your profile."}
         </p>
       </div>
     </div>
