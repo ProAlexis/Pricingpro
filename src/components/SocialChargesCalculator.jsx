@@ -2,37 +2,54 @@ import React from 'react';
 import { Calculator, Info } from 'lucide-react';
 
 // Taux de charges sociales par statut (France 2026)
+// Note: Les taux sont calculés sur le CA/brut pour obtenir le net
 const SOCIAL_CHARGES = {
   'auto-entrepreneur': {
     name: { fr: 'Auto-entrepreneur', en: 'Self-employed' },
-    rate: 0.22, // 22% du CA pour prestations de service
+    rate: 0.212, // 21.2% du CA pour prestations de service BNC (URSSAF 2026)
     description: { 
-      fr: 'Charges sociales simplifiées', 
-      en: 'Simplified social contributions' 
+      fr: 'Charges sociales simplifiées (21.2%)', 
+      en: 'Simplified social contributions (21.2%)' 
+    },
+    details: {
+      fr: 'Cotisations sociales : 21.2% • CFE : ~300€/an • Formation : 0.2%',
+      en: 'Social contributions: 21.2% • Business tax: ~€300/year • Training: 0.2%'
     }
   },
   'sasu': {
     name: { fr: 'SASU (Président)', en: 'SASU (President)' },
-    rate: 0.82, // ~82% charges patronales + salariales
+    rate: 0.54, // ~54% charges patronales + salariales du brut
     description: { 
-      fr: 'Assimilé salarié - Sécurité sociale', 
-      en: 'Employee status - Social security' 
+      fr: 'Assimilé salarié - Régime général', 
+      en: 'Employee status - General regime' 
+    },
+    details: {
+      fr: 'Charges patronales : ~42% • Charges salariales : ~22% • IS : 15-25%',
+      en: 'Employer contributions: ~42% • Employee contributions: ~22% • Corp. tax: 15-25%'
     }
   },
   'eurl': {
     name: { fr: 'EURL (Gérant majoritaire)', en: 'EURL (Majority manager)' },
-    rate: 0.45, // ~45% charges TNS
+    rate: 0.45, // ~45% charges TNS du bénéfice
     description: { 
-      fr: 'Travailleur non-salarié', 
-      en: 'Self-employed worker' 
+      fr: 'Travailleur non-salarié (TNS)', 
+      en: 'Self-employed worker (TNS)' 
+    },
+    details: {
+      fr: 'Cotisations sociales : ~45% du bénéfice • IS : 15-25%',
+      en: 'Social contributions: ~45% of profit • Corp. tax: 15-25%'
     }
   },
   'portage': {
     name: { fr: 'Portage salarial', en: 'Umbrella company' },
-    rate: 0.50, // ~50% charges + frais de gestion
+    rate: 0.49, // ~49% charges totales (sociales + frais de gestion)
     description: { 
       fr: 'Salarié porté - Tout inclus', 
       en: 'Employee - All inclusive' 
+    },
+    details: {
+      fr: 'Charges sociales : ~45% • Frais de gestion : 3-10% • RCP incluse',
+      en: 'Social contributions: ~45% • Management fees: 3-10% • Insurance included'
     }
   }
 };
