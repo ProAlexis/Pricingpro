@@ -150,7 +150,7 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   const clientAddressLines = doc.splitTextToSize(quoteData.clientAddress, 80);
   doc.text(clientAddressLines, pageWidth - 90, yPos);
 
-  yPos = 110;
+  yPos = 120;
 
   // Titre de la mission
   doc.setFontSize(14);
@@ -165,7 +165,7 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   doc.setTextColor(100, 100, 100);
   const descLines = doc.splitTextToSize(quoteData.missionDescription, pageWidth - 30);
   doc.text(descLines, 15, yPos);
-  yPos += descLines.length * 5 + 10;
+  yPos += descLines.length * 5 + 2;
 
   // Table header
   doc.setFillColor(147, 51, 234);
@@ -174,10 +174,10 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(10);
   doc.setFont(undefined, 'bold');
-  doc.text(labels.description, 20, yPos + 7);
-  doc.text(labels.quantity, pageWidth - 90, yPos + 7);
-  doc.text(labels.unitPrice, pageWidth - 60, yPos + 7);
-  doc.text(labels.total, pageWidth - 25, yPos + 7, { align: 'right' });
+  doc.text(labels.description, 20, yPos + 6.4);
+  doc.text(labels.quantity, pageWidth - 90, yPos + 6.4);
+  doc.text(labels.unitPrice, pageWidth - 60, yPos + 6.4);
+  doc.text(labels.total, pageWidth - 25, yPos + 6.4, { align: 'right' });
   doc.setFont(undefined, 'normal');
   
   yPos += 15;
@@ -187,7 +187,6 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   doc.text(quoteData.missionTitle, 20, yPos);
   doc.text(`${quoteData.daysCount} ${labels.days}`, pageWidth - 90, yPos);
   doc.text(`${quoteData.dailyRate}€`, pageWidth - 60, yPos);
-  // CORRECTION LIGNE 178
   doc.text(`${quoteData.totalHT.toLocaleString('fr-FR').replace(/\s/g, ' ')}€`, pageWidth - 25, yPos, { align: 'right' });
   
   yPos += 10;
