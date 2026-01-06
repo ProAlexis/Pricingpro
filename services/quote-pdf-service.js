@@ -150,7 +150,7 @@ export function generateQuotePDF(quoteData, language = 'fr') {
   const clientAddressLines = doc.splitTextToSize(quoteData.clientAddress, 80);
   doc.text(clientAddressLines, pageWidth - 90, yPos);
 
-  yPos = 140;
+  yPos = 110;
 
   // Titre de la mission
   doc.setFontSize(14);
