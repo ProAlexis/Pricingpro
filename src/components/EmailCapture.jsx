@@ -144,6 +144,8 @@ const EmailCapture = ({ results, formData, language }) => {
               <div className="flex-1 relative">
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t.placeholder}
