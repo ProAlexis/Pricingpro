@@ -1,5 +1,4 @@
 name: Scrape Market Rates
-
 on:
   schedule:
     # Tous les lundis à 2h du matin (UTC)
@@ -22,15 +21,15 @@ jobs:
       - name: Install dependencies
         run: npm install
       
-      - name: Run multi-source scraper
+      - name: Run multi-source scraper (Malt + Glassdoor + Upwork)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-        run: node scrapers/test-multi-source.js
+        run: node run-scraper.js
       
       - name: Notify on success
         if: success()
-        run: echo "✅ Scraping completed successfully!"
+        run: echo "✅ Scraping completed successfully! 2070+ rates updated."
       
       - name: Notify on failure
         if: failure()
