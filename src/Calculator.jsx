@@ -769,7 +769,7 @@ const Calculator = ({ onBackToHome, language }) => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                     {t.skills}
                     <Tooltip
                       content={TooltipContent.skills[language]}
@@ -828,7 +828,7 @@ const Calculator = ({ onBackToHome, language }) => {
 
               {/* Legal Status */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                   {t.legalStatus}
                   <Tooltip
                     content={TooltipContent.legalStatus[language]}
