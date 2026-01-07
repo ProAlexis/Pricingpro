@@ -70,10 +70,32 @@ const RateTrendChart = ({ formData, results, language = "fr" }) => {
 
       if (response.ok) {
         const data = await response.json();
-        setTrendData(data);
+
+        // 🔥 VALIDATION ICI, AVANT DE SET LES DONNÉES
+        if (data.trend && data.trend.length >= 2) {
+          const firstDate = new Date(data.trend[0].date).getTime();
+          const lastDate = new Date(
+            data.trend[data.trend.length - 1].date,
+          ).getTime();
+
+          // Si les dates sont différentes (au moins 15 jours d'écart)
+          const daysDiff = (lastDate - firstDate) / (1000 * 60 * 60 * 24);
+
+          if (daysDiff >= 15) {
+            // ✅ On a de vraies données historiques
+            setTrendData(data);
+          } else {
+            // ❌ Pas assez d'écart temporel
+            setTrendData({ trend: [], evolution: null });
+          }
+        } else {
+          // ❌ Pas assez de points de données
+          setTrendData({ trend: [], evolution: null });
+        }
       }
     } catch (error) {
       console.error("Error fetching trends:", error);
+      setTrendData({ trend: [], evolution: null });
     } finally {
       setLoading(false);
     }
