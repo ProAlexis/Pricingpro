@@ -27,7 +27,7 @@ const LogoUpload = ({ logo, setLogo, language = "fr" }) => {
       alert(
         language === "fr"
           ? "Le fichier est trop volumineux (max 2MB)"
-          : "File is too large (max 2MB)"
+          : "File is too large (max 2MB)",
       );
       return;
     }

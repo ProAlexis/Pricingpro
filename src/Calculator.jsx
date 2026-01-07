@@ -329,7 +329,7 @@ const Calculator = ({ onBackToHome, language }) => {
           : "/api/get-rates";
 
       const response = await fetch(
-        `${apiUrl}?profession=${formData.profession}&location=${formData.location}&experience_level=${formData.experienceLevel}`
+        `${apiUrl}?profession=${formData.profession}&location=${formData.location}&experience_level=${formData.experienceLevel}`,
       );
 
       if (!response.ok) {
@@ -341,7 +341,7 @@ const Calculator = ({ onBackToHome, language }) => {
       if (marketData.count > 0) {
         // ✅ DONNÉES RÉELLES DE L'API
         const profession = professions.find(
-          (p) => p.value === formData.profession
+          (p) => p.value === formData.profession,
         );
         const baseRate = marketData.avg;
         const experienceMultiplier =
@@ -349,7 +349,7 @@ const Calculator = ({ onBackToHome, language }) => {
         const skillsBonus = formData.skills.length * 30;
 
         const dailyRate = Math.round(
-          baseRate * experienceMultiplier + skillsBonus
+          baseRate * experienceMultiplier + skillsBonus,
         );
         const hourlyRate = Math.round(dailyRate / 8);
         const monthlyRate = Math.round(dailyRate * 20);
@@ -407,7 +407,7 @@ const Calculator = ({ onBackToHome, language }) => {
     const locationMultiplier = location.multiplier;
 
     const dailyRate = Math.round(
-      (baseRate * experienceMultiplier + skillsBonus) * locationMultiplier
+      (baseRate * experienceMultiplier + skillsBonus) * locationMultiplier,
     );
     const hourlyRate = Math.round(dailyRate / 8);
     const monthlyRate = Math.round(dailyRate * 20);
@@ -489,7 +489,7 @@ const Calculator = ({ onBackToHome, language }) => {
 
     const insights = [];
     const professionLabel = professions.find(
-      (p) => p.value === formData.profession
+      (p) => p.value === formData.profession,
     ).label[language];
 
     if (formData.experienceLevel === "junior") {
@@ -541,8 +541,8 @@ const Calculator = ({ onBackToHome, language }) => {
               formData.experienceLevel === "junior"
                 ? "juniors"
                 : formData.experienceLevel === "senior"
-                ? "seniors"
-                : "confirmés"
+                  ? "seniors"
+                  : "confirmés"
             } facturent généralement entre ${results.market.min}€ et ${
               results.market.max
             }€/jour.`
@@ -585,7 +585,7 @@ const Calculator = ({ onBackToHome, language }) => {
 
     const locationMultiplier = locationMultipliers[formData.location] || 1;
     const dailyRate = Math.round(
-      (baseRate * experienceMultiplier + skillsBonus) * locationMultiplier
+      (baseRate * experienceMultiplier + skillsBonus) * locationMultiplier,
     );
     const hourlyRate = Math.round(dailyRate / 8);
     const monthlyRate = Math.round(dailyRate * 20);
@@ -886,7 +886,7 @@ const Calculator = ({ onBackToHome, language }) => {
                       >
                         {t[status.replace("-", "")]}
                       </button>
-                    )
+                    ),
                   )}
                 </div>
               </div>
@@ -1201,7 +1201,7 @@ const Calculator = ({ onBackToHome, language }) => {
                     alert(
                       language === "fr"
                         ? "Erreur lors de la génération du PDF"
-                        : "Error generating PDF"
+                        : "Error generating PDF",
                     );
                   }
                 }}

@@ -65,7 +65,7 @@ const RateTrendChart = ({ formData, results, language = "fr" }) => {
           : "/api/get-rate-trends";
 
       const response = await fetch(
-        `${apiUrl}?profession=${formData.profession}&location=${formData.location}&experience_level=${formData.experienceLevel}&months=${selectedPeriod}`
+        `${apiUrl}?profession=${formData.profession}&location=${formData.location}&experience_level=${formData.experienceLevel}&months=${selectedPeriod}`,
       );
 
       if (response.ok) {
@@ -154,8 +154,8 @@ const RateTrendChart = ({ formData, results, language = "fr" }) => {
             evolution.direction === "up"
               ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
               : evolution.direction === "down"
-              ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
-              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
           }`}
         >
           {evolution.direction === "up" ? (
@@ -173,8 +173,8 @@ const RateTrendChart = ({ formData, results, language = "fr" }) => {
             {evolution.direction === "up"
               ? t.up
               : evolution.direction === "down"
-              ? t.down
-              : t.stable}
+                ? t.down
+                : t.stable}
           </span>
           <span className="text-sm opacity-75">
             ({evolution.oldRate}€ → {evolution.newRate}€)
@@ -259,13 +259,13 @@ const RateTrendChart = ({ formData, results, language = "fr" }) => {
         <span>
           {new Date(trend[0].date).toLocaleDateString(
             language === "fr" ? "fr-FR" : "en-US",
-            { month: "short", year: "numeric" }
+            { month: "short", year: "numeric" },
           )}
         </span>
         <span>
           {new Date(trend[trend.length - 1].date).toLocaleDateString(
             language === "fr" ? "fr-FR" : "en-US",
-            { month: "short", year: "numeric" }
+            { month: "short", year: "numeric" },
           )}
         </span>
       </div>

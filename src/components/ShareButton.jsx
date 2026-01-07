@@ -69,7 +69,7 @@ const ShareButton = ({ results, formData, language }) => {
     window.open(
       `https://x.com/intent/post?text=${text}&url=${url}&hashtags=${hashtags}`,
       "_blank",
-      "width=600,height=400"
+      "width=600,height=400",
     );
   };
 
@@ -79,7 +79,7 @@ const ShareButton = ({ results, formData, language }) => {
     window.open(
       `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
       "_blank",
-      "width=600,height=600"
+      "width=600,height=600",
     );
   };
 

@@ -82,7 +82,7 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
 
       localStorage.setItem(
         "pricingpro_history",
-        JSON.stringify(currentHistory)
+        JSON.stringify(currentHistory),
       );
       setHistory(currentHistory);
     } catch (error) {
@@ -95,7 +95,7 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
       const updatedHistory = history.filter((entry) => entry.id !== id);
       localStorage.setItem(
         "pricingpro_history",
-        JSON.stringify(updatedHistory)
+        JSON.stringify(updatedHistory),
       );
       setHistory(updatedHistory);
     } catch (error) {
