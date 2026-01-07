@@ -3,6 +3,7 @@ import {
   DollarSign,
   Globe,
   Database,
+  Calculator as CalculatorIcon,
   Users,
   CheckCircle,
   Star,
@@ -20,7 +21,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
         title: "Découvrez votre vraie valeur",
         subtitle: "Pilotez votre activité freelance de A à Z",
         description:
-          "Accédez à 1000+ tarifs réels, créez vos devis personnalisés et téléchargez vos contrats juridiques en quelques clics.",
+          "Accédez à 3500+ tarifs réels, créez vos devis personnalisés et téléchargez vos contrats juridiques en quelques clics.",
         cta: "Estimer mon tarif et créer mon devis",
         badge: "✨ 100% Gratuit · Devis & Contrats inclus · Sans inscription",
       },
@@ -38,17 +39,17 @@ const LandingPage = ({ onStartCalculator, language }) => {
           {
             icon: "database",
             title: "Données Réelles",
-            description: "1000+ tarifs scrapés en temps réel",
+            description: "3500+ tarifs scrapés en temps réel",
           },
           {
             icon: "fileText",
-            title: "Devis & Contrats Word",
+            title: "Contrats & CGV",
             description:
               "Générez instantanément des contrats de mission et des CGV personnalisés au format Word.",
           },
           {
             icon: "checkCircle",
-            title: "Gestion Administrative",
+            title: "Devis",
             description:
               "Éditez vos devis pro avec votre logo et vos infos légales, prêt à être envoyés à vos clients.",
           },
@@ -81,6 +82,12 @@ const LandingPage = ({ onStartCalculator, language }) => {
             title: "Insights Personnalisés",
             description:
               "Recommandations concrètes pour augmenter vos tarifs de 20-50%",
+          },
+          {
+            icon: "calculator",
+            title: "Optimisation Fiscale",
+            description:
+              "Simulez vos charges sociales et votre revenu net selon votre statut (Auto-entrepreneur, SASU, EURL).",
           },
         ],
       },
@@ -157,7 +164,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
         title: "Discover Your True Worth",
         subtitle: "Manage your freelance business from A to Z",
         description:
-          "Access 1000+ real market rates, create professional quotes, and download legal contract templates in just a few clicks.",
+          "Access 3500+ real market rates, create professional quotes, and download legal contract templates in just a few clicks.",
         cta: "Estimate my rate & create a quote",
         badge:
           "✨ 100% Free · Quotes & Contracts Included · No Signup Required",
@@ -176,17 +183,17 @@ const LandingPage = ({ onStartCalculator, language }) => {
           {
             icon: "database",
             title: "Real Data",
-            description: "1000+ real-world rates scraped in real-time",
+            description: "3500+ real-world rates scraped in real-time",
           },
           {
             icon: "fileText",
-            title: "Word Quotes & Contracts",
+            title: "Contracts & T&Cs",
             description:
               "Instantly generate customized mission contracts and T&Cs in Word format.",
           },
           {
             icon: "checkCircle",
-            title: "Admin Management",
+            title: "Quotes",
             description:
               "Edit professional quotes with your logo and legal info, ready to send to your clients.",
           },
@@ -219,6 +226,12 @@ const LandingPage = ({ onStartCalculator, language }) => {
             title: "Personalized Insights",
             description:
               "Concrete recommendations to increase your rates by 20-50%",
+          },
+          {
+            icon: "calculator",
+            title: "Tax Optimization",
+            description:
+              "Simulate social charges and net income based on your status (Self-employed, SASU, EURL).",
           },
         ],
       },
@@ -300,6 +313,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
       zap: Zap,
       chart: BarChart3,
       fileText: FileText,
+      calculator: CalculatorIcon,
       checkCircle: CheckCircle,
     };
     const IconComponent = icons[iconName] || Database;
@@ -344,7 +358,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-                1000+
+                3500+
               </div>
               <div className="text-gray-600 dark:text-gray-400">
                 {t.stats.rates}
@@ -518,8 +532,8 @@ const LandingPage = ({ onStartCalculator, language }) => {
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 {language === "fr"
-                  ? "PricingPro analyse 1000+ tarifs réels collectés depuis Malt, Glassdoor et Upwork. Notre algorithme prend en compte votre profession, localisation, niveau d'expérience et compétences pour vous donner une recommandation précise."
-                  : "PricingPro analyzes 1000+ real rates collected from Malt, Glassdoor and Upwork. Our algorithm takes into account your profession, location, experience level and skills to give you an accurate recommendation."}
+                  ? "PricingPro analyse 3500+ tarifs réels collectés depuis Malt, Glassdoor et Upwork. Notre algorithme prend en compte votre profession, localisation, niveau d'expérience et compétences pour vous donner une recommandation précise."
+                  : "PricingPro analyzes 3500+ real rates collected from Malt, Glassdoor and Upwork. Our algorithm takes into account your profession, location, experience level and skills to give you an accurate recommendation."}
               </p>
             </div>
 

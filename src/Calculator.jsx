@@ -32,12 +32,14 @@ import ProfessionComparison from "./components/ProfessionComparison";
 import ContractTemplates from "./components/ContractTemplates";
 
 // Composant pour afficher les sources de données
-const DataSourceBadge = ({ sourceCount, sources }) => {
+const DataSourceBadge = ({ sourceCount, sources, language }) => {
   const getSourceIcon = (source) => {
     const icons = {
       malt: "🟣",
       glassdoor: "🟢",
       upwork: "🔵",
+      stackoverflow: "🟠",
+      public: "🏛️",
     };
     return icons[source] || "📊";
   };
@@ -47,6 +49,8 @@ const DataSourceBadge = ({ sourceCount, sources }) => {
       malt: "Malt",
       glassdoor: "Glassdoor",
       upwork: "Upwork",
+      stackoverflow: "Stack Overflow",
+      public: language === "fr" ? "Données Publiques" : "Public Data",
     };
     return names[source] || source;
   };
@@ -930,6 +934,7 @@ const Calculator = ({ onBackToHome, language }) => {
               <DataSourceBadge
                 sourceCount={results.sourceCount}
                 sources={results.sources}
+                language={language}
               />
             )}
 

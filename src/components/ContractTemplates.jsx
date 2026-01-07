@@ -387,9 +387,7 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
               HeadingLevel.HEADING_2,
             ),
             createParagraph(
-              `Les présentes conditions générales de vente s'appliquent à toutes les prestations de services réalisées par ${
-                userInfo.name || "[VOTRE NOM]"
-              }.`,
+              `Les présentes conditions générales de vente s'appliquent à toutes les prestations de services réalisées par ${userInfo.name || "[VOTRE NOM]"}.`,
             ),
 
             createHeading("Article 2 - Commandes", HeadingLevel.HEADING_2),
@@ -760,6 +758,25 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
       {/* User Info Form */}
       {selectedTemplate && (
         <div className="mb-6 p-6 bg-gray-50 dark:bg-gray-900 rounded-xl">
+          {/* Badge du template sélectionné */}
+          <div className="mb-4 p-4 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-lg border-2 border-purple-300 dark:border-purple-700">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">
+                {t.templates[selectedTemplate].icon}
+              </span>
+              <div>
+                <p className="text-xs font-medium text-purple-600 dark:text-purple-300 mb-1">
+                  {language === "fr"
+                    ? "📄 Document sélectionné"
+                    : "📄 Selected document"}
+                </p>
+                <p className="text-lg font-bold text-purple-900 dark:text-purple-100">
+                  {t.templates[selectedTemplate].name}
+                </p>
+              </div>
+            </div>
+          </div>
+
           <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
             {t.fillInfo}
           </h4>
@@ -899,22 +916,6 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {template.desc}
             </p>
-
-            {selectedTemplate === key && (
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    generateContract(key);
-                  }}
-                  disabled={generating}
-                  className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                  <Download className="w-4 h-4" />
-                  {t.download}
-                </button>
-              </div>
-            )}
           </div>
         ))}
       </div>

@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { getCountryFromCity } from '../scrapers/geo-utils.js'; // Import de ton utilitaire
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -26,13 +27,15 @@ export default async function handler(req, res) {
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - parseInt(months));
     const startDateStr = startDate.toISOString().split('T')[0];
+    const geoData = await getCountryFromCity(location);
+    const countryName = geoData?.country || location.toLowerCase();
 
     // Requête pour obtenir l'historique
     const { data, error } = await supabase
       .from('market_rates_history')
       .select('*')
       .eq('profession', profession)
-      .eq('country', location)
+      .eq('country', countryName)
       .eq('experience_level', experience_level)
       .gte('snapshot_date', startDateStr)
       .order('snapshot_date', { ascending: true });

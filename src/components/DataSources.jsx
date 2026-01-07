@@ -16,30 +16,30 @@ const DataSources = ({ language = "fr" }) => {
       legalFramework: "Cadre Juridique",
       sources: [
         {
-          name: "Baromètre Malt 2024-2025",
+          name: "Baromètre Malt",
           url: "https://www.malt.fr/t/barometre-tarifs",
           description:
             "TJM moyens par profession, niveau d'expérience et localisation. Données issues de 500 000+ freelances inscrits sur Malt.",
-          dataPoints: "1,620 tarifs",
+          dataPoints: "Index Large",
           update: "Temps réel",
           icon: "database",
         },
         {
-          name: "Free-Work IT Earnings",
+          name: "Données Publiques",
           url: "https://www.free-work.com/fr/tech-it/earnings",
           description:
             "Rémunérations des freelances et salariés IT. Baromètre contributif mis à jour quotidiennement.",
-          dataPoints: "405 tarifs",
+          dataPoints: "Sources d'État",
           update: "Quotidien",
           icon: "database",
         },
         {
-          name: "Stack Overflow Developer Survey 2024",
+          name: "Stack Overflow",
           url: "https://survey.stackoverflow.co/2024",
           description:
-            "Salaires et données démographiques de 49,000+ développeurs dans 177 pays. Datasets CSV téléchargeables.",
-          dataPoints: "45 tarifs",
-          update: "Annuel",
+            "Analyse mondiale du marché tech agrégeant les données de Stack Overflow, Glassdoor et Upwork.",
+          dataPoints: "Global Tech",
+          update: "Mise à jour continue",
           icon: "database",
         },
       ],
@@ -103,11 +103,11 @@ const DataSources = ({ language = "fr" }) => {
       legalFramework: "Legal Framework",
       sources: [
         {
-          name: "Malt Barometer 2024-2025",
+          name: "Malt Barometer",
           url: "https://www.malt.fr/t/barometre-tarifs",
           description:
             "Average daily rates by profession, experience level and location. Data from 500,000+ freelancers on Malt.",
-          dataPoints: "1,620 rates",
+          dataPoints: "Large Index",
           update: "Real-time",
           icon: "database",
         },
@@ -115,18 +115,18 @@ const DataSources = ({ language = "fr" }) => {
           name: "Free-Work IT Earnings",
           url: "https://www.free-work.com/fr/tech-it/earnings",
           description:
-            "Freelance and employee IT compensation. Contributory barometer updated daily.",
-          dataPoints: "405 rates",
+            "Freelance and employee IT compensation. Contributory barometer updated on a daily basis.",
+          dataPoints: "Official Sources",
           update: "Daily",
           icon: "database",
         },
         {
-          name: "Stack Overflow Developer Survey 2024",
+          name: "Stack Overflow",
           url: "https://survey.stackoverflow.co/2024",
           description:
-            "Salaries and demographics of 49,000+ developers in 177 countries. Downloadable CSV datasets.",
-          dataPoints: "45 rates",
-          update: "Annual",
+            "Worldwide tech market analysis aggregating data from Stack Overflow, Glassdoor, and Upwork.",
+          dataPoints: "Global Tech",
+          update: "Continuous update",
           icon: "database",
         },
       ],
