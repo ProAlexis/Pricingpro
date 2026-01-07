@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   TrendingUp,
   DollarSign,
@@ -379,7 +379,7 @@ const Calculator = ({ onBackToHome, language }) => {
 
         setResults(finalResults);
 
-        // 🔥 NOUVEAU: Sauvegarder dans l'historique
+        // Sauvegarder dans l'historique
         saveCalculationToHistory(finalResults, formData);
 
         setStep(3);
@@ -445,7 +445,7 @@ const Calculator = ({ onBackToHome, language }) => {
   const handleLoadCalculation = (results, formData) => {
     setFormData(formData);
     setResults(results);
-    setStep(3); // Aller directement aux résultats
+    setStep(3);
     setLoadedFromHistory(true);
     window.scrollTo(0, 0);
   };

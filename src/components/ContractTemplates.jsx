@@ -1,22 +1,32 @@
-import React, { useState } from 'react';
-import { FileText, Download, Check, AlertCircle } from 'lucide-react';
+import { useState } from "react";
+import { FileText, Download, Check, AlertCircle } from "lucide-react";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  HeadingLevel,
+  AlignmentType,
+} from "docx";
+import { saveAs } from "file-saver";
 
-const ContractTemplates = ({ formData, legalStatus, language = 'fr' }) => {
+const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [userInfo, setUserInfo] = useState({
-    name: '',
-    company: '',
-    siret: '',
-    address: '',
-    email: '',
-    phone: ''
+    name: "",
+    company: "",
+    siret: "",
+    address: "",
+    email: "",
+    phone: "",
   });
   const [clientInfo, setClientInfo] = useState({
-    name: '',
-    company: '',
-    address: '',
-    siret: ''
+    name: "",
+    company: "",
+    address: "",
+    siret: "",
   });
+  const [generating, setGenerating] = useState(false);
 
   const translations = {
     fr: {
@@ -26,23 +36,23 @@ const ContractTemplates = ({ formData, legalStatus, language = 'fr' }) => {
         mission: {
           name: "Contrat de Mission Freelance",
           desc: "Contrat cadre pour missions freelance (CDD, régie, forfait)",
-          icon: "📝"
+          icon: "📝",
         },
         cgv: {
           name: "Conditions Générales de Vente (CGV)",
           desc: "CGV conformes à la loi française pour freelances",
-          icon: "📋"
+          icon: "📋",
         },
         mentions: {
           name: "Mentions Légales",
           desc: "Mentions légales pour votre site web",
-          icon: "⚖️"
+          icon: "⚖️",
         },
         nda: {
           name: "Accord de Confidentialité (NDA)",
           desc: "Clause de confidentialité bilatérale",
-          icon: "🔒"
-        }
+          icon: "🔒",
+        },
       },
       download: "Télécharger",
       preview: "Aperçu",
@@ -56,10 +66,13 @@ const ContractTemplates = ({ formData, legalStatus, language = 'fr' }) => {
       address: "Adresse",
       email: "Email",
       phone: "Téléphone",
-      generate: "Générer le document",
+      generate: "Générer le document Word",
+      generating: "Génération en cours...",
       close: "Fermer",
-      warning: "Ces templates sont fournis à titre informatif. Consultez un avocat pour vous assurer qu'ils correspondent à votre situation.",
-      disclaimer: "⚠️ Ces documents sont des modèles génériques. Adaptez-les à votre situation et faites-les valider par un professionnel du droit."
+      warning:
+        "Ces templates sont fournis à titre informatif. Consultez un avocat pour vous assurer qu'ils correspondent à votre situation.",
+      disclaimer:
+        "⚠️ Ces documents sont des modèles génériques. Adaptez-les à votre situation et faites-les valider par un professionnel du droit.",
     },
     en: {
       title: "Legal Document Templates",
@@ -68,23 +81,23 @@ const ContractTemplates = ({ formData, legalStatus, language = 'fr' }) => {
         mission: {
           name: "Freelance Mission Contract",
           desc: "Framework contract for freelance missions",
-          icon: "📝"
+          icon: "📝",
         },
         cgv: {
           name: "Terms and Conditions",
           desc: "T&C compliant with French law for freelancers",
-          icon: "📋"
+          icon: "📋",
         },
         mentions: {
           name: "Legal Notice",
           desc: "Legal notice for your website",
-          icon: "⚖️"
+          icon: "⚖️",
         },
         nda: {
           name: "Non-Disclosure Agreement (NDA)",
           desc: "Bilateral confidentiality clause",
-          icon: "🔒"
-        }
+          icon: "🔒",
+        },
       },
       download: "Download",
       preview: "Preview",
@@ -98,254 +111,625 @@ const ContractTemplates = ({ formData, legalStatus, language = 'fr' }) => {
       address: "Address",
       email: "Email",
       phone: "Phone",
-      generate: "Generate document",
+      generate: "Generate Word document",
+      generating: "Generating...",
       close: "Close",
-      warning: "These templates are provided for informational purposes. Consult a lawyer to ensure they fit your situation.",
-      disclaimer: "⚠️ These documents are generic templates. Adapt them to your situation and have them validated by a legal professional."
-    }
+      warning:
+        "These templates are provided for informational purposes. Consult a lawyer to ensure they fit your situation.",
+      disclaimer:
+        "⚠️ These documents are generic templates. Adapt them to your situation and have them validated by a legal professional.",
+    },
   };
 
   const t = translations[language];
 
-  const generateContract = (templateType) => {
-    let content = '';
-    const date = new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+  // Fonction helper pour créer un titre
+  const createHeading = (text, level = HeadingLevel.HEADING_1) => {
+    return new Paragraph({
+      text: text,
+      heading: level,
+      spacing: { before: 400, after: 200 },
     });
+  };
 
-    switch (templateType) {
-      case 'mission':
-        content = `
-CONTRAT DE PRESTATION DE SERVICES
-${language === 'fr' ? 'MISSION FREELANCE' : 'FREELANCE MISSION'}
+  // Fonction helper pour créer un paragraphe
+  const createParagraph = (text, options = {}) => {
+    return new Paragraph({
+      children: [
+        new TextRun({
+          text: text,
+          ...options,
+        }),
+      ],
+      spacing: { before: 120, after: 120 },
+    });
+  };
 
-${language === 'fr' ? 'Entre les soussignés :' : 'Between the undersigned:'}
+  // Fonction helper pour créer un paragraphe avec du texte en gras
+  const createBoldParagraph = (boldText, normalText = "") => {
+    return new Paragraph({
+      children: [
+        new TextRun({ text: boldText, bold: true }),
+        new TextRun({ text: normalText }),
+      ],
+      spacing: { before: 120, after: 120 },
+    });
+  };
 
-${language === 'fr' ? 'LE PRESTATAIRE :' : 'THE SERVICE PROVIDER:'}
-${userInfo.name}
-${userInfo.company ? userInfo.company : ''}
-SIRET : ${userInfo.siret || '[À COMPLÉTER]'}
-Adresse : ${userInfo.address || '[À COMPLÉTER]'}
-Email : ${userInfo.email || '[À COMPLÉTER]'}
-Téléphone : ${userInfo.phone || '[À COMPLÉTER]'}
+  // Générer le contrat de mission
+  const generateMissionContract = () => {
+    const date = new Date().toLocaleDateString(
+      language === "fr" ? "fr-FR" : "en-US",
+      {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }
+    );
 
-${language === 'fr' ? 'LE CLIENT :' : 'THE CLIENT:'}
-${clientInfo.name || '[NOM DU CLIENT]'}
-${clientInfo.company || '[SOCIÉTÉ DU CLIENT]'}
-${clientInfo.siret ? `SIRET : ${clientInfo.siret}` : ''}
-Adresse : ${clientInfo.address || '[ADRESSE DU CLIENT]'}
+    return new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            // Titre principal
+            new Paragraph({
+              text: "CONTRAT DE PRESTATION DE SERVICES",
+              heading: HeadingLevel.TITLE,
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 0, after: 400 },
+            }),
+            new Paragraph({
+              text:
+                language === "fr" ? "MISSION FREELANCE" : "FREELANCE MISSION",
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 600 },
+            }),
 
-${language === 'fr' ? 'IL A ÉTÉ CONVENU CE QUI SUIT :' : 'IT HAS BEEN AGREED AS FOLLOWS:'}
+            // Les parties
+            createHeading(
+              language === "fr"
+                ? "Entre les soussignés :"
+                : "Between the undersigned:",
+              HeadingLevel.HEADING_1
+            ),
 
-${language === 'fr' ? 'ARTICLE 1 - OBJET' : 'ARTICLE 1 - OBJECT'}
-Le prestataire s'engage à fournir les services suivants :
-[DÉCRIRE LA MISSION EN DÉTAIL]
+            createBoldParagraph(
+              language === "fr" ? "LE PRESTATAIRE :" : "THE SERVICE PROVIDER:",
+              ""
+            ),
+            createParagraph(userInfo.name || "[NOM DU PRESTATAIRE]"),
+            createParagraph(userInfo.company || ""),
+            createParagraph(`SIRET : ${userInfo.siret || "[À COMPLÉTER]"}`),
+            createParagraph(`Adresse : ${userInfo.address || "[À COMPLÉTER]"}`),
+            createParagraph(`Email : ${userInfo.email || "[À COMPLÉTER]"}`),
+            createParagraph(`Téléphone : ${userInfo.phone || "[À COMPLÉTER]"}`),
 
-${language === 'fr' ? 'ARTICLE 2 - DURÉE' : 'ARTICLE 2 - DURATION'}
-La mission débutera le [DATE DE DÉBUT] et se terminera le [DATE DE FIN].
+            createParagraph(""), // Ligne vide
 
-${language === 'fr' ? 'ARTICLE 3 - RÉMUNÉRATION' : 'ARTICLE 3 - COMPENSATION'}
-Les parties conviennent d'une rémunération de :
-- Tarif journalier : [MONTANT]€ HT/jour
-- Modalités de facturation : [MENSUELLE/À LA LIVRAISON]
-- Conditions de paiement : [30 JOURS/À RÉCEPTION]
+            createBoldParagraph(
+              language === "fr" ? "LE CLIENT :" : "THE CLIENT:",
+              ""
+            ),
+            createParagraph(clientInfo.name || "[NOM DU CLIENT]"),
+            createParagraph(clientInfo.company || "[SOCIÉTÉ DU CLIENT]"),
+            clientInfo.siret
+              ? createParagraph(`SIRET : ${clientInfo.siret}`)
+              : createParagraph(""),
+            createParagraph(
+              `Adresse : ${clientInfo.address || "[ADRESSE DU CLIENT]"}`
+            ),
 
-${language === 'fr' ? 'ARTICLE 4 - OBLIGATIONS DU PRESTATAIRE' : 'ARTICLE 4 - SERVICE PROVIDER OBLIGATIONS'}
-Le prestataire s'engage à :
-- Réaliser la mission avec diligence et professionnalisme
-- Respecter les délais convenus
-- Informer le client de tout retard ou difficulté
+            createParagraph(""), // Ligne vide
 
-${language === 'fr' ? 'ARTICLE 5 - OBLIGATIONS DU CLIENT' : 'ARTICLE 5 - CLIENT OBLIGATIONS'}
-Le client s'engage à :
-- Fournir les informations nécessaires à la réalisation de la mission
-- Régler les factures dans les délais convenus
-- Donner un accès aux ressources nécessaires
+            createBoldParagraph(
+              language === "fr"
+                ? "IL A ÉTÉ CONVENU CE QUI SUIT :"
+                : "IT HAS BEEN AGREED AS FOLLOWS:",
+              ""
+            ),
 
-${language === 'fr' ? 'ARTICLE 6 - PROPRIÉTÉ INTELLECTUELLE' : 'ARTICLE 6 - INTELLECTUAL PROPERTY'}
-[DÉFINIR LA PROPRIÉTÉ DES LIVRABLES]
+            // Articles
+            createHeading(
+              language === "fr" ? "ARTICLE 1 - OBJET" : "ARTICLE 1 - OBJECT",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph(
+              "Le prestataire s'engage à fournir les services suivants :"
+            ),
+            createParagraph("[DÉCRIRE LA MISSION EN DÉTAIL]"),
 
-${language === 'fr' ? 'ARTICLE 7 - CONFIDENTIALITÉ' : 'ARTICLE 7 - CONFIDENTIALITY'}
-Les parties s'engagent à garder confidentielles toutes informations échangées.
+            createHeading(
+              language === "fr" ? "ARTICLE 2 - DURÉE" : "ARTICLE 2 - DURATION",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph(
+              "La mission débutera le [DATE DE DÉBUT] et se terminera le [DATE DE FIN]."
+            ),
 
-${language === 'fr' ? 'ARTICLE 8 - RÉSILIATION' : 'ARTICLE 8 - TERMINATION'}
-Le contrat peut être résilié par l'une ou l'autre des parties avec un préavis de [DURÉE].
+            createHeading(
+              language === "fr"
+                ? "ARTICLE 3 - RÉMUNÉRATION"
+                : "ARTICLE 3 - COMPENSATION",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph("Les parties conviennent d'une rémunération de :"),
+            createParagraph("- Tarif journalier : [MONTANT]€ HT/jour"),
+            createParagraph(
+              "- Modalités de facturation : [MENSUELLE/À LA LIVRAISON]"
+            ),
+            createParagraph(
+              "- Conditions de paiement : [30 JOURS/À RÉCEPTION]"
+            ),
 
-${language === 'fr' ? 'ARTICLE 9 - LOI APPLICABLE' : 'ARTICLE 9 - APPLICABLE LAW'}
-Le présent contrat est soumis au droit français.
+            createHeading(
+              language === "fr"
+                ? "ARTICLE 4 - OBLIGATIONS DU PRESTATAIRE"
+                : "ARTICLE 4 - SERVICE PROVIDER OBLIGATIONS",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph("Le prestataire s'engage à :"),
+            createParagraph(
+              "- Réaliser la mission avec diligence et professionnalisme"
+            ),
+            createParagraph("- Respecter les délais convenus"),
+            createParagraph(
+              "- Informer le client de tout retard ou difficulté"
+            ),
 
-Fait en deux exemplaires à [VILLE], le ${date}
+            createHeading(
+              language === "fr"
+                ? "ARTICLE 5 - OBLIGATIONS DU CLIENT"
+                : "ARTICLE 5 - CLIENT OBLIGATIONS",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph("Le client s'engage à :"),
+            createParagraph(
+              "- Fournir les informations nécessaires à la réalisation de la mission"
+            ),
+            createParagraph("- Régler les factures dans les délais convenus"),
+            createParagraph("- Donner un accès aux ressources nécessaires"),
 
-Le Prestataire                    Le Client
-[SIGNATURE]                       [SIGNATURE]
-`;
-        break;
+            createHeading(
+              language === "fr"
+                ? "ARTICLE 6 - PROPRIÉTÉ INTELLECTUELLE"
+                : "ARTICLE 6 - INTELLECTUAL PROPERTY",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph("[DÉFINIR LA PROPRIÉTÉ DES LIVRABLES]"),
 
-      case 'cgv':
-        content = `
-CONDITIONS GÉNÉRALES DE VENTE
-${userInfo.company || userInfo.name}
+            createHeading(
+              language === "fr"
+                ? "ARTICLE 7 - CONFIDENTIALITÉ"
+                : "ARTICLE 7 - CONFIDENTIALITY",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph(
+              "Les parties s'engagent à garder confidentielles toutes informations échangées."
+            ),
 
-${language === 'fr' ? 'Article 1 - Champ d\'application' : 'Article 1 - Scope'}
-Les présentes conditions générales de vente s'appliquent à toutes les prestations de services réalisées par ${userInfo.name || '[VOTRE NOM]'}.
+            createHeading(
+              language === "fr"
+                ? "ARTICLE 8 - RÉSILIATION"
+                : "ARTICLE 8 - TERMINATION",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph(
+              "Le contrat peut être résilié par l'une ou l'autre des parties avec un préavis de [DURÉE]."
+            ),
 
-${language === 'fr' ? 'Article 2 - Commandes' : 'Article 2 - Orders'}
-Toute commande implique l'acceptation sans réserve des présentes CGV.
+            createHeading(
+              language === "fr"
+                ? "ARTICLE 9 - LOI APPLICABLE"
+                : "ARTICLE 9 - APPLICABLE LAW",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph("Le présent contrat est soumis au droit français."),
 
-${language === 'fr' ? 'Article 3 - Prix' : 'Article 3 - Prices'}
-Les prix sont exprimés en euros hors taxes (HT).
-${legalStatus === 'auto-entrepreneur' ? 'TVA non applicable, art. 293 B du CGI.' : 'TVA applicable selon le taux en vigueur.'}
+            // Signatures
+            createParagraph(""), // Ligne vide
+            createParagraph(""), // Ligne vide
+            createParagraph(`Fait en deux exemplaires à [VILLE], le ${date}`),
+            createParagraph(""), // Ligne vide
 
-${language === 'fr' ? 'Article 4 - Modalités de paiement' : 'Article 4 - Payment terms'}
-Le paiement s'effectue :
-- Par virement bancaire
-- Délai de paiement : 30 jours à réception de facture
-- En cas de retard : pénalités de 3 fois le taux d'intérêt légal
+            new Paragraph({
+              children: [
+                new TextRun({ text: "Le Prestataire", bold: true }),
+                new TextRun({
+                  text: "                                        ",
+                }),
+                new TextRun({ text: "Le Client", bold: true }),
+              ],
+              spacing: { before: 400 },
+            }),
+            createParagraph(""),
+            createParagraph(
+              "[SIGNATURE]                                        [SIGNATURE]"
+            ),
+          ],
+        },
+      ],
+    });
+  };
 
-${language === 'fr' ? 'Article 5 - Délais de livraison' : 'Article 5 - Delivery times'}
-Les délais de livraison sont indicatifs et ne sont pas garantis.
+  // Générer les CGV
+  const generateCGV = () => {
+    const date = new Date().toLocaleDateString(
+      language === "fr" ? "fr-FR" : "en-US",
+      {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }
+    );
 
-${language === 'fr' ? 'Article 6 - Propriété intellectuelle' : 'Article 6 - Intellectual property'}
-Les livrables restent la propriété du prestataire jusqu'au paiement intégral.
+    return new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            // Titre
+            new Paragraph({
+              text: "CONDITIONS GÉNÉRALES DE VENTE",
+              heading: HeadingLevel.TITLE,
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 0, after: 200 },
+            }),
+            new Paragraph({
+              text: userInfo.company || userInfo.name || "[VOTRE ENTREPRISE]",
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 600 },
+            }),
 
-${language === 'fr' ? 'Article 7 - Responsabilité' : 'Article 7 - Liability'}
-Le prestataire ne peut être tenu responsable que de ses fautes prouvées.
+            // Articles
+            createHeading(
+              "Article 1 - Champ d'application",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph(
+              `Les présentes conditions générales de vente s'appliquent à toutes les prestations de services réalisées par ${
+                userInfo.name || "[VOTRE NOM]"
+              }.`
+            ),
 
-${language === 'fr' ? 'Article 8 - Force majeure' : 'Article 8 - Force majeure'}
-Le prestataire ne pourra être tenu responsable en cas de force majeure.
+            createHeading("Article 2 - Commandes", HeadingLevel.HEADING_2),
+            createParagraph(
+              "Toute commande implique l'acceptation sans réserve des présentes CGV."
+            ),
 
-${language === 'fr' ? 'Article 9 - Litiges' : 'Article 9 - Disputes'}
-En cas de litige, les parties s'efforceront de trouver une solution amiable.
-À défaut, compétence exclusive est attribuée aux tribunaux de [VILLE].
+            createHeading("Article 3 - Prix", HeadingLevel.HEADING_2),
+            createParagraph("Les prix sont exprimés en euros hors taxes (HT)."),
+            createParagraph(
+              legalStatus === "auto-entrepreneur"
+                ? "TVA non applicable, art. 293 B du CGI."
+                : "TVA applicable selon le taux en vigueur."
+            ),
 
-${language === 'fr' ? 'Coordonnées :' : 'Contact:'}
-${userInfo.name}
-${userInfo.company || ''}
-${userInfo.siret ? `SIRET: ${userInfo.siret}` : ''}
-${userInfo.address}
-${userInfo.email}
-${userInfo.phone}
+            createHeading(
+              "Article 4 - Modalités de paiement",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph("Le paiement s'effectue :"),
+            createParagraph("- Par virement bancaire"),
+            createParagraph(
+              "- Délai de paiement : 30 jours à réception de facture"
+            ),
+            createParagraph(
+              "- En cas de retard : pénalités de 3 fois le taux d'intérêt légal"
+            ),
 
-Dernière mise à jour : ${date}
-`;
-        break;
+            createHeading(
+              "Article 5 - Délais de livraison",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph(
+              "Les délais de livraison sont indicatifs et ne sont pas garantis."
+            ),
 
-      case 'mentions':
-        content = `
-MENTIONS LÉGALES
+            createHeading(
+              "Article 6 - Propriété intellectuelle",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph(
+              "Les livrables restent la propriété du prestataire jusqu'au paiement intégral."
+            ),
 
-${language === 'fr' ? 'Éditeur du site' : 'Website publisher'}
-Nom : ${userInfo.name || '[VOTRE NOM]'}
-${userInfo.company ? `Entreprise : ${userInfo.company}` : ''}
-SIRET : ${userInfo.siret || '[VOTRE SIRET]'}
-Adresse : ${userInfo.address || '[VOTRE ADRESSE]'}
-Email : ${userInfo.email || '[VOTRE EMAIL]'}
-Téléphone : ${userInfo.phone || '[VOTRE TÉLÉPHONE]'}
+            createHeading("Article 7 - Responsabilité", HeadingLevel.HEADING_2),
+            createParagraph(
+              "Le prestataire ne peut être tenu responsable que de ses fautes prouvées."
+            ),
 
-${legalStatus === 'auto-entrepreneur' ? 'Auto-entrepreneur - Immatriculation à l\'URSSAF' : ''}
-${legalStatus === 'sasu' ? 'SASU - Immatriculation au RCS' : ''}
-${legalStatus === 'eurl' ? 'EURL - Immatriculation au RCS' : ''}
+            createHeading("Article 8 - Force majeure", HeadingLevel.HEADING_2),
+            createParagraph(
+              "Le prestataire ne pourra être tenu responsable en cas de force majeure."
+            ),
 
-${language === 'fr' ? 'Directeur de publication' : 'Publication director'}
-${userInfo.name || '[VOTRE NOM]'}
+            createHeading("Article 9 - Litiges", HeadingLevel.HEADING_2),
+            createParagraph(
+              "En cas de litige, les parties s'efforceront de trouver une solution amiable."
+            ),
+            createParagraph(
+              "À défaut, compétence exclusive est attribuée aux tribunaux de [VILLE]."
+            ),
 
-${language === 'fr' ? 'Hébergeur' : 'Host'}
-${language === 'fr' ? '[NOM DE L\'HÉBERGEUR]' : '[HOST NAME]'}
-[ADRESSE DE L'HÉBERGEUR]
-[TÉLÉPHONE DE L'HÉBERGEUR]
+            // Coordonnées
+            createParagraph(""), // Ligne vide
+            createHeading("Coordonnées :", HeadingLevel.HEADING_2),
+            createParagraph(userInfo.name || "[VOTRE NOM]"),
+            createParagraph(userInfo.company || ""),
+            createParagraph(userInfo.siret ? `SIRET: ${userInfo.siret}` : ""),
+            createParagraph(userInfo.address || "[VOTRE ADRESSE]"),
+            createParagraph(userInfo.email || "[VOTRE EMAIL]"),
+            createParagraph(userInfo.phone || "[VOTRE TÉLÉPHONE]"),
 
-${language === 'fr' ? 'Propriété intellectuelle' : 'Intellectual property'}
-L'ensemble du contenu de ce site (textes, images, vidéos) est protégé par le droit d'auteur.
-Toute reproduction est interdite sans autorisation écrite.
+            createParagraph(""), // Ligne vide
+            createParagraph(`Dernière mise à jour : ${date}`),
+          ],
+        },
+      ],
+    });
+  };
 
-${language === 'fr' ? 'Données personnelles (RGPD)' : 'Personal data (GDPR)'}
-Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données.
-Contact : ${userInfo.email || '[VOTRE EMAIL]'}
+  // Générer les mentions légales
+  const generateMentions = () => {
+    const date = new Date().toLocaleDateString(
+      language === "fr" ? "fr-FR" : "en-US",
+      {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }
+    );
 
-${language === 'fr' ? 'Cookies' : 'Cookies'}
-Ce site utilise des cookies pour améliorer l'expérience utilisateur.
-Vous pouvez les désactiver dans les paramètres de votre navigateur.
+    return new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            // Titre
+            new Paragraph({
+              text: "MENTIONS LÉGALES",
+              heading: HeadingLevel.TITLE,
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 0, after: 600 },
+            }),
 
-Dernière mise à jour : ${date}
-`;
-        break;
+            // Sections
+            createHeading("Éditeur du site", HeadingLevel.HEADING_2),
+            createParagraph(`Nom : ${userInfo.name || "[VOTRE NOM]"}`),
+            userInfo.company
+              ? createParagraph(`Entreprise : ${userInfo.company}`)
+              : createParagraph(""),
+            createParagraph(`SIRET : ${userInfo.siret || "[VOTRE SIRET]"}`),
+            createParagraph(
+              `Adresse : ${userInfo.address || "[VOTRE ADRESSE]"}`
+            ),
+            createParagraph(`Email : ${userInfo.email || "[VOTRE EMAIL]"}`),
+            createParagraph(
+              `Téléphone : ${userInfo.phone || "[VOTRE TÉLÉPHONE]"}`
+            ),
+            createParagraph(""),
+            legalStatus === "auto-entrepreneur"
+              ? createParagraph(
+                  "Auto-entrepreneur - Immatriculation à l'URSSAF"
+                )
+              : createParagraph(""),
+            legalStatus === "sasu"
+              ? createParagraph("SASU - Immatriculation au RCS")
+              : createParagraph(""),
+            legalStatus === "eurl"
+              ? createParagraph("EURL - Immatriculation au RCS")
+              : createParagraph(""),
 
-      case 'nda':
-        content = `
-ACCORD DE CONFIDENTIALITÉ (NDA)
-${language === 'fr' ? 'ACCORD DE NON-DIVULGATION' : 'NON-DISCLOSURE AGREEMENT'}
+            createHeading("Directeur de publication", HeadingLevel.HEADING_2),
+            createParagraph(userInfo.name || "[VOTRE NOM]"),
 
-Entre les soussignés :
+            createHeading("Hébergeur", HeadingLevel.HEADING_2),
+            createParagraph("[NOM DE L'HÉBERGEUR]"),
+            createParagraph("[ADRESSE DE L'HÉBERGEUR]"),
+            createParagraph("[TÉLÉPHONE DE L'HÉBERGEUR]"),
 
-PARTIE 1 :
-${userInfo.name}
-${userInfo.company || ''}
-Adresse : ${userInfo.address || '[À COMPLÉTER]'}
+            createHeading("Propriété intellectuelle", HeadingLevel.HEADING_2),
+            createParagraph(
+              "L'ensemble du contenu de ce site (textes, images, vidéos) est protégé par le droit d'auteur."
+            ),
+            createParagraph(
+              "Toute reproduction est interdite sans autorisation écrite."
+            ),
 
-PARTIE 2 :
-${clientInfo.name || '[NOM DE LA PARTIE 2]'}
-${clientInfo.company || '[SOCIÉTÉ]'}
-Adresse : ${clientInfo.address || '[ADRESSE]'}
+            createHeading(
+              "Données personnelles (RGPD)",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph(
+              "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données."
+            ),
+            createParagraph(`Contact : ${userInfo.email || "[VOTRE EMAIL]"}`),
 
-${language === 'fr' ? 'IL A ÉTÉ CONVENU CE QUI SUIT :' : 'IT HAS BEEN AGREED AS FOLLOWS:'}
+            createHeading("Cookies", HeadingLevel.HEADING_2),
+            createParagraph(
+              "Ce site utilise des cookies pour améliorer l'expérience utilisateur."
+            ),
+            createParagraph(
+              "Vous pouvez les désactiver dans les paramètres de votre navigateur."
+            ),
 
-${language === 'fr' ? 'Article 1 - Définitions' : 'Article 1 - Definitions'}
-"Informations Confidentielles" désigne toute information, de quelque nature que ce soit, 
-échangée entre les parties dans le cadre de leur collaboration.
+            createParagraph(""), // Ligne vide
+            createParagraph(`Dernière mise à jour : ${date}`),
+          ],
+        },
+      ],
+    });
+  };
 
-${language === 'fr' ? 'Article 2 - Engagement de confidentialité' : 'Article 2 - Confidentiality commitment'}
-Les parties s'engagent à :
-- Ne pas divulguer les Informations Confidentielles à des tiers
-- Utiliser ces informations uniquement dans le cadre de la mission
-- Protéger ces informations avec le même soin que leurs propres informations confidentielles
+  // Générer le NDA
+  const generateNDA = () => {
+    const date = new Date().toLocaleDateString(
+      language === "fr" ? "fr-FR" : "en-US",
+      {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }
+    );
 
-${language === 'fr' ? 'Article 3 - Exceptions' : 'Article 3 - Exceptions'}
-Ne sont pas considérées comme confidentielles les informations :
-- Déjà publiques au moment de la divulgation
-- Obtenues légalement d'un tiers
-- Développées indépendamment par la partie réceptrice
+    return new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            // Titre
+            new Paragraph({
+              text: "ACCORD DE CONFIDENTIALITÉ (NDA)",
+              heading: HeadingLevel.TITLE,
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 0, after: 200 },
+            }),
+            new Paragraph({
+              text:
+                language === "fr"
+                  ? "ACCORD DE NON-DIVULGATION"
+                  : "NON-DISCLOSURE AGREEMENT",
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 600 },
+            }),
 
-${language === 'fr' ? 'Article 4 - Durée' : 'Article 4 - Duration'}
-Le présent accord prend effet à compter de sa signature et reste en vigueur pendant 
-une durée de [DURÉE] à compter de la fin de la collaboration.
+            // Parties
+            createHeading("Entre les soussignés :", HeadingLevel.HEADING_1),
 
-${language === 'fr' ? 'Article 5 - Sanctions' : 'Article 5 - Sanctions'}
-En cas de violation de cet accord, la partie fautive s'expose à des dommages et intérêts.
+            createBoldParagraph("PARTIE 1 :", ""),
+            createParagraph(userInfo.name || "[VOTRE NOM]"),
+            createParagraph(userInfo.company || ""),
+            createParagraph(`Adresse : ${userInfo.address || "[À COMPLÉTER]"}`),
 
-${language === 'fr' ? 'Article 6 - Loi applicable' : 'Article 6 - Applicable law'}
-Le présent accord est régi par le droit français.
+            createParagraph(""), // Ligne vide
 
-Fait en deux exemplaires à [VILLE], le ${date}
+            createBoldParagraph("PARTIE 2 :", ""),
+            createParagraph(clientInfo.name || "[NOM DE LA PARTIE 2]"),
+            createParagraph(clientInfo.company || "[SOCIÉTÉ]"),
+            createParagraph(`Adresse : ${clientInfo.address || "[ADRESSE]"}`),
 
-Partie 1                          Partie 2
-[SIGNATURE]                       [SIGNATURE]
-`;
-        break;
+            createParagraph(""), // Ligne vide
 
-      default:
-        content = 'Template non trouvé';
+            createBoldParagraph("IL A ÉTÉ CONVENU CE QUI SUIT :", ""),
+
+            // Articles
+            createHeading("Article 1 - Définitions", HeadingLevel.HEADING_2),
+            createParagraph(
+              '"Informations Confidentielles" désigne toute information, de quelque nature que ce soit, échangée entre les parties dans le cadre de leur collaboration.'
+            ),
+
+            createHeading(
+              "Article 2 - Engagement de confidentialité",
+              HeadingLevel.HEADING_2
+            ),
+            createParagraph("Les parties s'engagent à :"),
+            createParagraph(
+              "- Ne pas divulguer les Informations Confidentielles à des tiers"
+            ),
+            createParagraph(
+              "- Utiliser ces informations uniquement dans le cadre de la mission"
+            ),
+            createParagraph(
+              "- Protéger ces informations avec le même soin que leurs propres informations confidentielles"
+            ),
+
+            createHeading("Article 3 - Exceptions", HeadingLevel.HEADING_2),
+            createParagraph(
+              "Ne sont pas considérées comme confidentielles les informations :"
+            ),
+            createParagraph("- Déjà publiques au moment de la divulgation"),
+            createParagraph("- Obtenues légalement d'un tiers"),
+            createParagraph(
+              "- Développées indépendamment par la partie réceptrice"
+            ),
+
+            createHeading("Article 4 - Durée", HeadingLevel.HEADING_2),
+            createParagraph(
+              "Le présent accord prend effet à compter de sa signature et reste en vigueur pendant une durée de [DURÉE] à compter de la fin de la collaboration."
+            ),
+
+            createHeading("Article 5 - Sanctions", HeadingLevel.HEADING_2),
+            createParagraph(
+              "En cas de violation de cet accord, la partie fautive s'expose à des dommages et intérêts."
+            ),
+
+            createHeading("Article 6 - Loi applicable", HeadingLevel.HEADING_2),
+            createParagraph(
+              "Le présent accord est régi par le droit français."
+            ),
+
+            // Signatures
+            createParagraph(""), // Ligne vide
+            createParagraph(""), // Ligne vide
+            createParagraph(`Fait en deux exemplaires à [VILLE], le ${date}`),
+            createParagraph(""), // Ligne vide
+
+            new Paragraph({
+              children: [
+                new TextRun({ text: "Partie 1", bold: true }),
+                new TextRun({
+                  text: "                                        ",
+                }),
+                new TextRun({ text: "Partie 2", bold: true }),
+              ],
+              spacing: { before: 400 },
+            }),
+            createParagraph(""),
+            createParagraph(
+              "[SIGNATURE]                                        [SIGNATURE]"
+            ),
+          ],
+        },
+      ],
+    });
+  };
+
+  // Générer et télécharger le document
+  const generateContract = async (templateType) => {
+    setGenerating(true);
+
+    try {
+      let doc;
+      const templateNames = {
+        mission: "Contrat_Mission",
+        cgv: "CGV",
+        mentions: "Mentions_Legales",
+        nda: "NDA",
+      };
+
+      // Générer le document selon le type
+      switch (templateType) {
+        case "mission":
+          doc = generateMissionContract();
+          break;
+        case "cgv":
+          doc = generateCGV();
+          break;
+        case "mentions":
+          doc = generateMentions();
+          break;
+        case "nda":
+          doc = generateNDA();
+          break;
+        default:
+          throw new Error("Type de template inconnu");
+      }
+
+      // Générer le blob et télécharger
+      const blob = await Packer.toBlob(doc);
+      const date = new Date().toISOString().split("T")[0];
+      saveAs(blob, `${templateNames[templateType]}_${date}.docx`);
+    } catch (error) {
+      console.error("Erreur lors de la génération du document:", error);
+      alert(
+        language === "fr"
+          ? "Erreur lors de la génération du document"
+          : "Error generating document"
+      );
+    } finally {
+      setGenerating(false);
     }
-
-    // Télécharger le fichier
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    
-    const templateNames = {
-      mission: 'Contrat_Mission',
-      cgv: 'CGV',
-      mentions: 'Mentions_Legales',
-      nda: 'NDA'
-    };
-
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${templateNames[templateType]}_${date.replace(/\s/g, '_')}.txt`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   return (
@@ -359,9 +743,7 @@ Partie 1                          Partie 2
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             {t.title}
           </h3>
-          <p className="text-gray-600 dark:text-gray-400">
-            {t.subtitle}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">{t.subtitle}</p>
         </div>
       </div>
 
@@ -391,7 +773,9 @@ Partie 1                          Partie 2
                 <input
                   type="text"
                   value={userInfo.name}
-                  onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, name: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   placeholder="Jean Dupont"
                 />
@@ -404,7 +788,9 @@ Partie 1                          Partie 2
                 <input
                   type="text"
                   value={userInfo.company}
-                  onChange={(e) => setUserInfo({...userInfo, company: e.target.value})}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, company: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   placeholder="Ma Société SARL"
                 />
@@ -417,7 +803,9 @@ Partie 1                          Partie 2
                 <input
                   type="text"
                   value={userInfo.siret}
-                  onChange={(e) => setUserInfo({...userInfo, siret: e.target.value})}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, siret: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   placeholder="123 456 789 00012"
                 />
@@ -430,7 +818,9 @@ Partie 1                          Partie 2
                 <input
                   type="email"
                   value={userInfo.email}
-                  onChange={(e) => setUserInfo({...userInfo, email: e.target.value})}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, email: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   placeholder="contact@exemple.fr"
                 />
@@ -443,7 +833,9 @@ Partie 1                          Partie 2
                 <input
                   type="text"
                   value={userInfo.address}
-                  onChange={(e) => setUserInfo({...userInfo, address: e.target.value})}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, address: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   placeholder="123 rue Example, 75001 Paris"
                 />
@@ -456,7 +848,9 @@ Partie 1                          Partie 2
                 <input
                   type="tel"
                   value={userInfo.phone}
-                  onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, phone: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   placeholder="+33 6 12 34 56 78"
                 />
@@ -465,10 +859,20 @@ Partie 1                          Partie 2
 
             <button
               onClick={() => generateContract(selectedTemplate)}
-              className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              disabled={generating}
+              className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Download className="w-5 h-5" />
-              {t.generate}
+              {generating ? (
+                <>
+                  <Download className="w-5 h-5 animate-pulse" />
+                  {t.generating}
+                </>
+              ) : (
+                <>
+                  <Download className="w-5 h-5" />
+                  {t.generate}
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -503,7 +907,8 @@ Partie 1                          Partie 2
                     e.stopPropagation();
                     generateContract(key);
                   }}
-                  className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                  disabled={generating}
+                  className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Download className="w-4 h-4" />
                   {t.download}

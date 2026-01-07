@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { GitCompare, TrendingUp, X, Plus, ArrowRight } from 'lucide-react';
 
 const ProfessionComparison = ({ currentFormData, onCompare, language = 'fr' }) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Download, FileSpreadsheet, FileText, Check } from 'lucide-react';
 
 const ExportData = ({ results, formData, language = 'fr' }) => {

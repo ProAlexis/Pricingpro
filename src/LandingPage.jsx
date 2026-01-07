@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   TrendingUp,
   DollarSign,
@@ -11,6 +10,7 @@ import {
   BarChart3,
   Shield,
   Zap,
+  FileText,
 } from "lucide-react";
 
 const LandingPage = ({ onStartCalculator, language }) => {
@@ -18,11 +18,11 @@ const LandingPage = ({ onStartCalculator, language }) => {
     fr: {
       hero: {
         title: "Découvrez votre vraie valeur",
-        subtitle: "Calculateur de tarifs intelligent",
+        subtitle: "Pilotez votre activité freelance de A à Z",
         description:
-          "Basé sur 1000+ tarifs réels du marché, notre outil vous dit exactement combien facturer selon votre profil.",
-        cta: "Calculer mes tarifs gratuitement",
-        badge: "✨ 100% Gratuit · Données réelles · Sans inscription",
+          "Accédez à 1000+ tarifs réels, créez vos devis personnalisés et téléchargez vos contrats juridiques en quelques clics.",
+        cta: "Estimer mon tarif et créer mon devis",
+        badge: "✨ 100% Gratuit · Devis & Contrats inclus · Sans inscription",
       },
       stats: {
         title: "Des données qui font la différence",
@@ -33,13 +33,24 @@ const LandingPage = ({ onStartCalculator, language }) => {
       },
       features: {
         title: "Pourquoi PricingPro ?",
-        subtitle: "L'outil le plus complet pour fixer vos tarifs",
+        subtitle: "L'outil tout-en-un pour vos tarifs, devis et contrats",
         list: [
           {
             icon: "database",
             title: "Données Réelles",
+            description: "1000+ tarifs scrapés en temps réel",
+          },
+          {
+            icon: "fileText",
+            title: "Devis & Contrats Word",
             description:
-              "1000+ tarifs scrapés en temps réel depuis Malt, Upwork et autres plateformes freelance",
+              "Générez instantanément des contrats de mission et des CGV personnalisés au format Word.",
+          },
+          {
+            icon: "checkCircle",
+            title: "Gestion Administrative",
+            description:
+              "Éditez vos devis pro avec votre logo et vos infos légales, prêt à être envoyés à vos clients.",
           },
           {
             icon: "globe",
@@ -90,9 +101,9 @@ const LandingPage = ({ onStartCalculator, language }) => {
           },
           {
             number: "3",
-            title: "Vos Résultats",
+            title: "Outils & Documents",
             description:
-              "Obtenez votre tarif recommandé + comparaison au marché",
+              "Accédez à votre tarif et générez vos devis et contrats personnalisés immédiatement",
           },
         ],
       },
@@ -144,11 +155,12 @@ const LandingPage = ({ onStartCalculator, language }) => {
     en: {
       hero: {
         title: "Discover Your True Worth",
-        subtitle: "Smart Pricing Calculator",
+        subtitle: "Manage your freelance business from A to Z",
         description:
-          "Based on 1000+ real market rates, our AI tool tells you exactly what to charge based on your profile.",
-        cta: "Calculate my rates for free",
-        badge: "✨ 100% Free · Real Data · No signup required",
+          "Access 1000+ real market rates, create professional quotes, and download legal contract templates in just a few clicks.",
+        cta: "Estimate my rate & create a quote",
+        badge:
+          "✨ 100% Free · Quotes & Contracts Included · No Signup Required",
       },
       stats: {
         title: "Data that makes a difference",
@@ -159,13 +171,24 @@ const LandingPage = ({ onStartCalculator, language }) => {
       },
       features: {
         title: "Why PricingPro?",
-        subtitle: "The most complete tool to set your rates",
+        subtitle: "The all-in-one tool for your rates, quotes, and contracts",
         list: [
           {
             icon: "database",
             title: "Real Data",
+            description: "1000+ real-world rates scraped in real-time",
+          },
+          {
+            icon: "fileText",
+            title: "Word Quotes & Contracts",
             description:
-              "1000+ rates scraped in real-time from Malt, Upwork and other freelance platforms",
+              "Instantly generate customized mission contracts and T&Cs in Word format.",
+          },
+          {
+            icon: "checkCircle",
+            title: "Admin Management",
+            description:
+              "Edit professional quotes with your logo and legal info, ready to send to your clients.",
           },
           {
             icon: "globe",
@@ -177,19 +200,19 @@ const LandingPage = ({ onStartCalculator, language }) => {
             icon: "trending",
             title: "3 Experience Levels",
             description:
-              "Junior, Mid-level, Senior - Precise recommendations based on your level",
+              "Junior, Mid-level, Senior - Precise recommendations based on your expertise level",
           },
           {
             icon: "shield",
             title: "100% Free",
             description:
-              "No credit card, no signup. Access all data immediately",
+              "No credit card, no signup required. Access all market data immediately",
           },
           {
             icon: "zap",
-            title: "Instant",
+            title: "Instant Results",
             description:
-              "Results in less than 3 seconds. Compare yourself to the market in real-time",
+              "Get results in under 3 seconds. Compare yourself to the market in real-time",
           },
           {
             icon: "chart",
@@ -215,8 +238,9 @@ const LandingPage = ({ onStartCalculator, language }) => {
           },
           {
             number: "3",
-            title: "Your Results",
-            description: "Get your recommended rate + market comparison",
+            title: "Results & Tools",
+            description:
+              "Get your rate and instantly generate your professional quotes and contracts",
           },
         ],
       },
@@ -275,8 +299,10 @@ const LandingPage = ({ onStartCalculator, language }) => {
       shield: Shield,
       zap: Zap,
       chart: BarChart3,
+      fileText: FileText,
+      checkCircle: CheckCircle,
     };
-    const IconComponent = icons[iconName];
+    const IconComponent = icons[iconName] || Database;
     return <IconComponent className="w-6 h-6" />;
   };
 
@@ -540,7 +566,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
                 {link}
               </a>
             ))}
-            {/* AJOUTEZ CE LIEN */}
             <a
               href="#sources"
               onClick={() => (window.location.hash = "#sources")}
