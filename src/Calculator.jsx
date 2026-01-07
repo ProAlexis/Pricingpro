@@ -26,6 +26,10 @@ import CalculationHistory, {
 } from "./components/CalculationHistory";
 import ShareButton from "./components/ShareButton";
 import Tooltip, { TooltipContent } from "./components/Tooltip";
+import AnnualIncomeSimulator from "./components/AnnualIncomeSimulator";
+import ExportData from "./components/ExportData";
+import ProfessionComparison from "./components/ProfessionComparison";
+import ContractTemplates from "./components/ContractTemplates";
 
 // Composant pour afficher les sources de données
 const DataSourceBadge = ({ sourceCount, sources }) => {
@@ -563,6 +567,38 @@ const Calculator = ({ onBackToHome, language }) => {
     return insights;
   };
 
+  const calculateRateForProfession = (professionValue) => {
+    const profession = professions.find((p) => p.value === professionValue);
+    if (!profession) return null;
+
+    const baseRate = profession.base;
+    const experienceMultiplier = 1 + parseInt(formData.experience || 0) * 0.08;
+    const skillsBonus = formData.skills.length * 30;
+
+    const locationMultipliers = {
+      france: 1,
+      portugal: 0.7,
+      uk: 1.3,
+      germany: 1.2,
+      usa: 1.5,
+    };
+
+    const locationMultiplier = locationMultipliers[formData.location] || 1;
+    const dailyRate = Math.round(
+      (baseRate * experienceMultiplier + skillsBonus) * locationMultiplier
+    );
+    const hourlyRate = Math.round(dailyRate / 8);
+    const monthlyRate = Math.round(dailyRate * 20);
+
+    return {
+      profession: profession.label[language],
+      professionValue,
+      daily: dailyRate,
+      hourly: hourlyRate,
+      monthly: monthlyRate,
+    };
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Main Content */}
@@ -1080,6 +1116,13 @@ const Calculator = ({ onBackToHome, language }) => {
               language={language}
             />
 
+            {/* Simulateur de revenus annuels */}
+            <AnnualIncomeSimulator
+              dailyRate={results.daily}
+              legalStatus={legalStatus}
+              language={language}
+            />
+
             {/* Insights */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-8">
               <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
@@ -1105,6 +1148,27 @@ const Calculator = ({ onBackToHome, language }) => {
             <RateTrendChart
               formData={formData}
               results={results}
+              language={language}
+            />
+
+            {/* Export CSV/Excel */}
+            <ExportData
+              results={results}
+              formData={formData}
+              language={language}
+            />
+
+            {/* Comparaison multi-professions */}
+            <ProfessionComparison
+              currentFormData={formData}
+              onCompare={calculateRateForProfession} // Fonction à créer (voir ci-dessous)
+              language={language}
+            />
+
+            {/* Templates de contrats */}
+            <ContractTemplates
+              formData={formData}
+              legalStatus={legalStatus}
               language={language}
             />
 
