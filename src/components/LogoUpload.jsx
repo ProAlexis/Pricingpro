@@ -1,24 +1,21 @@
-import React, { useState } from 'react';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Image as ImageIcon } from "lucide-react";
 
-const LogoUpload = ({ logo, setLogo, language = 'fr' }) => {
-  const [preview, setPreview] = useState(null);
-
+const LogoUpload = ({ logo, setLogo, language = "fr" }) => {
   const t = {
     fr: {
-      title: 'Logo pour le devis (optionnel)',
-      subtitle: 'Ajoutez votre logo pour personnaliser le devis',
-      upload: 'Choisir un logo',
-      remove: 'Supprimer',
-      formats: 'PNG, JPG (max 2MB)'
+      title: "Logo pour le devis (optionnel)",
+      subtitle: "Ajoutez votre logo pour personnaliser le devis",
+      upload: "Choisir un logo",
+      remove: "Supprimer",
+      formats: "PNG, JPG (max 2MB)",
     },
     en: {
-      title: 'Logo for the quote (optional)',
-      subtitle: 'Add your logo to personalize the quote',
-      upload: 'Choose a logo',
-      remove: 'Remove',
-      formats: 'PNG, JPG (max 2MB)'
-    }
+      title: "Logo for the quote (optional)",
+      subtitle: "Add your logo to personalize the quote",
+      upload: "Choose a logo",
+      remove: "Remove",
+      formats: "PNG, JPG (max 2MB)",
+    },
   }[language];
 
   const handleFileChange = (e) => {
@@ -27,13 +24,17 @@ const LogoUpload = ({ logo, setLogo, language = 'fr' }) => {
 
     // Vérifier la taille (2MB max)
     if (file.size > 2 * 1024 * 1024) {
-      alert(language === 'fr' ? 'Le fichier est trop volumineux (max 2MB)' : 'File is too large (max 2MB)');
+      alert(
+        language === "fr"
+          ? "Le fichier est trop volumineux (max 2MB)"
+          : "File is too large (max 2MB)"
+      );
       return;
     }
 
     // Vérifier le format
-    if (!file.type.startsWith('image/')) {
-      alert(language === 'fr' ? 'Format non supporté' : 'Unsupported format');
+    if (!file.type.startsWith("image/")) {
+      alert(language === "fr" ? "Format non supporté" : "Unsupported format");
       return;
     }
 
@@ -42,14 +43,12 @@ const LogoUpload = ({ logo, setLogo, language = 'fr' }) => {
     reader.onloadend = () => {
       const base64 = reader.result;
       setLogo(base64);
-      setPreview(base64);
     };
     reader.readAsDataURL(file);
   };
 
   const handleRemove = () => {
     setLogo(null);
-    setPreview(null);
   };
 
   return (
@@ -58,7 +57,7 @@ const LogoUpload = ({ logo, setLogo, language = 'fr' }) => {
         <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center flex-shrink-0">
           <ImageIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
         </div>
-        
+
         <div className="flex-1">
           <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
             {t.title}
@@ -67,11 +66,11 @@ const LogoUpload = ({ logo, setLogo, language = 'fr' }) => {
             {t.subtitle}
           </p>
 
-          {preview ? (
+          {logo ? (
             <div className="flex items-center gap-3">
-              <img 
-                src={preview} 
-                alt="Logo preview" 
+              <img
+                src={logo}
+                alt="Logo preview"
                 className="w-16 h-16 object-contain bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600"
               />
               <button
@@ -94,7 +93,7 @@ const LogoUpload = ({ logo, setLogo, language = 'fr' }) => {
               />
             </label>
           )}
-          
+
           <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
             {t.formats}
           </p>

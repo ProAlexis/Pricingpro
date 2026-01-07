@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { History, Trash2, TrendingUp, Calendar, X, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from "react";
+import {
+  History,
+  Trash2,
+  TrendingUp,
+  Calendar,
+  X,
+  ArrowRight,
+} from "lucide-react";
 
 const CalculationHistory = ({ language, onLoadCalculation }) => {
   const [history, setHistory] = useState([]);
@@ -19,7 +26,7 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
       profession: "Profession",
       location: "Localisation",
       experience: "Expérience",
-      calculations: "calculs sauvegardés"
+      calculations: "calculs sauvegardés",
     },
     en: {
       title: "Calculation History",
@@ -34,8 +41,8 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
       profession: "Profession",
       location: "Location",
       experience: "Experience",
-      calculations: "saved calculations"
-    }
+      calculations: "saved calculations",
+    },
   };
 
   const t = translations[language];
@@ -47,13 +54,13 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
 
   const loadHistory = () => {
     try {
-      const savedHistory = localStorage.getItem('pricingpro_history');
+      const savedHistory = localStorage.getItem("pricingpro_history");
       if (savedHistory) {
         const parsed = JSON.parse(savedHistory);
         setHistory(parsed);
       }
     } catch (error) {
-      console.error('Error loading history:', error);
+      console.error("Error loading history:", error);
     }
   };
 
@@ -64,81 +71,90 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
         id: Date.now(),
         date: new Date().toISOString(),
         results,
-        formData
+        formData,
       };
 
-      const savedHistory = localStorage.getItem('pricingpro_history');
+      const savedHistory = localStorage.getItem("pricingpro_history");
       let currentHistory = savedHistory ? JSON.parse(savedHistory) : [];
-      
+
       // Garder seulement les 10 derniers calculs
       currentHistory = [newEntry, ...currentHistory].slice(0, 10);
-      
-      localStorage.setItem('pricingpro_history', JSON.stringify(currentHistory));
+
+      localStorage.setItem(
+        "pricingpro_history",
+        JSON.stringify(currentHistory)
+      );
       setHistory(currentHistory);
     } catch (error) {
-      console.error('Error saving calculation:', error);
+      console.error("Error saving calculation:", error);
     }
   };
 
   const deleteEntry = (id) => {
     try {
-      const updatedHistory = history.filter(entry => entry.id !== id);
-      localStorage.setItem('pricingpro_history', JSON.stringify(updatedHistory));
+      const updatedHistory = history.filter((entry) => entry.id !== id);
+      localStorage.setItem(
+        "pricingpro_history",
+        JSON.stringify(updatedHistory)
+      );
       setHistory(updatedHistory);
     } catch (error) {
-      console.error('Error deleting entry:', error);
+      console.error("Error deleting entry:", error);
     }
   };
 
   const clearAllHistory = () => {
     if (window.confirm(t.confirmClear)) {
       try {
-        localStorage.removeItem('pricingpro_history');
+        localStorage.removeItem("pricingpro_history");
         setHistory([]);
       } catch (error) {
-        console.error('Error clearing history:', error);
+        console.error("Error clearing history:", error);
       }
     }
   };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
-      day: 'numeric',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleDateString(language === "fr" ? "fr-FR" : "en-US", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getProfessionLabel = (value) => {
     const professions = {
-      'web-dev': { fr: 'Développeur Web', en: 'Web Developer' },
-      'mobile-dev': { fr: 'Développeur Mobile', en: 'Mobile Developer' },
-      'fullstack-dev': { fr: 'Développeur Full-Stack', en: 'Full-Stack Developer' },
-      'backend-dev': { fr: 'Développeur Backend', en: 'Backend Developer' },
-      'data-analyst': { fr: 'Data Analyst', en: 'Data Analyst' },
-      'data-scientist': { fr: 'Data Scientist', en: 'Data Scientist' },
-      'devops': { fr: 'DevOps Engineer', en: 'DevOps Engineer' },
-      'ui-designer': { fr: 'Designer UI/UX', en: 'UI/UX Designer' },
-      'graphic-designer': { fr: 'Graphiste', en: 'Graphic Designer' },
-      'copywriter': { fr: 'Rédacteur', en: 'Copywriter' },
-      'marketing': { fr: 'Consultant Marketing', en: 'Marketing Consultant' },
-      'seo': { fr: 'Expert SEO', en: 'SEO Expert' },
-      'project-manager': { fr: 'Chef de Projet', en: 'Project Manager' },
-      'product-manager': { fr: 'Product Manager', en: 'Product Manager' },
-      'consultant': { fr: 'Consultant Business', en: 'Business Consultant' }
+      "web-dev": { fr: "Développeur Web", en: "Web Developer" },
+      "mobile-dev": { fr: "Développeur Mobile", en: "Mobile Developer" },
+      "fullstack-dev": {
+        fr: "Développeur Full-Stack",
+        en: "Full-Stack Developer",
+      },
+      "backend-dev": { fr: "Développeur Backend", en: "Backend Developer" },
+      "data-analyst": { fr: "Data Analyst", en: "Data Analyst" },
+      "data-scientist": { fr: "Data Scientist", en: "Data Scientist" },
+      devops: { fr: "DevOps Engineer", en: "DevOps Engineer" },
+      "ui-designer": { fr: "Designer UI/UX", en: "UI/UX Designer" },
+      "graphic-designer": { fr: "Graphiste", en: "Graphic Designer" },
+      copywriter: { fr: "Rédacteur", en: "Copywriter" },
+      marketing: { fr: "Consultant Marketing", en: "Marketing Consultant" },
+      seo: { fr: "Expert SEO", en: "SEO Expert" },
+      "project-manager": { fr: "Chef de Projet", en: "Project Manager" },
+      "product-manager": { fr: "Product Manager", en: "Product Manager" },
+      consultant: { fr: "Consultant Business", en: "Business Consultant" },
     };
     return professions[value]?.[language] || value;
   };
 
   const getLocationLabel = (value) => {
     const locations = {
-      'france': { fr: 'France', en: 'France' },
-      'portugal': { fr: 'Portugal', en: 'Portugal' },
-      'uk': { fr: 'Royaume-Uni', en: 'United Kingdom' },
-      'germany': { fr: 'Allemagne', en: 'Germany' },
-      'usa': { fr: 'États-Unis', en: 'United States' }
+      france: { fr: "France", en: "France" },
+      portugal: { fr: "Portugal", en: "Portugal" },
+      uk: { fr: "Royaume-Uni", en: "United Kingdom" },
+      germany: { fr: "Allemagne", en: "Germany" },
+      usa: { fr: "États-Unis", en: "United States" },
     };
     return locations[value]?.[language] || value;
   };
@@ -236,7 +252,9 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
                             {t.experience}
                           </p>
                           <p className="font-semibold text-gray-900 dark:text-white">
-                            {entry.formData.experience} {language === 'fr' ? 'ans' : 'years'} - {entry.formData.experienceLevel}
+                            {entry.formData.experience}{" "}
+                            {language === "fr" ? "ans" : "years"} -{" "}
+                            {entry.formData.experienceLevel}
                           </p>
                         </div>
                         <div>
@@ -244,9 +262,9 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
                             Compétences
                           </p>
                           <p className="font-semibold text-gray-900 dark:text-white">
-                            {entry.formData.skills.length > 0 
-                              ? entry.formData.skills.join(', ') 
-                              : 'Aucune'}
+                            {entry.formData.skills.length > 0
+                              ? entry.formData.skills.join(", ")
+                              : "Aucune"}
                           </p>
                         </div>
                       </div>
@@ -314,17 +332,17 @@ export const saveCalculationToHistory = (results, formData) => {
       id: Date.now(),
       date: new Date().toISOString(),
       results,
-      formData
+      formData,
     };
 
-    const savedHistory = localStorage.getItem('pricingpro_history');
+    const savedHistory = localStorage.getItem("pricingpro_history");
     let currentHistory = savedHistory ? JSON.parse(savedHistory) : [];
-    
+
     currentHistory = [newEntry, ...currentHistory].slice(0, 10);
-    
-    localStorage.setItem('pricingpro_history', JSON.stringify(currentHistory));
+
+    localStorage.setItem("pricingpro_history", JSON.stringify(currentHistory));
   } catch (error) {
-    console.error('Error saving calculation:', error);
+    console.error("Error saving calculation:", error);
   }
 };
 

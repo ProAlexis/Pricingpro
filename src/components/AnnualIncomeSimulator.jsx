@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
-import { TrendingUp, Calendar, DollarSign, Info, ChevronDown, ChevronUp, Target } from 'lucide-react';
+import { useState } from "react";
+import {
+  TrendingUp,
+  Calendar,
+  DollarSign,
+  Info,
+  ChevronDown,
+  ChevronUp,
+  Target,
+} from "lucide-react";
 
-const AnnualIncomeSimulator = ({ dailyRate, legalStatus, language = 'fr' }) => {
+const AnnualIncomeSimulator = ({ dailyRate, legalStatus, language = "fr" }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [customDays, setCustomDays] = useState(200);
 
@@ -22,29 +30,29 @@ const AnnualIncomeSimulator = ({ dailyRate, legalStatus, language = 'fr' }) => {
         intensive: {
           name: "Intensif",
           desc: "20j/mois - Aucune inter-contrat",
-          days: 240
+          days: 240,
         },
         standard: {
           name: "Standard",
           desc: "17j/mois - Peu d'inter-contrats",
-          days: 200
+          days: 200,
         },
         flexible: {
           name: "Flexible",
           desc: "15j/mois - Inter-contrats fréquents",
-          days: 180
+          days: 180,
         },
         partTime: {
           name: "Mi-temps",
           desc: "10j/mois - Activité réduite",
-          days: 120
-        }
+          days: 120,
+        },
       },
       info: "Ces estimations sont basées sur votre statut juridique et incluent les charges sociales moyennes.",
       note: "💡 Conseil : La plupart des freelances facturent entre 15-17j/mois en moyenne.",
       breakdown: "Détail des revenus",
       showDetails: "Voir le détail",
-      hideDetails: "Masquer le détail"
+      hideDetails: "Masquer le détail",
     },
     en: {
       title: "Annual Income Simulator",
@@ -62,40 +70,40 @@ const AnnualIncomeSimulator = ({ dailyRate, legalStatus, language = 'fr' }) => {
         intensive: {
           name: "Intensive",
           desc: "20d/month - No gaps",
-          days: 240
+          days: 240,
         },
         standard: {
           name: "Standard",
           desc: "17d/month - Few gaps",
-          days: 200
+          days: 200,
         },
         flexible: {
           name: "Flexible",
           desc: "15d/month - Frequent gaps",
-          days: 180
+          days: 180,
         },
         partTime: {
           name: "Part-time",
           desc: "10d/month - Reduced activity",
-          days: 120
-        }
+          days: 120,
+        },
       },
       info: "These estimates are based on your legal status and include average social contributions.",
       note: "💡 Tip: Most freelancers bill between 15-17 days/month on average.",
       breakdown: "Income breakdown",
       showDetails: "Show details",
-      hideDetails: "Hide details"
-    }
+      hideDetails: "Hide details",
+    },
   };
 
   const t = translations[language];
 
   // Taux de charges selon le statut
   const chargeRates = {
-    'auto-entrepreneur': 0.212,
-    'sasu': 0.54,
-    'eurl': 0.45,
-    'portage': 0.49
+    "auto-entrepreneur": 0.212,
+    sasu: 0.54,
+    eurl: 0.45,
+    portage: 0.49,
   };
 
   const chargeRate = chargeRates[legalStatus] || 0.22;
@@ -111,44 +119,44 @@ const AnnualIncomeSimulator = ({ dailyRate, legalStatus, language = 'fr' }) => {
       grossAnnual,
       charges,
       netAnnual,
-      netMonthly
+      netMonthly,
     };
   };
 
   const scenarios = [
-    { 
-      id: 'intensive', 
+    {
+      id: "intensive",
       ...t.scenarios.intensive,
       ...calculateRevenue(t.scenarios.intensive.days),
-      color: 'from-purple-600 to-pink-600'
+      color: "from-purple-600 to-pink-600",
     },
-    { 
-      id: 'standard', 
+    {
+      id: "standard",
       ...t.scenarios.standard,
       ...calculateRevenue(t.scenarios.standard.days),
-      color: 'from-blue-600 to-cyan-600'
+      color: "from-blue-600 to-cyan-600",
     },
-    { 
-      id: 'flexible', 
+    {
+      id: "flexible",
       ...t.scenarios.flexible,
       ...calculateRevenue(t.scenarios.flexible.days),
-      color: 'from-green-600 to-emerald-600'
+      color: "from-green-600 to-emerald-600",
     },
-    { 
-      id: 'partTime', 
+    {
+      id: "partTime",
       ...t.scenarios.partTime,
       ...calculateRevenue(t.scenarios.partTime.days),
-      color: 'from-orange-600 to-yellow-600'
-    }
+      color: "from-orange-600 to-yellow-600",
+    },
   ];
 
   const customScenario = calculateRevenue(customDays);
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat(language === 'fr' ? 'fr-FR' : 'en-US', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0
+    return new Intl.NumberFormat(language === "fr" ? "fr-FR" : "en-US", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -163,9 +171,7 @@ const AnnualIncomeSimulator = ({ dailyRate, legalStatus, language = 'fr' }) => {
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             {t.title}
           </h3>
-          <p className="text-gray-600 dark:text-gray-400">
-            {t.subtitle}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">{t.subtitle}</p>
         </div>
       </div>
 
@@ -177,7 +183,9 @@ const AnnualIncomeSimulator = ({ dailyRate, legalStatus, language = 'fr' }) => {
             className="relative overflow-hidden rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-500 transition-all group"
           >
             {/* Gradient header */}
-            <div className={`bg-gradient-to-r ${scenario.color} text-white p-4`}>
+            <div
+              className={`bg-gradient-to-r ${scenario.color} text-white p-4`}
+            >
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-lg font-bold">{scenario.name}</h4>
                 <div className="flex items-center gap-1 text-sm opacity-90">
@@ -314,19 +322,19 @@ const AnnualIncomeSimulator = ({ dailyRate, legalStatus, language = 'fr' }) => {
           <div className="text-sm text-gray-700 dark:text-gray-300">
             <p className="font-semibold mb-1">{t.info}</p>
             <p className="text-xs text-gray-600 dark:text-gray-400">
-              {legalStatus === 'auto-entrepreneur' && '~22% de charges'}
-              {legalStatus === 'sasu' && '~54% de charges (cotisations + salaire)'}
-              {legalStatus === 'eurl' && '~45% de charges TNS'}
-              {legalStatus === 'portage' && '~49% tout inclus (charges + frais)'}
+              {legalStatus === "auto-entrepreneur" && "~22% de charges"}
+              {legalStatus === "sasu" &&
+                "~54% de charges (cotisations + salaire)"}
+              {legalStatus === "eurl" && "~45% de charges TNS"}
+              {legalStatus === "portage" &&
+                "~49% tout inclus (charges + frais)"}
             </p>
           </div>
         </div>
 
         <div className="flex gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
           <span className="text-2xl flex-shrink-0">💡</span>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            {t.note}
-          </p>
+          <p className="text-sm text-gray-700 dark:text-gray-300">{t.note}</p>
         </div>
       </div>
     </div>

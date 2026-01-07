@@ -1,42 +1,64 @@
-import React, { useState } from 'react';
-import { X, FileText, Building, User, Mail, Phone, MapPin, Briefcase, Calendar, CreditCard } from 'lucide-react';
-import LogoUpload from './LogoUpload';
+import { useState } from "react";
+import {
+  X,
+  FileText,
+  Building,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Briefcase,
+  Calendar,
+  CreditCard,
+} from "lucide-react";
+import LogoUpload from "./LogoUpload";
 
-const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatus, onClose, onGenerate }) => {
+const QuoteGenerator = ({
+  results,
+  formData,
+  language,
+  logo,
+  setLogo,
+  legalStatus,
+  onClose,
+  onGenerate,
+}) => {
   const [quoteData, setQuoteData] = useState({
     // Freelance info
-    freelanceName: '',
-    freelanceEmail: '',
-    freelancePhone: '',
-    freelanceAddress: '',
-    freelanceSiret: '',
-    vatNumber: '',
-    capital: '',
-    rcs: '',
-    companyPortageName: '',
-    companyPortageSiret: '',
-    companyPortageAddress: '',
-    
+    freelanceName: "",
+    freelanceEmail: "",
+    freelancePhone: "",
+    freelanceAddress: "",
+    freelanceSiret: "",
+    vatNumber: "",
+    capital: "",
+    rcs: "",
+    companyPortageName: "",
+    companyPortageSiret: "",
+    companyPortageAddress: "",
+
     // Client info
-    clientName: '',
-    clientCompany: '',
-    clientEmail: '',
-    clientAddress: '',
-    
+    clientName: "",
+    clientCompany: "",
+    clientEmail: "",
+    clientAddress: "",
+
     // Mission details
-    missionTitle: '',
-    missionDescription: '',
+    missionTitle: "",
+    missionDescription: "",
     daysCount: 10,
     dailyRate: results.daily,
-    
+
     // Payment & VAT
-    paymentTerms: '30/70',
-    vatApplicable: legalStatus !== 'auto-entrepreneur',
+    paymentTerms: "30/70",
+    vatApplicable: legalStatus !== "auto-entrepreneur",
     vatRate: 20,
-    
+
     // Other
-    quoteNumber: `DEV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
-    validityDays: 30
+    quoteNumber: `DEV-${new Date().getFullYear()}-${String(
+      Math.floor(Math.random() * 1000)
+    ).padStart(3, "0")}`,
+    validityDays: 30,
   });
 
   const t = {
@@ -89,8 +111,9 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
         clientName: "Marie Martin",
         clientCompany: "Entreprise SARL Martin",
         missionTitle: "Développement site web e-commerce",
-        missionDescription: "Création d'un site e-commerce responsive avec système de paiement intégré"
-      }
+        missionDescription:
+          "Création d'un site e-commerce responsive avec système de paiement intégré",
+      },
     },
     en: {
       title: "Create professional quote",
@@ -141,16 +164,19 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
         clientName: "Jane Smith",
         clientCompany: "Company LLC Smith",
         missionTitle: "E-commerce website development",
-        missionDescription: "Full creation of a responsive e-commerce platform with integrated payment systems"
-      }
-    }
+        missionDescription:
+          "Full creation of a responsive e-commerce platform with integrated payment systems",
+      },
+    },
   };
 
   const labels = t[language];
 
   // Calculs en temps réel
   const totalHT = quoteData.daysCount * quoteData.dailyRate;
-  const totalTVA = quoteData.vatApplicable ? (totalHT * quoteData.vatRate / 100) : 0;
+  const totalTVA = quoteData.vatApplicable
+    ? (totalHT * quoteData.vatRate) / 100
+    : 0;
   const totalTTC = totalHT + totalTVA;
 
   const handleSubmit = (e) => {
@@ -161,7 +187,7 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
       totalTVA,
       totalTTC,
       logo,
-      legalStatus
+      legalStatus,
     });
   };
 
@@ -195,12 +221,14 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
             <div className="grid md:grid-cols-2 gap-4">
               <input
                 type="text"
-                name="freelanceName" 
+                name="freelanceName"
                 autoComplete="name"
                 required
                 placeholder={labels.placeholders.name}
                 value={quoteData.freelanceName}
-                onChange={(e) => setQuoteData({...quoteData, freelanceName: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({ ...quoteData, freelanceName: e.target.value })
+                }
                 className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <input
@@ -210,7 +238,9 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 required
                 placeholder={labels.placeholders.email}
                 value={quoteData.freelanceEmail}
-                onChange={(e) => setQuoteData({...quoteData, freelanceEmail: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({ ...quoteData, freelanceEmail: e.target.value })
+                }
                 className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <input
@@ -220,7 +250,9 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 required
                 placeholder={labels.placeholders.phone}
                 value={quoteData.freelancePhone}
-                onChange={(e) => setQuoteData({...quoteData, freelancePhone: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({ ...quoteData, freelancePhone: e.target.value })
+                }
                 className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <input
@@ -230,7 +262,12 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 required
                 placeholder={labels.placeholders.address}
                 value={quoteData.freelanceAddress}
-                onChange={(e) => setQuoteData({...quoteData, freelanceAddress: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({
+                    ...quoteData,
+                    freelanceAddress: e.target.value,
+                  })
+                }
                 className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <input
@@ -238,24 +275,30 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 name="freelanceSiret"
                 placeholder={labels.placeholders.siret}
                 value={quoteData.freelanceSiret}
-                onChange={(e) => setQuoteData({...quoteData, freelanceSiret: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({ ...quoteData, freelanceSiret: e.target.value })
+                }
                 className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white md:col-span-2"
               />
               {/*Champs spécifiques EURL / SASU */}
-              {['eurl', 'sasu'].includes(legalStatus) && (
+              {["eurl", "sasu"].includes(legalStatus) && (
                 <>
                   <input
                     type="text"
                     placeholder={labels.placeholders.vatNumber}
                     value={quoteData.vatNumber}
-                    onChange={(e) => setQuoteData({...quoteData, vatNumber: e.target.value})}
+                    onChange={(e) =>
+                      setQuoteData({ ...quoteData, vatNumber: e.target.value })
+                    }
                     className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <input
                     type="text"
                     placeholder={labels.placeholders.capital}
                     value={quoteData.capital}
-                    onChange={(e) => setQuoteData({...quoteData, capital: e.target.value})}
+                    onChange={(e) =>
+                      setQuoteData({ ...quoteData, capital: e.target.value })
+                    }
                     className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <input
@@ -264,33 +307,50 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                     autoComplete="one-time-code"
                     placeholder={labels.placeholders.rcs}
                     value={quoteData.rcs}
-                    onChange={(e) => setQuoteData({...quoteData, rcs: e.target.value})}
+                    onChange={(e) =>
+                      setQuoteData({ ...quoteData, rcs: e.target.value })
+                    }
                     className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white md:col-span-2"
                   />
                 </>
               )}
               {/* Champs spécifiques Portage Salarial */}
-              {legalStatus === 'portage' && (
+              {legalStatus === "portage" && (
                 <>
                   <input
                     type="text"
                     placeholder={labels.placeholders.portageCompany}
                     value={quoteData.companyPortageName}
-                    onChange={(e) => setQuoteData({...quoteData, companyPortageName: e.target.value})}
+                    onChange={(e) =>
+                      setQuoteData({
+                        ...quoteData,
+                        companyPortageName: e.target.value,
+                      })
+                    }
                     className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white md:col-span-2"
                   />
                   <input
                     type="text"
                     placeholder={labels.portageSiret}
                     value={quoteData.companyPortageSiret}
-                    onChange={(e) => setQuoteData({...quoteData, companyPortageSiret: e.target.value})}
+                    onChange={(e) =>
+                      setQuoteData({
+                        ...quoteData,
+                        companyPortageSiret: e.target.value,
+                      })
+                    }
                     className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <input
                     type="text"
                     placeholder={labels.address}
                     value={quoteData.companyPortageAddress}
-                    onChange={(e) => setQuoteData({...quoteData, companyPortageAddress: e.target.value})}
+                    onChange={(e) =>
+                      setQuoteData({
+                        ...quoteData,
+                        companyPortageAddress: e.target.value,
+                      })
+                    }
                     className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </>
@@ -312,7 +372,9 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 required
                 placeholder={labels.placeholders.clientName}
                 value={quoteData.clientName}
-                onChange={(e) => setQuoteData({...quoteData, clientName: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({ ...quoteData, clientName: e.target.value })
+                }
                 className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <input
@@ -321,7 +383,9 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 autoComplete="organization"
                 placeholder={labels.placeholders.clientCompany}
                 value={quoteData.clientCompany}
-                onChange={(e) => setQuoteData({...quoteData, clientCompany: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({ ...quoteData, clientCompany: e.target.value })
+                }
                 className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <input
@@ -330,7 +394,9 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 required
                 placeholder={labels.placeholders.email}
                 value={quoteData.clientEmail}
-                onChange={(e) => setQuoteData({...quoteData, clientEmail: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({ ...quoteData, clientEmail: e.target.value })
+                }
                 className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <input
@@ -339,7 +405,9 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 required
                 placeholder={labels.placeholders.address}
                 value={quoteData.clientAddress}
-                onChange={(e) => setQuoteData({...quoteData, clientAddress: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({ ...quoteData, clientAddress: e.target.value })
+                }
                 className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
@@ -357,7 +425,9 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 required
                 placeholder={labels.placeholders.missionTitle}
                 value={quoteData.missionTitle}
-                onChange={(e) => setQuoteData({...quoteData, missionTitle: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({ ...quoteData, missionTitle: e.target.value })
+                }
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <textarea
@@ -365,7 +435,12 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 rows={4}
                 placeholder={labels.placeholders.missionDescription}
                 value={quoteData.missionDescription}
-                onChange={(e) => setQuoteData({...quoteData, missionDescription: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({
+                    ...quoteData,
+                    missionDescription: e.target.value,
+                  })
+                }
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <div className="grid md:grid-cols-2 gap-4">
@@ -378,7 +453,12 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                     min="1"
                     required
                     value={quoteData.daysCount}
-                    onChange={(e) => setQuoteData({...quoteData, daysCount: parseInt(e.target.value)})}
+                    onChange={(e) =>
+                      setQuoteData({
+                        ...quoteData,
+                        daysCount: parseInt(e.target.value),
+                      })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
@@ -391,7 +471,12 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                     min="1"
                     required
                     value={quoteData.dailyRate}
-                    onChange={(e) => setQuoteData({...quoteData, dailyRate: parseInt(e.target.value)})}
+                    onChange={(e) =>
+                      setQuoteData({
+                        ...quoteData,
+                        dailyRate: parseInt(e.target.value),
+                      })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
@@ -412,7 +497,9 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                 </label>
                 <select
                   value={quoteData.paymentTerms}
-                  onChange={(e) => setQuoteData({...quoteData, paymentTerms: e.target.value})}
+                  onChange={(e) =>
+                    setQuoteData({ ...quoteData, paymentTerms: e.target.value })
+                  }
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="100%">{labels.payment100}</option>
@@ -420,16 +507,24 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                   <option value="30/70">{labels.payment30}</option>
                 </select>
               </div>
-              
+
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
                   id="vat"
                   checked={quoteData.vatApplicable}
-                  onChange={(e) => setQuoteData({...quoteData, vatApplicable: e.target.checked})}
+                  onChange={(e) =>
+                    setQuoteData({
+                      ...quoteData,
+                      vatApplicable: e.target.checked,
+                    })
+                  }
                   className="w-5 h-5"
                 />
-                <label htmlFor="vat" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="vat"
+                  className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   {labels.vatApplicable}
                 </label>
               </div>
@@ -440,7 +535,12 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
                   min="0"
                   max="100"
                   value={quoteData.vatRate}
-                  onChange={(e) => setQuoteData({...quoteData, vatRate: parseFloat(e.target.value)})}
+                  onChange={(e) =>
+                    setQuoteData({
+                      ...quoteData,
+                      vatRate: parseFloat(e.target.value),
+                    })
+                  }
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               )}
@@ -451,18 +551,30 @@ const QuoteGenerator = ({ results, formData, language, logo, setLogo, legalStatu
           <section className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-xl">
             <div className="space-y-2 text-lg">
               <div className="flex justify-between">
-                <span className="text-gray-700 dark:text-gray-300">{labels.totalHT}</span>
-                <span className="font-bold text-gray-900 dark:text-white">{totalHT.toLocaleString()}€</span>
+                <span className="text-gray-700 dark:text-gray-300">
+                  {labels.totalHT}
+                </span>
+                <span className="font-bold text-gray-900 dark:text-white">
+                  {totalHT.toLocaleString()}€
+                </span>
               </div>
               {quoteData.vatApplicable && (
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-gray-300">TVA ({quoteData.vatRate}%)</span>
-                  <span className="font-bold text-gray-900 dark:text-white">{totalTVA.toLocaleString()}€</span>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    TVA ({quoteData.vatRate}%)
+                  </span>
+                  <span className="font-bold text-gray-900 dark:text-white">
+                    {totalTVA.toLocaleString()}€
+                  </span>
                 </div>
               )}
               <div className="flex justify-between pt-2 border-t-2 border-purple-600">
-                <span className="font-bold text-purple-600 dark:text-purple-400">{labels.totalTTC}</span>
-                <span className="font-bold text-purple-600 dark:text-purple-400 text-2xl">{totalTTC.toLocaleString()}€</span>
+                <span className="font-bold text-purple-600 dark:text-purple-400">
+                  {labels.totalTTC}
+                </span>
+                <span className="font-bold text-purple-600 dark:text-purple-400 text-2xl">
+                  {totalTTC.toLocaleString()}€
+                </span>
               </div>
             </div>
           </section>

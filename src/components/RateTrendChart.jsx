@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Minus, Loader2, Calendar } from 'lucide-react';
+import { useState, useEffect } from "react";
+import {
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Loader2,
+  Calendar,
+} from "lucide-react";
 
-const RateTrendChart = ({ formData, results, language = 'fr' }) => {
+const RateTrendChart = ({ formData, results, language = "fr" }) => {
   const [trendData, setTrendData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState(6);
@@ -16,9 +22,10 @@ const RateTrendChart = ({ formData, results, language = 'fr' }) => {
       down: "En baisse",
       stable: "Stable",
       noData: "Pas encore d'historique disponible",
-      noDataDesc: "Les données d'évolution seront disponibles après plusieurs mises à jour hebdomadaires.",
+      noDataDesc:
+        "Les données d'évolution seront disponibles après plusieurs mises à jour hebdomadaires.",
       avgRate: "TJM moyen",
-      period: "Période"
+      period: "Période",
     },
     en: {
       title: "Rate Evolution",
@@ -29,10 +36,11 @@ const RateTrendChart = ({ formData, results, language = 'fr' }) => {
       down: "Decreasing",
       stable: "Stable",
       noData: "No historical data available yet",
-      noDataDesc: "Evolution data will be available after several weekly updates.",
+      noDataDesc:
+        "Evolution data will be available after several weekly updates.",
       avgRate: "Average daily rate",
-      period: "Period"
-    }
+      period: "Period",
+    },
   };
 
   const t = translations[language];
@@ -41,15 +49,21 @@ const RateTrendChart = ({ formData, results, language = 'fr' }) => {
     if (formData.profession && formData.location && formData.experienceLevel) {
       fetchTrends();
     }
-  }, [formData.profession, formData.location, formData.experienceLevel, selectedPeriod]);
+  }, [
+    formData.profession,
+    formData.location,
+    formData.experienceLevel,
+    selectedPeriod,
+  ]);
 
   const fetchTrends = async () => {
     setLoading(true);
     try {
-      const apiUrl = window.location.hostname === 'localhost'
-        ? 'http://localhost:3000/api/get-rate-trends'
-        : '/api/get-rate-trends';
-      
+      const apiUrl =
+        window.location.hostname === "localhost"
+          ? "http://localhost:3000/api/get-rate-trends"
+          : "/api/get-rate-trends";
+
       const response = await fetch(
         `${apiUrl}?profession=${formData.profession}&location=${formData.location}&experience_level=${formData.experienceLevel}&months=${selectedPeriod}`
       );
@@ -59,7 +73,7 @@ const RateTrendChart = ({ formData, results, language = 'fr' }) => {
         setTrendData(data);
       }
     } catch (error) {
-      console.error('Error fetching trends:', error);
+      console.error("Error fetching trends:", error);
     } finally {
       setLoading(false);
     }
@@ -71,7 +85,9 @@ const RateTrendChart = ({ formData, results, language = 'fr' }) => {
         <div className="flex items-center justify-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
           <span className="ml-3 text-gray-600 dark:text-gray-400">
-            {language === 'fr' ? 'Chargement de l\'historique...' : 'Loading history...'}
+            {language === "fr"
+              ? "Chargement de l'historique..."
+              : "Loading history..."}
           </span>
         </div>
       </div>
@@ -95,8 +111,8 @@ const RateTrendChart = ({ formData, results, language = 'fr' }) => {
   }
 
   const { trend, evolution } = trendData;
-  const maxRate = Math.max(...trend.map(d => d.maxRate));
-  const minRate = Math.min(...trend.map(d => d.minRate));
+  const maxRate = Math.max(...trend.map((d) => d.maxRate));
+  const minRate = Math.min(...trend.map((d) => d.minRate));
   const range = maxRate - minRate;
 
   return (
@@ -111,20 +127,21 @@ const RateTrendChart = ({ formData, results, language = 'fr' }) => {
             {t.subtitle} {selectedPeriod} {t.months}
           </p>
         </div>
-        
+
         {/* Period selector */}
         <div className="flex gap-2">
-          {[3, 6, 12].map(months => (
+          {[3, 6, 12].map((months) => (
             <button
               key={months}
               onClick={() => setSelectedPeriod(months)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 selectedPeriod === months
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  ? "bg-purple-600 text-white"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
               }`}
             >
-              {months}{language === 'fr' ? 'm' : 'mo'}
+              {months}
+              {language === "fr" ? "m" : "mo"}
             </button>
           ))}
         </div>
@@ -132,25 +149,32 @@ const RateTrendChart = ({ formData, results, language = 'fr' }) => {
 
       {/* Evolution badge */}
       {evolution && (
-        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-6 ${
-          evolution.direction === 'up' 
-            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-            : evolution.direction === 'down'
-            ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-            : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-        }`}>
-          {evolution.direction === 'up' ? (
+        <div
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-6 ${
+            evolution.direction === "up"
+              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+              : evolution.direction === "down"
+              ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+          }`}
+        >
+          {evolution.direction === "up" ? (
             <TrendingUp className="w-5 h-5" />
-          ) : evolution.direction === 'down' ? (
+          ) : evolution.direction === "down" ? (
             <TrendingDown className="w-5 h-5" />
           ) : (
             <Minus className="w-5 h-5" />
           )}
           <span className="font-bold">
-            {evolution.percentage > 0 ? '+' : ''}{evolution.percentage}%
+            {evolution.percentage > 0 ? "+" : ""}
+            {evolution.percentage}%
           </span>
           <span className="text-sm">
-            {evolution.direction === 'up' ? t.up : evolution.direction === 'down' ? t.down : t.stable}
+            {evolution.direction === "up"
+              ? t.up
+              : evolution.direction === "down"
+              ? t.down
+              : t.stable}
           </span>
           <span className="text-sm opacity-75">
             ({evolution.oldRate}€ → {evolution.newRate}€)
@@ -160,25 +184,58 @@ const RateTrendChart = ({ formData, results, language = 'fr' }) => {
 
       {/* Simple line chart */}
       <div className="relative h-48 mb-4">
-        <svg className="w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
+        <svg
+          className="w-full h-full"
+          viewBox="0 0 800 200"
+          preserveAspectRatio="none"
+        >
           {/* Grid lines */}
-          <line x1="0" y1="50" x2="800" y2="50" stroke="currentColor" strokeWidth="1" className="text-gray-200 dark:text-gray-700" strokeDasharray="5,5" />
-          <line x1="0" y1="100" x2="800" y2="100" stroke="currentColor" strokeWidth="1" className="text-gray-200 dark:text-gray-700" strokeDasharray="5,5" />
-          <line x1="0" y1="150" x2="800" y2="150" stroke="currentColor" strokeWidth="1" className="text-gray-200 dark:text-gray-700" strokeDasharray="5,5" />
-          
+          <line
+            x1="0"
+            y1="50"
+            x2="800"
+            y2="50"
+            stroke="currentColor"
+            strokeWidth="1"
+            className="text-gray-200 dark:text-gray-700"
+            strokeDasharray="5,5"
+          />
+          <line
+            x1="0"
+            y1="100"
+            x2="800"
+            y2="100"
+            stroke="currentColor"
+            strokeWidth="1"
+            className="text-gray-200 dark:text-gray-700"
+            strokeDasharray="5,5"
+          />
+          <line
+            x1="0"
+            y1="150"
+            x2="800"
+            y2="150"
+            stroke="currentColor"
+            strokeWidth="1"
+            className="text-gray-200 dark:text-gray-700"
+            strokeDasharray="5,5"
+          />
+
           {/* Line path */}
           <polyline
             fill="none"
             stroke="currentColor"
             strokeWidth="3"
             className="text-purple-600"
-            points={trend.map((point, idx) => {
-              const x = (idx / (trend.length - 1)) * 800;
-              const y = 190 - ((point.avgRate - minRate) / range) * 180;
-              return `${x},${y}`;
-            }).join(' ')}
+            points={trend
+              .map((point, idx) => {
+                const x = (idx / (trend.length - 1)) * 800;
+                const y = 190 - ((point.avgRate - minRate) / range) * 180;
+                return `${x},${y}`;
+              })
+              .join(" ")}
           />
-          
+
           {/* Data points */}
           {trend.map((point, idx) => {
             const x = (idx / (trend.length - 1)) * 800;
@@ -199,23 +256,45 @@ const RateTrendChart = ({ formData, results, language = 'fr' }) => {
 
       {/* Timeline */}
       <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
-        <span>{new Date(trend[0].date).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', year: 'numeric' })}</span>
-        <span>{new Date(trend[trend.length - 1].date).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', year: 'numeric' })}</span>
+        <span>
+          {new Date(trend[0].date).toLocaleDateString(
+            language === "fr" ? "fr-FR" : "en-US",
+            { month: "short", year: "numeric" }
+          )}
+        </span>
+        <span>
+          {new Date(trend[trend.length - 1].date).toLocaleDateString(
+            language === "fr" ? "fr-FR" : "en-US",
+            { month: "short", year: "numeric" }
+          )}
+        </span>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 pt-4 border-t dark:border-gray-700">
         <div className="text-center">
-          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{language === 'fr' ? 'Début' : 'Start'}</div>
-          <div className="text-lg font-bold text-gray-900 dark:text-white">{trend[0].avgRate}€</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+            {language === "fr" ? "Début" : "Start"}
+          </div>
+          <div className="text-lg font-bold text-gray-900 dark:text-white">
+            {trend[0].avgRate}€
+          </div>
         </div>
         <div className="text-center">
-          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{language === 'fr' ? 'Actuel' : 'Current'}</div>
-          <div className="text-lg font-bold text-purple-600 dark:text-purple-400">{trend[trend.length - 1].avgRate}€</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+            {language === "fr" ? "Actuel" : "Current"}
+          </div>
+          <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
+            {trend[trend.length - 1].avgRate}€
+          </div>
         </div>
         <div className="text-center">
-          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{language === 'fr' ? 'Max' : 'Max'}</div>
-          <div className="text-lg font-bold text-gray-900 dark:text-white">{maxRate}€</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+            {language === "fr" ? "Max" : "Max"}
+          </div>
+          <div className="text-lg font-bold text-gray-900 dark:text-white">
+            {maxRate}€
+          </div>
         </div>
       </div>
     </div>
