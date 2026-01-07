@@ -1,69 +1,84 @@
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
  * Envoyer l'email avec l'analyse de tarifs
  */
-export async function sendRateAnalysisEmail({ email, results, formData, language = 'fr' }) {
+export async function sendRateAnalysisEmail({
+  email,
+  results,
+  formData,
+  language = "fr",
+}) {
   try {
     const translations = {
       fr: {
-        subject: '📊 Votre Analyse de Tarifs Personnalisée - PricingPro',
-        greeting: 'Bonjour',
-        intro: 'Voici votre analyse de tarifs personnalisée basée sur votre profil :',
-        profile: 'Votre profil',
-        profession: 'Profession',
-        location: 'Localisation',
-        experience: 'Expérience',
-        experienceLevel: 'Niveau',
-        skills: 'Compétences',
-        results: 'Vos tarifs recommandés',
-        hourly: 'Tarif horaire',
-        daily: 'Tarif journalier',
-        monthly: 'Tarif mensuel',
-        market: 'Comparaison marché',
-        marketMin: 'Minimum marché',
-        marketAvg: 'Moyenne marché',
-        marketMax: 'Maximum marché',
-        advice: 'Nos conseils',
-        adviceText: 'Vos tarifs sont compétitifs ! Continuez à développer vos compétences pour augmenter votre valeur sur le marché.',
-        cta: 'Recalculer mes tarifs',
-        footer: 'PricingPro - Le calculateur de tarifs le plus précis du marché',
-        footerNote: 'Cet email vous a été envoyé car vous avez demandé une analyse sur PricingPro.com'
+        subject: "📊 Votre Analyse de Tarifs Personnalisée - PricingPro",
+        greeting: "Bonjour",
+        intro:
+          "Voici votre analyse de tarifs personnalisée basée sur votre profil :",
+        profile: "Votre profil",
+        profession: "Profession",
+        location: "Localisation",
+        experience: "Expérience",
+        experienceLevel: "Niveau",
+        skills: "Compétences",
+        results: "Vos tarifs recommandés",
+        hourly: "Tarif horaire",
+        daily: "Tarif journalier",
+        monthly: "Tarif mensuel",
+        market: "Comparaison marché",
+        marketMin: "Minimum marché",
+        marketAvg: "Moyenne marché",
+        marketMax: "Maximum marché",
+        advice: "Nos conseils",
+        adviceText:
+          "Vos tarifs sont compétitifs ! Continuez à développer vos compétences pour augmenter votre valeur sur le marché.",
+        cta: "Recalculer mes tarifs",
+        footer:
+          "PricingPro - Le calculateur de tarifs le plus précis du marché",
+        footerNote:
+          "Cet email vous a été envoyé car vous avez demandé une analyse sur PricingPro.fr",
       },
       en: {
-        subject: '📊 Your Personalized Rate Analysis - PricingPro',
-        greeting: 'Hello',
-        intro: 'Here is your personalized rate analysis based on your profile:',
-        profile: 'Your profile',
-        profession: 'Profession',
-        location: 'Location',
-        experience: 'Experience',
-        experienceLevel: 'Level',
-        skills: 'Skills',
-        results: 'Your recommended rates',
-        hourly: 'Hourly rate',
-        daily: 'Daily rate',
-        monthly: 'Monthly rate',
-        market: 'Market comparison',
-        marketMin: 'Market minimum',
-        marketAvg: 'Market average',
-        marketMax: 'Market maximum',
-        advice: 'Our advice',
-        adviceText: 'Your rates are competitive! Keep developing your skills to increase your market value.',
-        cta: 'Recalculate my rates',
-        footer: 'PricingPro - The most accurate pricing calculator on the market',
-        footerNote: 'You received this email because you requested an analysis on PricingPro.com'
-      }
+        subject: "📊 Your Personalized Rate Analysis - PricingPro",
+        greeting: "Hello",
+        intro: "Here is your personalized rate analysis based on your profile:",
+        profile: "Your profile",
+        profession: "Profession",
+        location: "Location",
+        experience: "Experience",
+        experienceLevel: "Level",
+        skills: "Skills",
+        results: "Your recommended rates",
+        hourly: "Hourly rate",
+        daily: "Daily rate",
+        monthly: "Monthly rate",
+        market: "Market comparison",
+        marketMin: "Market minimum",
+        marketAvg: "Market average",
+        marketMax: "Market maximum",
+        advice: "Our advice",
+        adviceText:
+          "Your rates are competitive! Keep developing your skills to increase your market value.",
+        cta: "Recalculate my rates",
+        footer:
+          "PricingPro - The most accurate pricing calculator on the market",
+        footerNote:
+          "You received this email because you requested an analysis on PricingPro.fr",
+      },
     };
 
     const t = translations[language];
 
     // Formater les compétences
-    const skillsList = formData.skills && formData.skills.length > 0
-      ? formData.skills.join(', ')
-      : (language === 'fr' ? 'Aucune compétence ajoutée' : 'No skills added');
+    const skillsList =
+      formData.skills && formData.skills.length > 0
+        ? formData.skills.join(", ")
+        : language === "fr"
+          ? "Aucune compétence ajoutée"
+          : "No skills added";
 
     // Créer le HTML de l'email
     const htmlContent = `
@@ -249,7 +264,7 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <h1>📊 ${t.subject.split(' - ')[0]}</h1>
+      <h1>📊 ${t.subject.split(" - ")[0]}</h1>
     </div>
 
     <!-- Content -->
@@ -268,19 +283,19 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
         <div class="profile-grid">
           <div class="profile-item">
             <div class="profile-label">${t.profession}</div>
-            <div class="profile-value">${formData.profession || 'N/A'}</div>
+            <div class="profile-value">${formData.profession || "N/A"}</div>
           </div>
           <div class="profile-item">
             <div class="profile-label">${t.location}</div>
-            <div class="profile-value">${formData.location || 'N/A'}</div>
+            <div class="profile-value">${formData.location || "N/A"}</div>
           </div>
           <div class="profile-item">
             <div class="profile-label">${t.experienceLevel}</div>
-            <div class="profile-value">${formData.experienceLevel || 'N/A'}</div>
+            <div class="profile-value">${formData.experienceLevel || "N/A"}</div>
           </div>
           <div class="profile-item">
             <div class="profile-label">${t.experience}</div>
-            <div class="profile-value">${formData.experience || 0} ${language === 'fr' ? 'ans' : 'years'}</div>
+            <div class="profile-value">${formData.experience || 0} ${language === "fr" ? "ans" : "years"}</div>
           </div>
         </div>
         <div class="profile-item" style="margin-top: 15px;">
@@ -358,22 +373,21 @@ export async function sendRateAnalysisEmail({ email, results, formData, language
 
     // Envoyer l'email
     const { data, error } = await resend.emails.send({
-      from: 'PricingPro <contact@pricingpro.fr>', // ← Changez avec votre domaine vérifié
+      from: "PricingPro <contact@pricingpro.fr>", // ← Changez avec votre domaine vérifié
       to: [email],
       subject: t.subject,
       html: htmlContent,
     });
 
     if (error) {
-      console.error('❌ Resend error:', error);
+      console.error("❌ Resend error:", error);
       return { success: false, error };
     }
 
-    console.log('✅ Email sent successfully:', data);
+    console.log("✅ Email sent successfully:", data);
     return { success: true, data };
-
   } catch (error) {
-    console.error('❌ Error sending email:', error);
+    console.error("❌ Error sending email:", error);
     return { success: false, error: error.message };
   }
 }
