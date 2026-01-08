@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"; // Ajout de useState ici
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   TrendingUp,
@@ -11,15 +12,17 @@ import {
   Zap,
   FileText,
   Globe,
-  Server,
-  Code,
-  Palette,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
-import { useEffect } from "react";
 
 const LandingPage = ({ onStartCalculator, language }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // États pour le bouton Voir Plus
+  const [showAllProfessions, setShowAllProfessions] = useState(false);
+  const PROFESSIONS_LIMIT = 9;
 
   useEffect(() => {
     if (location.hash) {
@@ -168,13 +171,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
         description:
           "PricingPro est le calculateur de tarifs le plus précis du marché pour les freelances et consultants. Nos données proviennent de milliers de tarifs réels collectés sur les principales plateformes freelance.",
       },
-      footer: {
-        tagline:
-          "PricingPro - Le calculateur de tarifs le plus précis du marché",
-        links: ["À propos", "Comment ça marche", "Données", "Contact"],
-        legal:
-          "© 2026 PricingPro. Toutes les données sont anonymisées et agrégées.",
-      },
     },
     en: {
       hero: {
@@ -310,12 +306,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
         description:
           "PricingPro is the most accurate pricing calculator on the market for freelancers and consultants. Our data comes from thousands of real rates collected from major freelance platforms.",
       },
-      footer: {
-        tagline:
-          "PricingPro - The most accurate pricing calculator on the market",
-        links: ["About", "How it works", "Data", "Contact"],
-        legal: "© 2026 PricingPro. All data is anonymized and aggregated.",
-      },
     },
   };
 
@@ -337,7 +327,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
     return <IconComponent className="w-6 h-6" />;
   };
 
-  // Liste complète des 15 métiers pour la grille (Optimisation de ton code)
   const professionsList = [
     {
       fr: "Développeur Web",
@@ -346,7 +335,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
       linkEn: "/web-developer-rate",
       price: 400,
       tech: "React, Vue, Node.js, TypeScript",
-      color: "blue", // text-blue-600 border-blue-500 bg-blue-100
+      color: "blue",
       iconPath: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4",
     },
     {
@@ -506,7 +495,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
     },
   ];
 
-  // Helper pour générer les classes de couleurs dynamiquement
   const colorClasses = {
     blue: {
       border: "hover:border-blue-500 dark:hover:border-blue-400",
@@ -622,7 +610,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
             {t.hero.description}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
-            {/* Bouton Principal - Calculateur */}
             <button
               onClick={onStartCalculator}
               className="w-full sm:w-72 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl text-lg font-bold shadow-lg hover:shadow-purple-500/20 transform hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
@@ -631,7 +618,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
               {t.hero.cta}
             </button>
 
-            {/* Bouton Secondaire - Devis */}
             <button
               onClick={() => navigate("/generateur-devis-freelance")}
               className="w-full sm:w-72 px-8 py-4 bg-white dark:bg-gray-800 border-2 border-purple-600 text-purple-600 dark:text-purple-400 rounded-xl text-lg font-bold shadow-md hover:bg-purple-50 dark:hover:bg-purple-900/20 transform hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
@@ -643,7 +629,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
         </div>
       </section>
 
-      {/* SECTION PROFESSIONS - GRID COMPLETE */}
+      {/* SECTION PROFESSIONS - GRID AVEC VOIR PLUS */}
       <section
         id="professions"
         className="py-20 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
@@ -662,51 +648,69 @@ const LandingPage = ({ onStartCalculator, language }) => {
             </p>
           </div>
 
-          {/* Grid 15 professions (Générée dynamiquement) */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {professionsList.map((prof, idx) => {
-              const colors = colorClasses[prof.color];
-              return (
-                <Link
-                  key={idx}
-                  to={language === "fr" ? prof.linkFr : prof.linkEn}
-                  className={`group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 ${colors.border}`}
-                >
-                  <div className="flex items-start gap-4">
-                    <div
-                      className={`p-3 rounded-xl group-hover:scale-110 transition-transform ${colors.bg}`}
-                    >
-                      <svg
-                        className={`w-8 h-8 ${colors.text}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d={prof.iconPath}
-                        />
-                      </svg>
+            {professionsList
+              .slice(0, showAllProfessions ? professionsList.length : PROFESSIONS_LIMIT)
+              .map((prof, idx) => {
+                const colors = colorClasses[prof.color];
+                return (
+                  <Link
+                    key={idx}
+                    to={language === "fr" ? prof.linkFr : prof.linkEn}
+                    className={`group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 ${colors.border}`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`p-3 rounded-xl group-hover:scale-110 transition-transform ${colors.bg}`}>
+                        <svg
+                          className={`w-8 h-8 ${colors.text}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d={prof.iconPath}
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className={`text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors ${colors.groupText}`}>
+                          {language === "fr" ? prof.fr : prof.en}
+                        </h3>
+                        <p className={`text-2xl font-bold mb-2 ${colors.text}`}>
+                          {prof.price}€/{language === "fr" ? "jour" : "day"}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                          {prof.tech}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h3
-                        className={`text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors ${colors.groupText}`}
-                      >
-                        {language === "fr" ? prof.fr : prof.en}
-                      </h3>
-                      <p className={`text-2xl font-bold mb-2 ${colors.text}`}>
-                        {prof.price}€/{language === "fr" ? "jour" : "day"}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {prof.tech}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              })}
+          </div>
+
+          <div className="mt-12 text-center">
+            <button
+              onClick={() => setShowAllProfessions(!showAllProfessions)}
+              className="inline-flex items-center gap-2 px-8 py-3 bg-white dark:bg-gray-800 border-2 border-purple-600 text-purple-600 dark:text-purple-400 rounded-xl font-bold hover:bg-purple-600 hover:text-white transition-all shadow-md group"
+            >
+              {showAllProfessions ? (
+                <>
+                  {language === "fr" ? "Voir moins" : "Show less"}
+                  <ChevronUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
+                </>
+              ) : (
+                <>
+                  {language === "fr"
+                    ? `Voir tous les métiers (${professionsList.length})`
+                    : `See all professions (${professionsList.length})`}
+                  <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
+                </>
+              )}
+            </button>
           </div>
         </div>
       </section>

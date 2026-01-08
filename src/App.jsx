@@ -26,6 +26,7 @@ const App = () => {
     return saved ? JSON.parse(saved) : false;
   });
 
+  const [calculatorKey, setCalculatorKey] = useState(0);
   const location = useLocation();
 
   // 1. Gestion du Dark Mode
@@ -58,9 +59,12 @@ const App = () => {
     }
   }, [location.pathname]);
 
+  const [resetKey, setResetKey] = useState(0);
+  
   const goToCalculator = () => {
     window.location.hash = "#calculator";
     setCurrentPage("calculator");
+    setResetKey(prev => prev + 1);
     window.scrollTo(0, 0);
   };
 
@@ -87,6 +91,7 @@ const App = () => {
         darkMode={darkMode}
         setDarkMode={setDarkMode}
         onLogoClick={goToHome}
+        onNavigateToCalculator={goToCalculator}
       />
 
       <main className="pt-20">
@@ -166,6 +171,7 @@ const App = () => {
             path="/calculator"
             element={
               <Calculator
+                key={calculatorKey}
                 language={language}
                 onBackToHome={() => (window.location.href = "/")}
               />
