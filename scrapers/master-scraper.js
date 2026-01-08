@@ -48,13 +48,25 @@ export async function runMasterScraper() {
       ],
     );
 
-    // 3. Utiliser les données publiques
-    const allRates = [
+    // 3. Fusionner les niveaux d'expérience
+    const rawRates = [
       ...publicData,
       ...maltData,
       ...upworkData,
       ...glassdoorData,
     ];
+
+    const experienceMapping = {
+      junior: "Junior (0-2 ans)",
+      mid: "Intermédiaire (2-5 ans)",
+      senior: "Senior (5-10 ans)",
+    };
+
+    const allRates = rawRates.map((rate) => ({
+      ...rate,
+      experience_level:
+        experienceMapping[rate.experience_level] || rate.experience_level,
+    }));
 
     console.log("\n📈 Summary:");
     console.log(
@@ -87,17 +99,18 @@ export async function runMasterScraper() {
 
     // 4.5 Sauvegarder dans l'historique
     console.log("\n📈 Saving historical snapshot...");
-    const today = new Date().toISOString().split("T")[0]; // Format YYYY-MM-DD
+    const today = new Date().toISOString().split("T")[0];
 
     const historyData = allRates.map((rate) => ({
       profession: rate.profession,
       country: rate.country || "unknown",
       city: rate.city || "global",
-      experience_level: rate.experience_level,
+      experience_level: rate.experience_level, // Déjà transformé en "Intermédiaire (2-5 ans)" etc.
       rate_daily: rate.rate_daily,
       rate_hourly: rate.rate_hourly,
       source: rate.source,
-      data_sources: rate.source || "Malt, Free-Work, Stack Overflow",
+      data_sources:
+        rate.data_sources || rate.source || "Malt, Free-Work, Stack Overflow",
       snapshot_date: today,
     }));
 

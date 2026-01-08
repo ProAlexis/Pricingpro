@@ -173,7 +173,6 @@ const ExportData = ({ results, formData, language = "fr" }) => {
 
   // Fonction pour télécharger le CSV
   const downloadCSV = (content, filename) => {
-    // Ajouter le BOM UTF-8 pour Excel
     const BOM = "\uFEFF";
     const blob = new Blob([BOM + content], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");

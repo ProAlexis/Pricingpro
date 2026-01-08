@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   X,
   FileText,
@@ -60,6 +60,52 @@ const QuoteGenerator = ({
     ).padStart(3, "0")}`,
     validityDays: 30,
   });
+
+  // --- RÉCUPÉRATION AU CHARGEMENT ---
+  useEffect(() => {
+    const saved = localStorage.getItem("pricingpro_freelance_info");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setQuoteData((prev) => ({ ...prev, ...parsed }));
+      } catch (e) {
+        console.error("Erreur lecture localStorage", e);
+      }
+    }
+  }, []);
+
+  // --- SAUVEGARDE AUTOMATIQUE ---
+  useEffect(() => {
+    const infoToSave = {
+      freelanceName: quoteData.freelanceName,
+      freelanceEmail: quoteData.freelanceEmail,
+      freelancePhone: quoteData.freelancePhone,
+      freelanceAddress: quoteData.freelanceAddress,
+      freelanceSiret: quoteData.freelanceSiret,
+      vatNumber: quoteData.vatNumber,
+      capital: quoteData.capital,
+      rcs: quoteData.rcs,
+      companyPortageName: quoteData.companyPortageName,
+      companyPortageSiret: quoteData.companyPortageSiret,
+      companyPortageAddress: quoteData.companyPortageAddress,
+    };
+    localStorage.setItem(
+      "pricingpro_freelance_info",
+      JSON.stringify(infoToSave),
+    );
+  }, [
+    quoteData.freelanceName,
+    quoteData.freelanceEmail,
+    quoteData.freelancePhone,
+    quoteData.freelanceAddress,
+    quoteData.freelanceSiret,
+    quoteData.vatNumber,
+    quoteData.capital,
+    quoteData.rcs,
+    quoteData.companyPortageName,
+    quoteData.companyPortageSiret,
+    quoteData.companyPortageAddress,
+  ]);
 
   const t = {
     fr: {

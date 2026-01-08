@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FileText, Download, Check, AlertCircle } from "lucide-react";
+import toast from "react-hot-toast";
 import {
   Document,
   Packer,
@@ -718,6 +719,17 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
       const blob = await Packer.toBlob(doc);
       const date = new Date().toISOString().split("T")[0];
       saveAs(blob, `${templateNames[templateType]}_${date}.docx`);
+
+      // Toast success
+      const successMsg =
+        language === "fr"
+          ? `Document "${t.templates[templateType].name}" généré !`
+          : `Document "${t.templates[templateType].name}" generated!`;
+
+      toast.success(successMsg, {
+        icon: "📁",
+        position: "bottom-right",
+      });
     } catch (error) {
       console.error("Erreur lors de la génération du document:", error);
       alert(

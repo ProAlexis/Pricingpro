@@ -15,6 +15,7 @@ import {
   Database,
   FileText,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import EmailCapture from "./components/EmailCapture";
 import { SocialChargesCalculator } from "./components/SocialChargesCalculator";
 import { generateRateAnalysisPDF } from "../services/pdf-service";
@@ -1243,8 +1244,23 @@ const Calculator = ({ onBackToHome, language }) => {
           legalStatus={legalStatus}
           onClose={() => setShowQuoteGenerator(false)}
           onGenerate={(quoteData) => {
+            // 1. On lance la création du PDF
             generateQuotePDF(quoteData, language);
+
+            // 2. On ferme la modale du formulaire
             setShowQuoteGenerator(false);
+
+            // 3. On affiche le message de confirmation bilingue
+            const message =
+              language === "fr"
+                ? "Votre devis a été généré avec succès !"
+                : "Your quote has been successfully generated!";
+
+            toast.success(message, {
+              duration: 4000,
+              position: "bottom-right",
+              icon: "📄",
+            });
           }}
         />
       )}

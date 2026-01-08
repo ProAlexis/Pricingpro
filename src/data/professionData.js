@@ -1,5 +1,4 @@
 // professionData.js - Bilingual SEO data (FR + EN)
-// Complete version with all 5 professions
 
 export const professionsData = {
   // 1. DEVELOPPEUR WEB

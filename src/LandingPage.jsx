@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   TrendingUp,
   Database,
@@ -16,10 +16,10 @@ import {
   Palette,
 } from "lucide-react";
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
 
 const LandingPage = ({ onStartCalculator, language }) => {
+  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
         subtitle: "Pilotez votre activité freelance de A à Z",
         description:
           "Accédez à 3500+ tarifs réels, créez vos devis personnalisés et téléchargez vos contrats juridiques en quelques clics.",
-        cta: "Estimer mon tarif et créer mon devis",
+        cta: "Estimer mon tarif",
         badge: "✨ Accès gratuit · Devis & Contrats inclus · Sans inscription",
       },
       stats: {
@@ -183,7 +183,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
         subtitle: "Manage your freelance business from A to Z",
         description:
           "Access 3500+ real market rates, create professional quotes, and download legal contract templates in just a few clicks.",
-        cta: "Estimate my rate & create a quote",
+        cta: "Estimate my rate",
         badge:
           "✨ Free Access · Quotes & Contracts Included · No Signup Required",
       },
@@ -622,13 +622,25 @@ const LandingPage = ({ onStartCalculator, language }) => {
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-12 max-w-3xl mx-auto">
             {t.hero.description}
           </p>
-          <button
-            onClick={onStartCalculator}
-            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl text-lg font-semibold hover:shadow-2xl transform hover:scale-105 transition-all flex items-center gap-2 mx-auto"
-          >
-            {t.hero.cta}
-            <ArrowRight className="w-5 h-5" />
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
+            {/* Bouton Principal - Calculateur */}
+            <button
+              onClick={onStartCalculator}
+              className="w-full sm:w-72 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl text-lg font-bold shadow-lg hover:shadow-purple-500/20 transform hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
+            >
+              <CalculatorIcon className="w-5 h-5" />
+              {t.hero.cta}
+            </button>
+
+            {/* Bouton Secondaire - Devis */}
+            <button
+              onClick={() => navigate("/generateur-devis-freelance")}
+              className="w-full sm:w-72 px-8 py-4 bg-white dark:bg-gray-800 border-2 border-purple-600 text-purple-600 dark:text-purple-400 rounded-xl text-lg font-bold shadow-md hover:bg-purple-50 dark:hover:bg-purple-900/20 transform hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
+            >
+              <FileText className="w-5 h-5" />
+              {language === "fr" ? "Créer un devis" : "Create a quote"}
+            </button>
+          </div>
         </div>
       </section>
 

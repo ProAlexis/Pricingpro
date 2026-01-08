@@ -5,6 +5,7 @@ import Calculator from "./Calculator";
 import UnifiedHeader from "./components/UnifiedHeader";
 import DataSources from "./components/DataSources";
 import ScrollToTop from "./components/ScrollToTop";
+import { Toaster } from "react-hot-toast";
 
 // Import pages légales
 import MentionsLegales from "./pages/MentionsLegales";
@@ -12,39 +13,9 @@ import MentionsLegalesEN from "./pages/MentionsLegalesEN";
 import Confidentialite from "./pages/Confidentialite";
 import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 
-// Import pages FR
-import DeveloppeurWebFR from "./pages/professions/fr/DeveloppeurWeb";
-import DataScientistFR from "./pages/professions/fr/DataScientist";
-import DesignerUXFR from "./pages/professions/fr/DesignerUX";
-import ConsultantMarketingFR from "./pages/professions/fr/ConsultantMarketing";
-import DevOpsFR from "./pages/professions/fr/DevOps";
-import DeveloppeurMobileFR from "./pages/professions/fr/DeveloppeurMobile";
-import DeveloppeurFullStackFR from "./pages/professions/fr/DeveloppeurFullStack";
-import DeveloppeurBackendFR from "./pages/professions/fr/DeveloppeurBackend";
-import DataAnalystFR from "./pages/professions/fr/DataAnalyst";
-import GraphisteFR from "./pages/professions/fr/Graphiste";
-import RedacteurFR from "./pages/professions/fr/Redacteur";
-import ExpertSEOFR from "./pages/professions/fr/ExpertSEO";
-import ChefDeProjetFR from "./pages/professions/fr/ChefDeProjet";
-import ProductManagerFR from "./pages/professions/fr/ProductManager";
-import ConsultantBusinessFR from "./pages/professions/fr/ConsultantBusiness";
-
-// Import pages EN
-import WebDeveloperEN from "./pages/professions/en/WebDeveloper";
-import DataScientistEN from "./pages/professions/en/DataScientist";
-import UXDesignerEN from "./pages/professions/en/UXDesigner";
-import MarketingConsultantEN from "./pages/professions/en/MarketingConsultant";
-import DevOpsEngineerEN from "./pages/professions/en/DevOpsEngineer";
-import MobileDeveloperEN from "./pages/professions/en/MobileDeveloper";
-import FullStackDeveloperEN from "./pages/professions/en/FullStackDeveloper";
-import BackendDeveloperEN from "./pages/professions/en/BackendDeveloper";
-import DataAnalystEN from "./pages/professions/en/DataAnalyst";
-import GraphicDesignerEN from "./pages/professions/en/GraphicDesigner";
-import CopywriterEN from "./pages/professions/en/Copywriter";
-import SEOExpertEN from "./pages/professions/en/SEOExpert";
-import ProjectManagerEN from "./pages/professions/en/ProjectManager";
-import ProductManagerEN from "./pages/professions/en/ProductManager";
-import BusinessConsultantEN from "./pages/professions/en/BusinessConsultant";
+// Import pages FR & EN
+import ProfessionTemplate from "./pages/ProfessionTemplate";
+import GenerateurDevis from "./pages/GenerateurDevis";
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState("landing");
@@ -138,70 +109,58 @@ const App = () => {
     <>
       {/* Composant pour gérer le scroll automatique et le reset du title */}
       <ScrollToTop />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: "#333",
+            color: "#fff",
+            borderRadius: "10px",
+          },
+        }}
+      />
 
       <Routes>
         {/* Page principale avec système de hash existant */}
         <Route path="/" element={<MainApp />} />
-
-        {/* Pages professions FR */}
-        <Route path="/tarif-developpeur-web" element={<DeveloppeurWebFR />} />
-        <Route path="/tarif-data-scientist" element={<DataScientistFR />} />
-        <Route path="/tarif-designer-ux" element={<DesignerUXFR />} />
         <Route
-          path="/tarif-consultant-marketing"
-          element={<ConsultantMarketingFR />}
-        />
-        <Route path="/tarif-devops" element={<DevOpsFR />} />
-        <Route
-          path="/tarif-developpeur-mobile"
-          element={<DeveloppeurMobileFR />}
-        />
-        <Route
-          path="/tarif-developpeur-fullstack"
-          element={<DeveloppeurFullStackFR />}
-        />
-        <Route
-          path="/tarif-developpeur-backend"
-          element={<DeveloppeurBackendFR />}
-        />
-        <Route path="/tarif-data-analyst" element={<DataAnalystFR />} />
-        <Route path="/tarif-graphiste" element={<GraphisteFR />} />
-        <Route path="/tarif-redacteur" element={<RedacteurFR />} />
-        <Route path="/tarif-expert-seo" element={<ExpertSEOFR />} />
-        <Route path="/tarif-chef-de-projet" element={<ChefDeProjetFR />} />
-        <Route path="/tarif-product-manager" element={<ProductManagerFR />} />
-        <Route
-          path="/tarif-consultant-business"
-          element={<ConsultantBusinessFR />}
+          path="/calculator"
+          element={
+            <div className={darkMode ? "dark" : ""}>
+              <UnifiedHeader
+                language={language}
+                setLanguage={setLanguage}
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+                onLogoClick={() => (window.location.href = "/")}
+              />
+              <main className="pt-20 bg-white dark:bg-gray-900 min-h-screen">
+                <Calculator
+                  language={language}
+                  onBackToHome={() => (window.location.href = "/")}
+                />
+              </main>
+            </div>
+          }
         />
 
-        {/* Pages professions EN */}
-        <Route path="/web-developer-rate" element={<WebDeveloperEN />} />
-        <Route path="/data-scientist-rate" element={<DataScientistEN />} />
-        <Route path="/ux-designer-rate" element={<UXDesignerEN />} />
+        {/* Générateur de devis */}
         <Route
-          path="/marketing-consultant-rate"
-          element={<MarketingConsultantEN />}
-        />
-        <Route path="/devops-rate" element={<DevOpsEngineerEN />} />
-        <Route path="/mobile-developer-rate" element={<MobileDeveloperEN />} />
-        <Route
-          path="/fullstack-developer-rate"
-          element={<FullStackDeveloperEN />}
-        />
-        <Route
-          path="/backend-developer-rate"
-          element={<BackendDeveloperEN />}
-        />
-        <Route path="/data-analyst-rate" element={<DataAnalystEN />} />
-        <Route path="/graphic-designer-rate" element={<GraphicDesignerEN />} />
-        <Route path="/copywriter-rate" element={<CopywriterEN />} />
-        <Route path="/seo-expert-rate" element={<SEOExpertEN />} />
-        <Route path="/project-manager-rate" element={<ProjectManagerEN />} />
-        <Route path="/product-manager-rate" element={<ProductManagerEN />} />
-        <Route
-          path="/business-consultant-rate"
-          element={<BusinessConsultantEN />}
+          path="/generateur-devis-freelance"
+          element={
+            <div className={darkMode ? "dark" : ""}>
+              <UnifiedHeader
+                language={language}
+                setLanguage={setLanguage}
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+                onLogoClick={() => (window.location.href = "/")}
+              />
+              <main className="pt-20 bg-white dark:bg-gray-900 min-h-screen">
+                <GenerateurDevis language={language} />
+              </main>
+            </div>
+          }
         />
 
         {/* Pages légales */}
@@ -212,6 +171,9 @@ const App = () => {
           path="/confidentialite-en"
           element={<PolitiqueConfidentialite />}
         />
+
+        {/* Pages Professions */}
+        <Route path="/:slug" element={<ProfessionTemplate />} />
 
         {/* 404 - Redirection vers home */}
         <Route path="*" element={<MainApp />} />
