@@ -1,11 +1,8 @@
 import { Link } from "react-router-dom";
 import {
   TrendingUp,
-  DollarSign,
-  Globe,
   Database,
   Calculator as CalculatorIcon,
-  Users,
   CheckCircle,
   Star,
   ArrowRight,
@@ -13,9 +10,10 @@ import {
   Shield,
   Zap,
   FileText,
+  Globe,
+  Server,
   Code,
   Palette,
-  Server,
 } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -34,6 +32,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
       }
     }
   }, [location]);
+
   const translations = {
     fr: {
       hero: {
@@ -339,6 +338,271 @@ const LandingPage = ({ onStartCalculator, language }) => {
     return <IconComponent className="w-6 h-6" />;
   };
 
+  // Liste complète des 15 métiers pour la grille (Optimisation de ton code)
+  const professionsList = [
+    {
+      fr: "Développeur Web",
+      en: "Web Developer",
+      linkFr: "/tarif-developpeur-web",
+      linkEn: "/web-developer-rate",
+      price: 400,
+      tech: "React, Vue, Node.js, TypeScript",
+      color: "blue", // text-blue-600 border-blue-500 bg-blue-100
+      iconPath: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4",
+    },
+    {
+      fr: "Data Scientist",
+      en: "Data Scientist",
+      linkFr: "/tarif-data-scientist",
+      linkEn: "/data-scientist-rate",
+      price: 550,
+      tech: "Python, ML/DL, NLP, Big Data",
+      color: "purple",
+      iconPath:
+        "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+    },
+    {
+      fr: "Designer UX/UI",
+      en: "UX/UI Designer",
+      linkFr: "/tarif-designer-ux",
+      linkEn: "/ux-designer-rate",
+      price: 400,
+      tech: "Figma, Design System, UX Research",
+      color: "pink",
+      iconPath:
+        "M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01",
+    },
+    {
+      fr: "Consultant Marketing",
+      en: "Marketing Consultant",
+      linkFr: "/tarif-consultant-marketing",
+      linkEn: "/marketing-consultant-rate",
+      price: 450,
+      tech: "SEO, Google Ads, Growth Hacking",
+      color: "green",
+      iconPath: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+    },
+    {
+      fr: "DevOps Engineer",
+      en: "DevOps Engineer",
+      linkFr: "/tarif-devops",
+      linkEn: "/devops-rate",
+      price: 500,
+      tech: "Kubernetes, AWS, Terraform, CI/CD",
+      color: "orange",
+      iconPath:
+        "M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01",
+    },
+    {
+      fr: "Développeur Mobile",
+      en: "Mobile Developer",
+      linkFr: "/tarif-developpeur-mobile",
+      linkEn: "/mobile-developer-rate",
+      price: 450,
+      tech: "React Native, Flutter, iOS, Android",
+      color: "indigo",
+      iconPath:
+        "M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z",
+    },
+    {
+      fr: "Développeur Full-Stack",
+      en: "Full-Stack Developer",
+      linkFr: "/tarif-developpeur-fullstack",
+      linkEn: "/fullstack-developer-rate",
+      price: 400,
+      tech: "React, Node.js, PostgreSQL",
+      color: "cyan",
+      iconPath:
+        "M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z",
+    },
+    {
+      fr: "Développeur Backend",
+      en: "Backend Developer",
+      linkFr: "/tarif-developpeur-backend",
+      linkEn: "/backend-developer-rate",
+      price: 400,
+      tech: "Node.js, Python, API REST, MongoDB",
+      color: "teal",
+      iconPath:
+        "M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01",
+    },
+    {
+      fr: "Data Analyst",
+      en: "Data Analyst",
+      linkFr: "/tarif-data-analyst",
+      linkEn: "/data-analyst-rate",
+      price: 500,
+      tech: "SQL, Python, Tableau, Power BI",
+      color: "violet",
+      iconPath:
+        "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+    },
+    {
+      fr: "Graphiste",
+      en: "Graphic Designer",
+      linkFr: "/tarif-graphiste",
+      linkEn: "/graphic-designer-rate",
+      price: 300,
+      tech: "Photoshop, Illustrator, Branding",
+      color: "rose",
+      iconPath:
+        "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
+    },
+    {
+      fr: "Rédacteur",
+      en: "Copywriter",
+      linkFr: "/tarif-redacteur",
+      linkEn: "/copywriter-rate",
+      price: 250,
+      tech: "SEO, Content Writing, Storytelling",
+      color: "amber",
+      iconPath:
+        "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",
+    },
+    {
+      fr: "Expert SEO",
+      en: "SEO Expert",
+      linkFr: "/tarif-expert-seo",
+      linkEn: "/seo-expert-rate",
+      price: 550,
+      tech: "Technical SEO, Link Building",
+      color: "emerald",
+      iconPath: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
+    },
+    {
+      fr: "Chef de Projet",
+      en: "Project Manager",
+      linkFr: "/tarif-chef-de-projet",
+      linkEn: "/project-manager-rate",
+      price: 600,
+      tech: "Scrum, Agile, JIRA, Leadership",
+      color: "sky",
+      iconPath:
+        "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01",
+    },
+    {
+      fr: "Product Manager",
+      en: "Product Manager",
+      linkFr: "/tarif-product-manager",
+      linkEn: "/product-manager-rate",
+      price: 650,
+      tech: "Vision Produit, Roadmap, Analytics",
+      color: "fuchsia",
+      iconPath:
+        "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z",
+    },
+    {
+      fr: "Consultant Business",
+      en: "Business Consultant",
+      linkFr: "/tarif-consultant-business",
+      linkEn: "/business-consultant-rate",
+      price: 775,
+      tech:
+        language === "fr"
+          ? "Stratégie, Transformation"
+          : "Strategy, Transformation",
+      color: "yellow",
+      iconPath:
+        "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+    },
+  ];
+
+  // Helper pour générer les classes de couleurs dynamiquement
+  const colorClasses = {
+    blue: {
+      border: "hover:border-blue-500 dark:hover:border-blue-400",
+      bg: "bg-blue-100 dark:bg-blue-900/30",
+      text: "text-blue-600 dark:text-blue-400",
+      groupText: "group-hover:text-blue-600 dark:group-hover:text-blue-400",
+    },
+    purple: {
+      border: "hover:border-purple-500 dark:hover:border-purple-400",
+      bg: "bg-purple-100 dark:bg-purple-900/30",
+      text: "text-purple-600 dark:text-purple-400",
+      groupText: "group-hover:text-purple-600 dark:group-hover:text-purple-400",
+    },
+    pink: {
+      border: "hover:border-pink-500 dark:hover:border-pink-400",
+      bg: "bg-pink-100 dark:bg-pink-900/30",
+      text: "text-pink-600 dark:text-pink-400",
+      groupText: "group-hover:text-pink-600 dark:group-hover:text-pink-400",
+    },
+    green: {
+      border: "hover:border-green-500 dark:hover:border-green-400",
+      bg: "bg-green-100 dark:bg-green-900/30",
+      text: "text-green-600 dark:text-green-400",
+      groupText: "group-hover:text-green-600 dark:group-hover:text-green-400",
+    },
+    orange: {
+      border: "hover:border-orange-500 dark:hover:border-orange-400",
+      bg: "bg-orange-100 dark:bg-orange-900/30",
+      text: "text-orange-600 dark:text-orange-400",
+      groupText: "group-hover:text-orange-600 dark:group-hover:text-orange-400",
+    },
+    indigo: {
+      border: "hover:border-indigo-500 dark:hover:border-indigo-400",
+      bg: "bg-indigo-100 dark:bg-indigo-900/30",
+      text: "text-indigo-600 dark:text-indigo-400",
+      groupText: "group-hover:text-indigo-600 dark:group-hover:text-indigo-400",
+    },
+    cyan: {
+      border: "hover:border-cyan-500 dark:hover:border-cyan-400",
+      bg: "bg-cyan-100 dark:bg-cyan-900/30",
+      text: "text-cyan-600 dark:text-cyan-400",
+      groupText: "group-hover:text-cyan-600 dark:group-hover:text-cyan-400",
+    },
+    teal: {
+      border: "hover:border-teal-500 dark:hover:border-teal-400",
+      bg: "bg-teal-100 dark:bg-teal-900/30",
+      text: "text-teal-600 dark:text-teal-400",
+      groupText: "group-hover:text-teal-600 dark:group-hover:text-teal-400",
+    },
+    violet: {
+      border: "hover:border-violet-500 dark:hover:border-violet-400",
+      bg: "bg-violet-100 dark:bg-violet-900/30",
+      text: "text-violet-600 dark:text-violet-400",
+      groupText: "group-hover:text-violet-600 dark:group-hover:text-violet-400",
+    },
+    rose: {
+      border: "hover:border-rose-500 dark:hover:border-rose-400",
+      bg: "bg-rose-100 dark:bg-rose-900/30",
+      text: "text-rose-600 dark:text-rose-400",
+      groupText: "group-hover:text-rose-600 dark:group-hover:text-rose-400",
+    },
+    amber: {
+      border: "hover:border-amber-500 dark:hover:border-amber-400",
+      bg: "bg-amber-100 dark:bg-amber-900/30",
+      text: "text-amber-600 dark:text-amber-400",
+      groupText: "group-hover:text-amber-600 dark:group-hover:text-amber-400",
+    },
+    emerald: {
+      border: "hover:border-emerald-500 dark:hover:border-emerald-400",
+      bg: "bg-emerald-100 dark:bg-emerald-900/30",
+      text: "text-emerald-600 dark:text-emerald-400",
+      groupText:
+        "group-hover:text-emerald-600 dark:group-hover:text-emerald-400",
+    },
+    sky: {
+      border: "hover:border-sky-500 dark:hover:border-sky-400",
+      bg: "bg-sky-100 dark:bg-sky-900/30",
+      text: "text-sky-600 dark:text-sky-400",
+      groupText: "group-hover:text-sky-600 dark:group-hover:text-sky-400",
+    },
+    fuchsia: {
+      border: "hover:border-fuchsia-500 dark:hover:border-fuchsia-400",
+      bg: "bg-fuchsia-100 dark:bg-fuchsia-900/30",
+      text: "text-fuchsia-600 dark:text-fuchsia-400",
+      groupText:
+        "group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400",
+    },
+    yellow: {
+      border: "hover:border-yellow-500 dark:hover:border-yellow-400",
+      bg: "bg-yellow-100 dark:bg-yellow-900/30",
+      text: "text-yellow-600 dark:text-yellow-400",
+      groupText: "group-hover:text-yellow-600 dark:group-hover:text-yellow-400",
+    },
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Hero Section */}
@@ -368,163 +632,70 @@ const LandingPage = ({ onStartCalculator, language }) => {
         </div>
       </section>
 
-      {/* Fin Hero */}
-
-      {/* SECTION MÉTIERS */}
+      {/* SECTION PROFESSIONS - GRID COMPLETE */}
       <section
         id="professions"
-        className="py-20 px-4 bg-white dark:bg-gray-900"
+        className="py-20 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
       >
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               {language === "fr"
                 ? "Explorer les tarifs par métier"
-                : "Explore rates by profession"}
+                : "Explore Rates by Profession"}
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-400">
               {language === "fr"
                 ? "Analyses détaillées basées sur 3500+ points de données"
-                : "Detailed analysis based on 3500+ data points"}
+                : "Detailed analyses based on 3500+ data points"}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Développeur Web */}
-            <Link
-              to={
-                language === "fr"
-                  ? "/tarif-developpeur-web"
-                  : "/web-developer-rate"
-              }
-              className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-purple-500"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-                  <Code className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-purple-600">
-                    {language === "fr" ? "Développeur Web" : "Web Developer"}
-                  </h3>
-                  <p className="text-sm text-gray-500">400€/jour</p>
-                </div>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                React, Vue, Node.js, TypeScript
-              </p>
-            </Link>
-
-            {/* Data Scientist */}
-            <Link
-              to={
-                language === "fr"
-                  ? "/tarif-data-scientist"
-                  : "/data-scientist-rate"
-              }
-              className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-blue-500"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                  <Database className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600">
-                    Data Scientist
-                  </h3>
-                  <p className="text-sm text-gray-500">550€/jour</p>
-                </div>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Python, ML/DL, NLP, Big Data
-              </p>
-            </Link>
-
-            {/* Designer UX/UI */}
-            <Link
-              to={
-                language === "fr" ? "/tarif-designer-ux" : "/ux-designer-rate"
-              }
-              className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-pink-500"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-pink-100 dark:bg-pink-900/30 rounded-xl">
-                  <Palette className="w-8 h-8 text-pink-600 dark:text-pink-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-pink-600">
-                    Designer UX/UI
-                  </h3>
-                  <p className="text-sm text-gray-500">400€/jour</p>
-                </div>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Figma, Design System, UX Research
-              </p>
-            </Link>
-
-            {/* Consultant Marketing */}
-            <Link
-              to={
-                language === "fr"
-                  ? "/tarif-consultant-marketing"
-                  : "/marketing-consultant-rate"
-              }
-              className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-green-500"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
-                  <TrendingUp className="w-8 h-8 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-green-600">
-                    {language === "fr"
-                      ? "Consultant Marketing"
-                      : "Marketing Consultant"}
-                  </h3>
-                  <p className="text-sm text-gray-500">450€/jour</p>
-                </div>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                SEO, Google Ads, Growth Hacking
-              </p>
-            </Link>
-
-            {/* DevOps Engineer */}
-            <Link
-              to={language === "fr" ? "/tarif-devops" : "/devops-rate"}
-              className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-orange-500"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
-                  <Server className="w-8 h-8 text-orange-600 dark:text-orange-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-orange-600">
-                    DevOps Engineer
-                  </h3>
-                  <p className="text-sm text-gray-500">500€/jour</p>
-                </div>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Kubernetes, AWS, Terraform, CI/CD
-              </p>
-            </Link>
-
-            {/* CTA "Voir tous les métiers" */}
-            <div
-              onClick={onStartCalculator}
-              className="cursor-pointer p-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-lg flex items-center justify-center hover:scale-105 transition-all text-white"
-            >
-              <div className="text-center">
-                <p className="text-3xl font-bold mb-1">15+</p>
-                <p className="text-sm font-medium opacity-90">
-                  {language === "fr"
-                    ? "Métiers à découvrir"
-                    : "Professions to explore"}
-                </p>
-              </div>
-            </div>
+          {/* Grid 15 professions (Générée dynamiquement) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {professionsList.map((prof, idx) => {
+              const colors = colorClasses[prof.color];
+              return (
+                <Link
+                  key={idx}
+                  to={language === "fr" ? prof.linkFr : prof.linkEn}
+                  className={`group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 ${colors.border}`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`p-3 rounded-xl group-hover:scale-110 transition-transform ${colors.bg}`}
+                    >
+                      <svg
+                        className={`w-8 h-8 ${colors.text}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d={prof.iconPath}
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h3
+                        className={`text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors ${colors.groupText}`}
+                      >
+                        {language === "fr" ? prof.fr : prof.en}
+                      </h3>
+                      <p className={`text-2xl font-bold mb-2 ${colors.text}`}>
+                        {prof.price}€/{language === "fr" ? "jour" : "day"}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {prof.tech}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

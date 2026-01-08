@@ -1,5 +1,5 @@
-import ProfessionPage from '../../ProfessionPage';
-import { professionsData } from '../../../data/professionData';
+import ProfessionPage from "../../ProfessionPage";
+import { professionsData } from "../../../data/professionData";
 
 const ConsultantBusiness = () => {
   return (
