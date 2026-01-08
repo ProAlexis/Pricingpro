@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   TrendingUp,
   DollarSign,
@@ -12,9 +13,27 @@ import {
   Shield,
   Zap,
   FileText,
+  Code,
+  Palette,
+  Server,
 } from "lucide-react";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import Footer from "./components/Footer";
 
 const LandingPage = ({ onStartCalculator, language }) => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      }
+    }
+  }, [location]);
   const translations = {
     fr: {
       hero: {
@@ -23,7 +42,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
         description:
           "Accédez à 3500+ tarifs réels, créez vos devis personnalisés et téléchargez vos contrats juridiques en quelques clics.",
         cta: "Estimer mon tarif et créer mon devis",
-        badge: "✨ 100% Gratuit · Devis & Contrats inclus · Sans inscription",
+        badge: "✨ Accès gratuit · Devis & Contrats inclus · Sans inscription",
       },
       stats: {
         title: "Des données qui font la différence",
@@ -67,9 +86,9 @@ const LandingPage = ({ onStartCalculator, language }) => {
           },
           {
             icon: "shield",
-            title: "100% Gratuit",
+            title: "Sans Engagement",
             description:
-              "Pas de carte bancaire, pas d'inscription. Accédez à toutes les données immédiatement",
+              "Pas de carte bancaire, pas d'inscription. Accédez aux fonctionnalités de base immédiatement",
           },
           {
             icon: "zap",
@@ -167,7 +186,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
           "Access 3500+ real market rates, create professional quotes, and download legal contract templates in just a few clicks.",
         cta: "Estimate my rate & create a quote",
         badge:
-          "✨ 100% Free · Quotes & Contracts Included · No Signup Required",
+          "✨ Free Access · Quotes & Contracts Included · No Signup Required",
       },
       stats: {
         title: "Data that makes a difference",
@@ -211,9 +230,9 @@ const LandingPage = ({ onStartCalculator, language }) => {
           },
           {
             icon: "shield",
-            title: "100% Free",
+            title: "No Commitment",
             description:
-              "No credit card, no signup required. Access all market data immediately",
+              "No credit card, no signup required. Access core features immediately",
           },
           {
             icon: "zap",
@@ -346,6 +365,167 @@ const LandingPage = ({ onStartCalculator, language }) => {
             {t.hero.cta}
             <ArrowRight className="w-5 h-5" />
           </button>
+        </div>
+      </section>
+
+      {/* Fin Hero */}
+
+      {/* SECTION MÉTIERS */}
+      <section
+        id="professions"
+        className="py-20 px-4 bg-white dark:bg-gray-900"
+      >
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              {language === "fr"
+                ? "Explorer les tarifs par métier"
+                : "Explore rates by profession"}
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400">
+              {language === "fr"
+                ? "Analyses détaillées basées sur 3500+ points de données"
+                : "Detailed analysis based on 3500+ data points"}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Développeur Web */}
+            <Link
+              to={
+                language === "fr"
+                  ? "/tarif-developpeur-web"
+                  : "/web-developer-rate"
+              }
+              className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-purple-500"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
+                  <Code className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-purple-600">
+                    {language === "fr" ? "Développeur Web" : "Web Developer"}
+                  </h3>
+                  <p className="text-sm text-gray-500">400€/jour</p>
+                </div>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                React, Vue, Node.js, TypeScript
+              </p>
+            </Link>
+
+            {/* Data Scientist */}
+            <Link
+              to={
+                language === "fr"
+                  ? "/tarif-data-scientist"
+                  : "/data-scientist-rate"
+              }
+              className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-blue-500"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                  <Database className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600">
+                    Data Scientist
+                  </h3>
+                  <p className="text-sm text-gray-500">550€/jour</p>
+                </div>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Python, ML/DL, NLP, Big Data
+              </p>
+            </Link>
+
+            {/* Designer UX/UI */}
+            <Link
+              to={
+                language === "fr" ? "/tarif-designer-ux" : "/ux-designer-rate"
+              }
+              className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-pink-500"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 bg-pink-100 dark:bg-pink-900/30 rounded-xl">
+                  <Palette className="w-8 h-8 text-pink-600 dark:text-pink-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-pink-600">
+                    Designer UX/UI
+                  </h3>
+                  <p className="text-sm text-gray-500">400€/jour</p>
+                </div>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Figma, Design System, UX Research
+              </p>
+            </Link>
+
+            {/* Consultant Marketing */}
+            <Link
+              to={
+                language === "fr"
+                  ? "/tarif-consultant-marketing"
+                  : "/marketing-consultant-rate"
+              }
+              className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-green-500"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                  <TrendingUp className="w-8 h-8 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-green-600">
+                    {language === "fr"
+                      ? "Consultant Marketing"
+                      : "Marketing Consultant"}
+                  </h3>
+                  <p className="text-sm text-gray-500">450€/jour</p>
+                </div>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                SEO, Google Ads, Growth Hacking
+              </p>
+            </Link>
+
+            {/* DevOps Engineer */}
+            <Link
+              to={language === "fr" ? "/tarif-devops" : "/devops-rate"}
+              className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-orange-500"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
+                  <Server className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-orange-600">
+                    DevOps Engineer
+                  </h3>
+                  <p className="text-sm text-gray-500">500€/jour</p>
+                </div>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Kubernetes, AWS, Terraform, CI/CD
+              </p>
+            </Link>
+
+            {/* CTA "Voir tous les métiers" */}
+            <div
+              onClick={onStartCalculator}
+              className="cursor-pointer p-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-lg flex items-center justify-center hover:scale-105 transition-all text-white"
+            >
+              <div className="text-center">
+                <p className="text-3xl font-bold mb-1">15+</p>
+                <p className="text-sm font-medium opacity-90">
+                  {language === "fr"
+                    ? "Métiers à découvrir"
+                    : "Professions to explore"}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -558,8 +738,8 @@ const LandingPage = ({ onStartCalculator, language }) => {
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 {language === "fr"
-                  ? "Oui ! PricingPro est 100% gratuit. Pas de carte bancaire, pas d'inscription. Accédez instantanément à toutes les données du marché."
-                  : "Yes! PricingPro is 100% free. No credit card, no signup. Instantly access all market data."}
+                  ? "Oui ! L'accès aux fonctionnalités principales (calculateur de tarifs, données de marché, génération de devis et contrats) est gratuit. Pas de carte bancaire, pas d'inscription nécessaire."
+                  : "Yes! Access to core features (rate calculator, market data, quote and contract generation) is free. No credit card, no signup required."}
               </p>
             </div>
           </div>
@@ -567,30 +747,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-gray-900 text-gray-400">
-        <div className="max-w-6xl mx-auto text-center">
-          {/* ... */}
-          <div className="flex flex-wrap justify-center gap-6 mb-6">
-            {t.footer.links.map((link, idx) => (
-              <a
-                key={idx}
-                href="#"
-                className="hover:text-white transition-colors"
-              >
-                {link}
-              </a>
-            ))}
-            <a
-              href="#sources"
-              onClick={() => (window.location.hash = "#sources")}
-              className="hover:text-white transition-colors"
-            >
-              {language === "fr" ? "Sources de données" : "Data sources"}
-            </a>
-          </div>
-          {/* ... */}
-        </div>
-      </footer>
+      <Footer language={language} />
     </div>
   );
 };

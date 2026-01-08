@@ -5,4 +5,4 @@ Disallow: /api/
 # Crawl-delay pour éviter la surcharge
 Crawl-delay: 1
 
-Sitemap: https://pricingpro-mauve.vercel.app/sitemap.xml
+Sitemap: https://pricingpro.fr/sitemap.xml
