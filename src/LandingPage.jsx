@@ -16,7 +16,6 @@ import {
   Palette,
 } from "lucide-react";
 import { useEffect } from "react";
-import Footer from "./components/Footer";
 
 const LandingPage = ({ onStartCalculator, language }) => {
   const navigate = useNavigate();
@@ -928,9 +927,6 @@ const LandingPage = ({ onStartCalculator, language }) => {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <Footer language={language} />
     </div>
   );
 };

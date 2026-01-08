@@ -10,7 +10,6 @@ import {
   Calculator as CalculatorIcon,
 } from "lucide-react";
 import UnifiedHeader from "../components/UnifiedHeader";
-import Footer from "../components/Footer";
 import {
   LineChart,
   Line,
@@ -606,7 +605,6 @@ const ProfessionPage = ({
           </Link>
         </div>
       </div>
-      <Footer language={language} />
     </div>
   );
 };

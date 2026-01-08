@@ -6,6 +6,7 @@ import UnifiedHeader from "./components/UnifiedHeader";
 import DataSources from "./components/DataSources";
 import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "react-hot-toast";
+import Footer from "./components/Footer";
 
 // Import pages légales
 import MentionsLegales from "./pages/MentionsLegales";
@@ -106,8 +107,9 @@ const App = () => {
   );
 
   return (
-    <>
-      {/* Composant pour gérer le scroll automatique et le reset du title */}
+    <div
+      className={`min-h-screen flex flex-col ${darkMode ? "dark" : ""} bg-white dark:bg-gray-900 transition-colors duration-300`}
+    >
       <ScrollToTop />
       <Toaster
         position="bottom-right"
@@ -120,65 +122,90 @@ const App = () => {
         }}
       />
 
-      <Routes>
-        {/* Page principale avec système de hash existant */}
-        <Route path="/" element={<MainApp />} />
-        <Route
-          path="/calculator"
-          element={
-            <div className={darkMode ? "dark" : ""}>
-              <UnifiedHeader
-                language={language}
-                setLanguage={setLanguage}
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
-                onLogoClick={() => (window.location.href = "/")}
-              />
-              <main className="pt-20 bg-white dark:bg-gray-900 min-h-screen">
-                <Calculator
-                  language={language}
-                  onBackToHome={() => (window.location.href = "/")}
-                />
-              </main>
-            </div>
+      {/* LE HEADER : Appelé une seule fois ici, il sera présent sur toutes les routes */}
+      <UnifiedHeader
+        language={language}
+        setLanguage={setLanguage}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        onLogoClick={() => {
+          if (location.pathname === "/") {
+            goToHome();
+          } else {
+            window.location.href = "/";
           }
-        />
+        }}
+      />
 
-        {/* Générateur de devis */}
-        <Route
-          path="/generateur-devis-freelance"
-          element={
-            <div className={darkMode ? "dark" : ""}>
-              <UnifiedHeader
+      {/* LE CONTENU PRINCIPAL : flex-grow permet de pousser le footer vers le bas */}
+      <main className="pt-20 flex-grow">
+        <Routes>
+          {/* Page principale avec système de hash */}
+          <Route
+            path="/"
+            element={
+              <>
+                {currentPage === "landing" && (
+                  <LandingPage
+                    onStartCalculator={goToCalculator}
+                    language={language}
+                  />
+                )}
+                {currentPage === "calculator" && (
+                  <Calculator onBackToHome={goToHome} language={language} />
+                )}
+                {currentPage === "sources" && (
+                  <DataSources language={language} />
+                )}
+              </>
+            }
+          />
+
+          {/* Route directe Calculator */}
+          <Route
+            path="/calculator"
+            element={
+              <Calculator
                 language={language}
-                setLanguage={setLanguage}
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
-                onLogoClick={() => (window.location.href = "/")}
+                onBackToHome={() => (window.location.href = "/")}
               />
-              <main className="pt-20 bg-white dark:bg-gray-900 min-h-screen">
-                <GenerateurDevis language={language} />
-              </main>
-            </div>
-          }
-        />
+            }
+          />
 
-        {/* Pages légales */}
-        <Route path="/mentions-legales" element={<MentionsLegales />} />
-        <Route path="/mentions-legales-en" element={<MentionsLegalesEN />} />
-        <Route path="/confidentialite" element={<Confidentialite />} />
-        <Route
-          path="/confidentialite-en"
-          element={<PolitiqueConfidentialite />}
-        />
+          {/* Générateur de devis */}
+          <Route
+            path="/generateur-devis-freelance"
+            element={<GenerateurDevis language={language} />}
+          />
 
-        {/* Pages Professions */}
-        <Route path="/:slug" element={<ProfessionTemplate />} />
+          {/* Pages légales */}
+          <Route path="/mentions-legales" element={<MentionsLegales />} />
+          <Route path="/mentions-legales-en" element={<MentionsLegalesEN />} />
+          <Route path="/confidentialite" element={<Confidentialite />} />
+          <Route
+            path="/confidentialite-en"
+            element={<PolitiqueConfidentialite />}
+          />
 
-        {/* 404 - Redirection vers home */}
-        <Route path="*" element={<MainApp />} />
-      </Routes>
-    </>
+          {/* Pages Professions */}
+          <Route path="/:slug" element={<ProfessionTemplate />} />
+
+          {/* 404 */}
+          <Route
+            path="*"
+            element={
+              <LandingPage
+                onStartCalculator={goToCalculator}
+                language={language}
+              />
+            }
+          />
+        </Routes>
+      </main>
+
+      {/* LE FOOTER : Appelé une seule fois ici, il apparaîtra sur TOUTES les pages */}
+      <Footer language={language} />
+    </div>
   );
 };
 

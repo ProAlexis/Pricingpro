@@ -1,5 +1,11 @@
 import React from "react";
-import { Database, ExternalLink, Shield, FileText } from "lucide-react";
+import {
+  Database,
+  ExternalLink,
+  Shield,
+  FileText,
+  AlertCircle,
+} from "lucide-react";
 
 const DataSources = ({ language = "fr" }) => {
   const translations = {
@@ -188,163 +194,168 @@ const DataSources = ({ language = "fr" }) => {
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full mb-4">
-          <Shield className="w-8 h-8 text-purple-600 dark:text-purple-300" />
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4 transition-colors duration-300">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full mb-4">
+            <Shield className="w-8 h-8 text-purple-600 dark:text-purple-300" />
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.title}
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            {t.subtitle}
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+            {t.lastUpdate}: {currentDate}
+          </p>
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          {t.title}
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-          {t.subtitle}
-        </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-          {t.lastUpdate}: {currentDate}
-        </p>
-      </div>
 
-      {/* Data Policy */}
-      <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-12">
-        <div className="flex items-start gap-4">
-          <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
-          <div>
-            <h2 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-2">
-              {t.dataPolicy}
-            </h2>
-            <p className="text-blue-800 dark:text-blue-200">{t.policyText}</p>
+        {/* Data Policy */}
+        <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-12">
+          <div className="flex items-start gap-4">
+            <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+            <div>
+              <h2 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-2">
+                {t.dataPolicy}
+              </h2>
+              <p className="text-blue-800 dark:text-blue-200">{t.policyText}</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Sources */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          {t.mainSources}
-        </h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          {t.sources.map((source, idx) => (
-            <div
-              key={idx}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                  <Database className="w-6 h-6 text-purple-600 dark:text-purple-300" />
+        {/* Main Sources */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            {t.mainSources}
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {t.sources.map((source, idx) => (
+              <div
+                key={idx}
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                    <Database className="w-6 h-6 text-purple-600 dark:text-purple-300" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-gray-900 dark:text-white">
+                      {source.name}
+                    </h3>
+                    <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+                      {source.update}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 dark:text-white">
-                    {source.name}
-                  </h3>
-                  <span className="text-xs text-green-600 dark:text-green-400 font-medium">
-                    {source.update}
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {source.description}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold text-purple-600 dark:text-purple-400">
+                    {source.dataPoints}
                   </span>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                {source.description}
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-purple-600 dark:text-purple-400">
-                  {source.dataPoints}
-                </span>
-                <a
-                  href={source.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  {language === "fr" ? "Voir la source" : "View source"}
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Complementary Sources */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          {t.secondarySources}
-        </h2>
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg divide-y dark:divide-gray-700">
-          {t.complementary.map((source, idx) => (
-            <div
-              key={idx}
-              className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                    {source.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    {source.description}
-                  </p>
-                  <span className="inline-block px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-medium">
-                    {source.license}
-                  </span>
-                </div>
-                <a
-                  href={source.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 flex-shrink-0"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Legal Framework */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          {t.legalFramework}
-        </h2>
-        <div className="space-y-4">
-          {t.legal.map((item, idx) => (
-            <div
-              key={idx}
-              className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {item.description}
-                  </p>
-                </div>
-                {item.url && (
                   <a
-                    href={item.url}
+                    href={source.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    {language === "fr" ? "Voir la source" : "View source"}
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Complementary Sources */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            {t.secondarySources}
+          </h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg divide-y dark:divide-gray-700">
+            {t.complementary.map((source, idx) => (
+              <div
+                key={idx}
+                className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                      {source.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      {source.description}
+                    </p>
+                    <span className="inline-block px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-medium">
+                      {source.license}
+                    </span>
+                  </div>
+                  <a
+                    href={source.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 flex-shrink-0"
                   >
                     <ExternalLink className="w-4 h-4" />
                   </a>
-                )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Disclaimer */}
-      <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-xl p-6">
-        <h2 className="text-lg font-bold text-yellow-900 dark:text-yellow-100 mb-2">
-          {t.disclaimer}
-        </h2>
-        <p className="text-sm text-yellow-800 dark:text-yellow-200">
-          {t.disclaimerText}
-        </p>
+        {/* Legal Framework */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            {t.legalFramework}
+          </h2>
+          <div className="space-y-4">
+            {t.legal.map((item, idx) => (
+              <div
+                key={idx}
+                className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {item.description}
+                    </p>
+                  </div>
+                  {item.url && (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 flex-shrink-0"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Disclaimer */}
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-xl p-6">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+            <h2 className="text-lg font-bold text-yellow-900 dark:text-yellow-100">
+              {t.disclaimer}
+            </h2>
+          </div>
+          <p className="text-sm text-yellow-800 dark:text-yellow-200">
+            {t.disclaimerText}
+          </p>
+        </div>
       </div>
     </div>
   );
