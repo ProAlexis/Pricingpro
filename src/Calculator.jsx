@@ -1173,9 +1173,12 @@ const Calculator = ({ onBackToHome, language }) => {
 
             {/* Templates de contrats */}
             <ContractTemplates
-              formData={formData}
-              legalStatus={legalStatus}
               language={language}
+              legalStatus={legalStatus}
+              formData={{
+                ...formData,
+                dailyRate: results?.daily || results?.suggestedTJM, // On injecte le TJM calculé
+              }}
             />
 
             {/* Email Capture */}

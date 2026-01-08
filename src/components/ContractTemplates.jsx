@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FileText, Download, Check, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import {
@@ -28,6 +28,19 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
     siret: "",
   });
   const [generating, setGenerating] = useState(false);
+
+  // CHARGER les infos au démarrage
+  useEffect(() => {
+    const savedInfo = localStorage.getItem("pricingpro_user_info");
+    if (savedInfo) {
+      setUserInfo(JSON.parse(savedInfo));
+    }
+  }, []);
+
+  // SAUVEGARDER quand userInfo change
+  useEffect(() => {
+    localStorage.setItem("pricingpro_user_info", JSON.stringify(userInfo));
+  }, [userInfo]);
 
   const translations = {
     fr: {
@@ -199,12 +212,25 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
               language === "fr" ? "LE PRESTATAIRE :" : "THE SERVICE PROVIDER:",
               "",
             ),
-            createParagraph(userInfo.name || "[NOM DU PRESTATAIRE]"),
+            createParagraph(
+              userInfo.name ||
+                (language === "fr"
+                  ? "[NOM DU PRESTATAIRE]"
+                  : "[PROVIDER NAME]"),
+            ),
             createParagraph(userInfo.company || ""),
-            createParagraph(`SIRET : ${userInfo.siret || "[À COMPLÉTER]"}`),
-            createParagraph(`Adresse : ${userInfo.address || "[À COMPLÉTER]"}`),
-            createParagraph(`Email : ${userInfo.email || "[À COMPLÉTER]"}`),
-            createParagraph(`Téléphone : ${userInfo.phone || "[À COMPLÉTER]"}`),
+            createParagraph(
+              `${language === "fr" ? "SIRET :" : "Business ID:"} ${userInfo.siret || (language === "fr" ? "[À COMPLÉTER]" : "[TO COMPLETE]")}`,
+            ),
+            createParagraph(
+              `${language === "fr" ? "Adresse :" : "Address:"} ${userInfo.address || (language === "fr" ? "[À COMPLÉTER]" : "[TO COMPLETE]")}`,
+            ),
+            createParagraph(
+              `Email : ${userInfo.email || (language === "fr" ? "[À COMPLÉTER]" : "[TO COMPLETE]")}`,
+            ),
+            createParagraph(
+              `${language === "fr" ? "Téléphone :" : "Phone:"} ${userInfo.phone || (language === "fr" ? "[À COMPLÉTER]" : "[TO COMPLETE]")}`,
+            ),
 
             createParagraph(""), // Ligne vide
 
@@ -212,13 +238,23 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
               language === "fr" ? "LE CLIENT :" : "THE CLIENT:",
               "",
             ),
-            createParagraph(clientInfo.name || "[NOM DU CLIENT]"),
-            createParagraph(clientInfo.company || "[SOCIÉTÉ DU CLIENT]"),
+            createParagraph(
+              clientInfo.name ||
+                (language === "fr" ? "[NOM DU CLIENT]" : "[CLIENT NAME]"),
+            ),
+            createParagraph(
+              clientInfo.company ||
+                (language === "fr"
+                  ? "[SOCIÉTÉ DU CLIENT]"
+                  : "[CLIENT COMPANY]"),
+            ),
             clientInfo.siret
-              ? createParagraph(`SIRET : ${clientInfo.siret}`)
+              ? createParagraph(
+                  `${language === "fr" ? "SIRET :" : "Business ID :"} ${clientInfo.siret}`,
+                )
               : createParagraph(""),
             createParagraph(
-              `Adresse : ${clientInfo.address || "[ADRESSE DU CLIENT]"}`,
+              `${language === "fr" ? "Adresse :" : "Address:"} ${clientInfo.address || (language === "fr" ? "[ADRESSE DU CLIENT]" : "[CLIENT ADDRESS]")}`,
             ),
 
             createParagraph(""), // Ligne vide
@@ -236,16 +272,24 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
               HeadingLevel.HEADING_2,
             ),
             createParagraph(
-              "Le prestataire s'engage à fournir les services suivants :",
+              language === "fr"
+                ? "Le prestataire s'engage à fournir les services suivants :"
+                : "The service provider agrees to provide the following services:",
             ),
-            createParagraph("[DÉCRIRE LA MISSION EN DÉTAIL]"),
+            createParagraph(
+              language === "fr"
+                ? "[DÉCRIRE LA MISSION EN DÉTAIL]"
+                : "[DESCRIBE THE MISSION IN DETAIL]",
+            ),
 
             createHeading(
               language === "fr" ? "ARTICLE 2 - DURÉE" : "ARTICLE 2 - DURATION",
               HeadingLevel.HEADING_2,
             ),
             createParagraph(
-              "La mission débutera le [DATE DE DÉBUT] et se terminera le [DATE DE FIN].",
+              language === "fr"
+                ? "La mission débutera le [DATE DE DÉBUT] et se terminera le [DATE DE FIN]."
+                : "The mission will start on [START DATE] and end on [END DATE].",
             ),
 
             createHeading(
@@ -254,50 +298,83 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                 : "ARTICLE 3 - COMPENSATION",
               HeadingLevel.HEADING_2,
             ),
-            createParagraph("Les parties conviennent d'une rémunération de :"),
-            createParagraph("- Tarif journalier : [MONTANT]€ HT/jour"),
             createParagraph(
-              "- Modalités de facturation : [MENSUELLE/À LA LIVRAISON]",
+              language === "fr"
+                ? "Les parties conviennent d'une rémunération de :"
+                : "The parties agree on a compensation of:",
             ),
             createParagraph(
-              "- Conditions de paiement : [30 JOURS/À RÉCEPTION]",
+              `${language === "fr" ? "- Tarif journalier :" : "- Daily rate:"} ${formData?.dailyRate || "[MONTANT]"}€ HT/jour`,
             ),
 
+            // ARTICLE 4 - OBLIGATIONS
             createHeading(
               language === "fr"
                 ? "ARTICLE 4 - OBLIGATIONS DU PRESTATAIRE"
                 : "ARTICLE 4 - SERVICE PROVIDER OBLIGATIONS",
               HeadingLevel.HEADING_2,
             ),
-            createParagraph("Le prestataire s'engage à :"),
             createParagraph(
-              "- Réaliser la mission avec diligence et professionnalisme",
+              language === "fr"
+                ? "Le prestataire s'engage à :"
+                : "The service provider undertakes to:",
             ),
-            createParagraph("- Respecter les délais convenus"),
             createParagraph(
-              "- Informer le client de tout retard ou difficulté",
+              language === "fr"
+                ? "- Réaliser la mission avec diligence et professionnalisme"
+                : "- Perform the mission with diligence and professionalism",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "- Respecter les délais convenus"
+                : "- Respect the agreed deadlines",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "- Informer le client de tout retard ou difficulté"
+                : "- Inform the client of any delay or difficulty",
             ),
 
+            // ARTICLE 5 - CLIENT OBLIGATIONS
             createHeading(
               language === "fr"
                 ? "ARTICLE 5 - OBLIGATIONS DU CLIENT"
                 : "ARTICLE 5 - CLIENT OBLIGATIONS",
               HeadingLevel.HEADING_2,
             ),
-            createParagraph("Le client s'engage à :"),
             createParagraph(
-              "- Fournir les informations nécessaires à la réalisation de la mission",
+              language === "fr"
+                ? "Le client s'engage à :"
+                : "The client undertakes to:",
             ),
-            createParagraph("- Régler les factures dans les délais convenus"),
-            createParagraph("- Donner un accès aux ressources nécessaires"),
+            createParagraph(
+              language === "fr"
+                ? "- Fournir les informations nécessaires à la réalisation de la mission"
+                : "- Provide the information necessary for the performance of the mission",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "- Régler les factures dans les délais convenus"
+                : "- Settle invoices within the agreed deadlines",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "- Donner un accès aux ressources nécessaires"
+                : "- Provide access to the necessary resources",
+            ),
 
+            // ARTICLE 6 & 7 - IP & CONFIDENTIALITY
             createHeading(
               language === "fr"
                 ? "ARTICLE 6 - PROPRIÉTÉ INTELLECTUELLE"
                 : "ARTICLE 6 - INTELLECTUAL PROPERTY",
               HeadingLevel.HEADING_2,
             ),
-            createParagraph("[DÉFINIR LA PROPRIÉTÉ DES LIVRABLES]"),
+            createParagraph(
+              language === "fr"
+                ? "Le prestataire cède au client l'intégralité des droits de propriété intellectuelle sur les livrables à compter du paiement complet de la prestation."
+                : "The provider assigns all intellectual property rights to the deliverables upon full payment.",
+            ),
 
             createHeading(
               language === "fr"
@@ -306,9 +383,12 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
               HeadingLevel.HEADING_2,
             ),
             createParagraph(
-              "Les parties s'engagent à garder confidentielles toutes informations échangées.",
+              language === "fr"
+                ? "Les parties s'engagent à garder confidentielles toutes informations échangées."
+                : "The parties undertake to keep all exchanged information confidential.",
             ),
 
+            // ARTICLE 8 & 9 - TERMINATION & LAW
             createHeading(
               language === "fr"
                 ? "ARTICLE 8 - RÉSILIATION"
@@ -316,7 +396,9 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
               HeadingLevel.HEADING_2,
             ),
             createParagraph(
-              "Le contrat peut être résilié par l'une ou l'autre des parties avec un préavis de [DURÉE].",
+              language === "fr"
+                ? "Le contrat peut être résilié par l'une ou l'autre des parties avec un préavis de [DURÉE]."
+                : "The contract may be terminated by either party with a notice period of [DURATION].",
             ),
 
             createHeading(
@@ -325,21 +407,35 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                 : "ARTICLE 9 - APPLICABLE LAW",
               HeadingLevel.HEADING_2,
             ),
-            createParagraph("Le présent contrat est soumis au droit français."),
+            createParagraph(
+              language === "fr"
+                ? "Le présent contrat est soumis au droit français."
+                : "This contract is governed by French law.",
+            ),
 
             // Signatures
             createParagraph(""), // Ligne vide
             createParagraph(""), // Ligne vide
-            createParagraph(`Fait en deux exemplaires à [VILLE], le ${date}`),
+            createParagraph(
+              language === "fr"
+                ? `Fait en deux exemplaires à [VILLE], le ${date}`
+                : `Done in duplicate in [CITY], on ${date}`,
+            ),
             createParagraph(""), // Ligne vide
 
             new Paragraph({
               children: [
-                new TextRun({ text: "Le Prestataire", bold: true }),
+                new TextRun({
+                  text: language === "fr" ? "Le Prestataire" : "The Provider",
+                  bold: true,
+                }),
                 new TextRun({
                   text: "                                        ",
                 }),
-                new TextRun({ text: "Le Client", bold: true }),
+                new TextRun({
+                  text: language === "fr" ? "Le Client" : "The Client",
+                  bold: true,
+                }),
               ],
               spacing: { before: 400 },
             }),
@@ -371,98 +467,200 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
           children: [
             // Titre
             new Paragraph({
-              text: "CONDITIONS GÉNÉRALES DE VENTE",
+              text:
+                language === "fr"
+                  ? "CONDITIONS GÉNÉRALES DE VENTE"
+                  : "TERMS AND CONDITIONS",
               heading: HeadingLevel.TITLE,
               alignment: AlignmentType.CENTER,
               spacing: { before: 0, after: 200 },
             }),
             new Paragraph({
-              text: userInfo.company || userInfo.name || "[VOTRE ENTREPRISE]",
+              text:
+                userInfo.company ||
+                userInfo.name ||
+                (language === "fr" ? "[VOTRE ENTREPRISE]" : "[YOUR COMPANY]"),
               alignment: AlignmentType.CENTER,
               spacing: { after: 600 },
             }),
 
-            // Articles
+            // Article 1
             createHeading(
-              "Article 1 - Champ d'application",
+              language === "fr"
+                ? "Article 1 - Champ d'application"
+                : "Article 1 - Scope of Application",
               HeadingLevel.HEADING_2,
             ),
             createParagraph(
-              `Les présentes conditions générales de vente s'appliquent à toutes les prestations de services réalisées par ${userInfo.name || "[VOTRE NOM]"}.`,
+              language === "fr"
+                ? `Les présentes conditions générales de vente s'appliquent à toutes les prestations de services réalisées par ${userInfo.name || "[VOTRE NOM]"}.`
+                : `These general terms and conditions apply to all services provided by ${userInfo.name || "[YOUR NAME]"}.`,
             ),
 
-            createHeading("Article 2 - Commandes", HeadingLevel.HEADING_2),
+            // Article 2
+            createHeading(
+              language === "fr"
+                ? "Article 2 - Commandes"
+                : "Article 2 - Orders",
+              HeadingLevel.HEADING_2,
+            ),
             createParagraph(
-              "Toute commande implique l'acceptation sans réserve des présentes CGV.",
+              language === "fr"
+                ? "Toute commande implique l'acceptation sans réserve des présentes CGV."
+                : "Any order implies the unreserved acceptance of these T&Cs.",
             ),
 
-            createHeading("Article 3 - Prix", HeadingLevel.HEADING_2),
-            createParagraph("Les prix sont exprimés en euros hors taxes (HT)."),
+            // Article 3
+            createHeading(
+              language === "fr" ? "Article 3 - Prix" : "Article 3 - Pricing",
+              HeadingLevel.HEADING_2,
+            ),
+            createParagraph(
+              language === "fr"
+                ? "Les prix sont exprimés en euros hors taxes (HT)."
+                : "Prices are expressed in euros excluding taxes (VAT).",
+            ),
             createParagraph(
               legalStatus === "auto-entrepreneur"
-                ? "TVA non applicable, art. 293 B du CGI."
-                : "TVA applicable selon le taux en vigueur.",
+                ? language === "fr"
+                  ? "TVA non applicable, art. 293 B du CGI."
+                  : "VAT not applicable, art. 293 B of the CGI."
+                : language === "fr"
+                  ? "TVA applicable selon le taux en vigueur."
+                  : "VAT applicable at the current rate.",
             ),
 
+            // Article 4
             createHeading(
-              "Article 4 - Modalités de paiement",
-              HeadingLevel.HEADING_2,
-            ),
-            createParagraph("Le paiement s'effectue :"),
-            createParagraph("- Par virement bancaire"),
-            createParagraph(
-              "- Délai de paiement : 30 jours à réception de facture",
-            ),
-            createParagraph(
-              "- En cas de retard : pénalités de 3 fois le taux d'intérêt légal",
-            ),
-
-            createHeading(
-              "Article 5 - Délais de livraison",
+              language === "fr"
+                ? "Article 4 - Modalités de paiement"
+                : "Article 4 - Payment Terms",
               HeadingLevel.HEADING_2,
             ),
             createParagraph(
-              "Les délais de livraison sont indicatifs et ne sont pas garantis.",
+              language === "fr"
+                ? "Le paiement s'effectue :"
+                : "Payment is made:",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "- Par virement bancaire"
+                : "- By bank transfer",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "- Délai de paiement : 30 jours à réception de facture"
+                : "- Payment term: 30 days from receipt of invoice",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "- En cas de retard : pénalités de 3 fois le taux d'intérêt légal"
+                : "- In case of late payment: penalties of 3 times the legal interest rate",
             ),
 
+            // Article 5
             createHeading(
-              "Article 6 - Propriété intellectuelle",
+              language === "fr"
+                ? "Article 5 - Délais de livraison"
+                : "Article 5 - Delivery Deadlines",
               HeadingLevel.HEADING_2,
             ),
             createParagraph(
-              "Les livrables restent la propriété du prestataire jusqu'au paiement intégral.",
+              language === "fr"
+                ? "Les délais de livraison sont indicatifs et ne sont pas garantis."
+                : "Delivery times are indicative and are not guaranteed.",
             ),
 
-            createHeading("Article 7 - Responsabilité", HeadingLevel.HEADING_2),
+            // Article 6
+            createHeading(
+              language === "fr"
+                ? "Article 6 - Propriété intellectuelle"
+                : "Article 6 - Intellectual Property",
+              HeadingLevel.HEADING_2,
+            ),
             createParagraph(
-              "Le prestataire ne peut être tenu responsable que de ses fautes prouvées.",
+              language === "fr"
+                ? "Les livrables restent la propriété du prestataire jusqu'au paiement intégral."
+                : "Deliverables remain the property of the provider until full payment.",
             ),
 
-            createHeading("Article 8 - Force majeure", HeadingLevel.HEADING_2),
+            // Article 7
+            createHeading(
+              language === "fr"
+                ? "Article 7 - Responsabilité"
+                : "Article 7 - Liability",
+              HeadingLevel.HEADING_2,
+            ),
             createParagraph(
-              "Le prestataire ne pourra être tenu responsable en cas de force majeure.",
+              language === "fr"
+                ? "Le prestataire ne peut être tenu responsable que de ses fautes prouvées."
+                : "The provider can only be held responsible for proven faults.",
             ),
 
-            createHeading("Article 9 - Litiges", HeadingLevel.HEADING_2),
-            createParagraph(
-              "En cas de litige, les parties s'efforceront de trouver une solution amiable.",
+            // Article 8
+            createHeading(
+              language === "fr"
+                ? "Article 8 - Force majeure"
+                : "Article 8 - Force Majeure",
+              HeadingLevel.HEADING_2,
             ),
             createParagraph(
-              "À défaut, compétence exclusive est attribuée aux tribunaux de [VILLE].",
+              language === "fr"
+                ? "Le prestataire ne pourra être tenu responsable en cas de force majeure."
+                : "The provider cannot be held responsible in case of force majeure.",
+            ),
+
+            // Article 9
+            createHeading(
+              language === "fr"
+                ? "Article 9 - Litiges"
+                : "Article 9 - Disputes",
+              HeadingLevel.HEADING_2,
+            ),
+            createParagraph(
+              language === "fr"
+                ? "En cas de litige, les parties s'efforceront de trouver une solution amiable."
+                : "In the event of a dispute, the parties will endeavor to find an amicable solution.",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "À défaut, compétence exclusive est attribuée aux tribunaux de [VILLE]."
+                : "Failing that, exclusive jurisdiction is granted to the courts of [CITY].",
             ),
 
             // Coordonnées
-            createParagraph(""), // Ligne vide
-            createHeading("Coordonnées :", HeadingLevel.HEADING_2),
-            createParagraph(userInfo.name || "[VOTRE NOM]"),
+            createParagraph(""),
+            createHeading(
+              language === "fr" ? "Coordonnées :" : "Contact Information:",
+              HeadingLevel.HEADING_2,
+            ),
+            createParagraph(
+              userInfo.name ||
+                (language === "fr" ? "[VOTRE NOM]" : "[YOUR NAME]"),
+            ),
             createParagraph(userInfo.company || ""),
-            createParagraph(userInfo.siret ? `SIRET: ${userInfo.siret}` : ""),
-            createParagraph(userInfo.address || "[VOTRE ADRESSE]"),
-            createParagraph(userInfo.email || "[VOTRE EMAIL]"),
-            createParagraph(userInfo.phone || "[VOTRE TÉLÉPHONE]"),
+            createParagraph(
+              `${language === "fr" ? "SIRET :" : "Business ID :"} ${userInfo.siret || (language === "fr" ? "[À COMPLÉTER]" : "[TO COMPLETE]")}`,
+            ),
+            createParagraph(
+              userInfo.address ||
+                (language === "fr" ? "[VOTRE ADRESSE]" : "[YOUR ADDRESS]"),
+            ),
+            createParagraph(
+              userInfo.email ||
+                (language === "fr" ? "[VOTRE EMAIL]" : "[YOUR EMAIL]"),
+            ),
+            createParagraph(
+              userInfo.phone ||
+                (language === "fr" ? "[VOTRE TÉLÉPHONE]" : "[YOUR PHONE]"),
+            ),
 
-            createParagraph(""), // Ligne vide
-            createParagraph(`Dernière mise à jour : ${date}`),
+            createParagraph(""),
+            createParagraph(
+              language === "fr"
+                ? `Dernière mise à jour : ${date}`
+                : `Last update: ${date}`,
+            ),
           ],
         },
       ],
@@ -594,83 +792,158 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
             }),
 
             // Parties
-            createHeading("Entre les soussignés :", HeadingLevel.HEADING_1),
+            createHeading(
+              language === "fr"
+                ? "Entre les soussignés :"
+                : "Between the undersigned:",
+              HeadingLevel.HEADING_1,
+            ),
 
-            createBoldParagraph("PARTIE 1 :", ""),
+            createBoldParagraph(
+              language === "fr" ? "PARTIE 1 :" : "PARTY 1:",
+              "",
+            ),
             createParagraph(userInfo.name || "[VOTRE NOM]"),
             createParagraph(userInfo.company || ""),
-            createParagraph(`Adresse : ${userInfo.address || "[À COMPLÉTER]"}`),
+            createParagraph(
+              `${language === "fr" ? "Adresse :" : "Address:"} ${userInfo.address || "[À COMPLÉTER]"}`,
+            ),
 
             createParagraph(""), // Ligne vide
 
-            createBoldParagraph("PARTIE 2 :", ""),
+            createBoldParagraph(
+              language === "fr" ? "PARTIE 2 :" : "PARTY 2:",
+              "",
+            ),
             createParagraph(clientInfo.name || "[NOM DE LA PARTIE 2]"),
             createParagraph(clientInfo.company || "[SOCIÉTÉ]"),
-            createParagraph(`Adresse : ${clientInfo.address || "[ADRESSE]"}`),
+            createParagraph(
+              `${language === "fr" ? "Adresse :" : "Address:"} ${clientInfo.address || "[ADRESSE]"}`,
+            ),
 
             createParagraph(""), // Ligne vide
 
-            createBoldParagraph("IL A ÉTÉ CONVENU CE QUI SUIT :", ""),
+            createBoldParagraph(
+              language === "fr"
+                ? "IL A ÉTÉ CONVENU CE QUI SUIT :"
+                : "IT HAS BEEN AGREED AS FOLLOWS:",
+              "",
+            ),
 
             // Articles
-            createHeading("Article 1 - Définitions", HeadingLevel.HEADING_2),
+            createHeading(
+              language === "fr"
+                ? "Article 1 - Définitions"
+                : "Article 1 - Definitions",
+              HeadingLevel.HEADING_2,
+            ),
             createParagraph(
-              '"Informations Confidentielles" désigne toute information, de quelque nature que ce soit, échangée entre les parties dans le cadre de leur collaboration.',
+              language === "fr"
+                ? '"Informations Confidentielles" désigne toute information, de quelque nature que ce soit, échangée entre les parties dans le cadre de leur collaboration.'
+                : '"Confidential Information" means any information, of any nature whatsoever, exchanged between the parties as part of their collaboration.',
             ),
 
             createHeading(
-              "Article 2 - Engagement de confidentialité",
+              language === "fr"
+                ? "Article 2 - Engagement de confidentialité"
+                : "Article 2 - Confidentiality Undertaking",
               HeadingLevel.HEADING_2,
             ),
-            createParagraph("Les parties s'engagent à :"),
             createParagraph(
-              "- Ne pas divulguer les Informations Confidentielles à des tiers",
+              language === "fr"
+                ? "Les parties s'engagent à :"
+                : "The parties undertake to:",
             ),
             createParagraph(
-              "- Utiliser ces informations uniquement dans le cadre de la mission",
+              language === "fr"
+                ? "- Ne pas divulguer les Informations Confidentielles à des tiers"
+                : "- Not disclose Confidential Information to third parties",
             ),
             createParagraph(
-              "- Protéger ces informations avec le même soin que leurs propres informations confidentielles",
-            ),
-
-            createHeading("Article 3 - Exceptions", HeadingLevel.HEADING_2),
-            createParagraph(
-              "Ne sont pas considérées comme confidentielles les informations :",
-            ),
-            createParagraph("- Déjà publiques au moment de la divulgation"),
-            createParagraph("- Obtenues légalement d'un tiers"),
-            createParagraph(
-              "- Développées indépendamment par la partie réceptrice",
+              language === "fr"
+                ? "- Utiliser ces informations uniquement dans le cadre de la mission"
+                : "- Use this information only within the scope of the mission",
             ),
 
-            createHeading("Article 4 - Durée", HeadingLevel.HEADING_2),
+            createHeading(
+              language === "fr"
+                ? "Article 3 - Exceptions"
+                : "Article 3 - Exceptions",
+              HeadingLevel.HEADING_2,
+            ),
             createParagraph(
-              "Le présent accord prend effet à compter de sa signature et reste en vigueur pendant une durée de [DURÉE] à compter de la fin de la collaboration.",
+              language === "fr"
+                ? "Ne sont pas considérées comme confidentielles les informations :"
+                : "Information shall not be considered confidential if it is:",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "- Déjà publiques au moment de la divulgation"
+                : "- Already public at the time of disclosure",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "- Obtenues légalement d'un tiers"
+                : "- Legally obtained from a third party",
             ),
 
-            createHeading("Article 5 - Sanctions", HeadingLevel.HEADING_2),
+            createHeading(
+              language === "fr" ? "Article 4 - Durée" : "Article 4 - Duration",
+              HeadingLevel.HEADING_2,
+            ),
             createParagraph(
-              "En cas de violation de cet accord, la partie fautive s'expose à des dommages et intérêts.",
+              language === "fr"
+                ? "Le présent accord prend effet à compter de sa signature et reste en vigueur pendant une durée de [DURÉE] à compter de la fin de la collaboration."
+                : "This agreement shall take effect upon signature and remain in force for a period of [DURATION] from the end of the collaboration.",
             ),
 
-            createHeading("Article 6 - Loi applicable", HeadingLevel.HEADING_2),
+            createHeading(
+              language === "fr"
+                ? "Article 5 - Sanctions"
+                : "Article 5 - Penalties",
+              HeadingLevel.HEADING_2,
+            ),
             createParagraph(
-              "Le présent accord est régi par le droit français.",
+              language === "fr"
+                ? "En cas de violation de cet accord, la partie fautive s'expose à des dommages et intérêts."
+                : "In the event of a breach of this agreement, the defaulting party may be liable for damages.",
+            ),
+
+            createHeading(
+              language === "fr"
+                ? "Article 6 - Loi applicable"
+                : "Article 6 - Governing Law",
+              HeadingLevel.HEADING_2,
+            ),
+            createParagraph(
+              language === "fr"
+                ? "Le présent accord est régi par le droit français."
+                : "This agreement is governed by French law.",
             ),
 
             // Signatures
             createParagraph(""), // Ligne vide
             createParagraph(""), // Ligne vide
-            createParagraph(`Fait en deux exemplaires à [VILLE], le ${date}`),
+            createParagraph(
+              language === "fr"
+                ? `Fait en deux exemplaires à [VILLE], le ${date}`
+                : `Done in duplicate in [CITY], on ${date}`,
+            ),
             createParagraph(""), // Ligne vide
 
             new Paragraph({
               children: [
-                new TextRun({ text: "Partie 1", bold: true }),
+                new TextRun({
+                  text: language === "fr" ? "Partie 1" : "Party 1",
+                  bold: true,
+                }),
                 new TextRun({
                   text: "                                        ",
                 }),
-                new TextRun({ text: "Partie 2", bold: true }),
+                new TextRun({
+                  text: language === "fr" ? "Partie 2" : "Party 2",
+                  bold: true,
+                }),
               ],
               spacing: { before: 400 },
             }),
@@ -731,10 +1004,10 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
         position: "bottom-right",
       });
     } catch (error) {
-      console.error("Erreur lors de la génération du document:", error);
-      alert(
+      console.error("Erreur...", error);
+      toast.error(
         language === "fr"
-          ? "Erreur lors de la génération du document"
+          ? "Erreur lors de la génération"
           : "Error generating document",
       );
     } finally {
@@ -882,6 +1155,72 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   placeholder="+33 6 12 34 56 78"
+                />
+              </div>
+            </div>
+
+            {/* Section Client dans le formulaire */}
+            <h4 className="text-lg font-bold text-gray-900 dark:text-white mt-6 mb-4">
+              {t.clientInfo}
+            </h4>
+            <div className="grid md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {t.name}
+                </label>
+                <input
+                  type="text"
+                  value={clientInfo.name}
+                  onChange={(e) =>
+                    setClientInfo({ ...clientInfo, name: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="M. Jean Client"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {t.company}
+                </label>
+                <input
+                  type="text"
+                  value={clientInfo.company}
+                  onChange={(e) =>
+                    setClientInfo({ ...clientInfo, company: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="Client SA"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {t.siret}
+                </label>
+                <input
+                  type="text"
+                  value={clientInfo.siret}
+                  onChange={(e) =>
+                    setClientInfo({ ...clientInfo, siret: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="987 654 321 00012"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {t.address}
+                </label>
+                <input
+                  type="text"
+                  value={clientInfo.address}
+                  onChange={(e) =>
+                    setClientInfo({ ...clientInfo, address: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="456 Avenue du Client, Paris"
                 />
               </div>
             </div>

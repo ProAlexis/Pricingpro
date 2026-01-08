@@ -30,30 +30,37 @@ const UnifiedHeader = ({
               PricingPro
             </h1>
             <p className="text-xs text-gray-600 dark:text-gray-400">
-              {language === "fr" ? "Outils pour freelances" : "Tools for freelancers"}
+              {language === "fr"
+                ? "Outils pour freelances"
+                : "Tools for freelancers"}
             </p>
           </div>
         </button>
 
         {/* Navigation & Actions */}
         <div className="flex items-center gap-2 md:gap-4">
-          
-          {/* Menu Navigation (Desktop) */}
-          <nav className="hidden md:flex items-center gap-1 border-r border-gray-200 dark:border-gray-700 pr-4 mr-2">
+          {/* Menu Navigation (Adaptatif Mobile/Desktop) */}
+          <nav className="flex items-center gap-1 border-r border-gray-200 dark:border-gray-700 pr-2 md:pr-4 mr-1 md:mr-2">
             <button
               onClick={() => navigate("/calculator")}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-all"
+              className="flex items-center gap-2 px-2 md:px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-all"
+              title={language === "fr" ? "Calculateur" : "Calculator"}
             >
-              <Calculator className="w-4 h-4" />
-              {language === "fr" ? "Calculateur" : "Calculator"}
+              <Calculator className="w-5 h-5 md:w-4 md:h-4" />
+              <span className="hidden md:inline">
+                {language === "fr" ? "Calculateur" : "Calculator"}
+              </span>
             </button>
-            
+
             <button
               onClick={() => navigate("/generateur-devis-freelance")}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-all"
+              className="flex items-center gap-2 px-2 md:px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-all"
+              title={language === "fr" ? "Devis" : "Quote"}
             >
-              <FileText className="w-4 h-4" />
-              {language === "fr" ? "Devis" : "Quote"}
+              <FileText className="w-5 h-5 md:w-4 md:h-4" />
+              <span className="hidden md:inline">
+                {language === "fr" ? "Devis" : "Quote"}
+              </span>
             </button>
           </nav>
 
