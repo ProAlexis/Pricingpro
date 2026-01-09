@@ -327,25 +327,35 @@ const Calculator = ({ onBackToHome, language }) => {
     setLoading(true);
     setApiError(null);
 
-try {
-      // 1. Appel API
+    try {
+      // 1. Appel API avec rate limit check
       const response = await fetch(
-        `/api/get-rates?profession=${formData.profession}&location=${formData.location}&experience_level=${formData.experienceLevel}`
+        `/api/get-rates?profession=${formData.profession}&location=${formData.location}&experience_level=${formData.experienceLevel}`,
       );
+
+      if (response.status === 429) {
+        throw new Error("Trop de calculs rapides. Attends 1 minute.");
+      }
 
       if (!response.ok) throw new Error("API Offline");
 
       const marketData = await response.json();
 
       // 2. Vérification de sécurité des données reçues
-      if (marketData && typeof marketData.avg === 'number' && marketData.count > 0) {
-        
+      if (
+        marketData &&
+        typeof marketData.avg === "number" &&
+        marketData.count > 0
+      ) {
         // Calcul basé sur les données de Supabase
         const baseRate = marketData.avg;
-        const experienceMultiplier = 1 + (parseInt(formData.experience || 0) * 0.08);
+        const experienceMultiplier =
+          1 + parseInt(formData.experience || 0) * 0.08;
         const skillsBonus = formData.skills.length * 30;
 
-        const dailyRate = Math.round(baseRate * experienceMultiplier + skillsBonus);
+        const dailyRate = Math.round(
+          baseRate * experienceMultiplier + skillsBonus,
+        );
         const hourlyRate = Math.round(dailyRate / 8);
         const monthlyRate = Math.round(dailyRate * 20);
 
@@ -375,7 +385,6 @@ try {
         setResults(finalResults);
         saveCalculationToHistory(finalResults, formData);
         setStep(3);
-
       } else {
         fallbackToSimulated();
       }
