@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import LandingPage from "./LandingPage";
 import Calculator from "./Calculator";
 import UnifiedHeader from "./components/UnifiedHeader";
@@ -27,6 +27,8 @@ const App = () => {
   });
 
   const [calculatorKey, setCalculatorKey] = useState(0);
+
+  const navigate = useNavigate();
   const location = useLocation();
 
   // 1. Gestion du Dark Mode
@@ -39,43 +41,32 @@ const App = () => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
 
-  // 2. Gestion du bouton "Retour" du navigateur (seulement pour la page principale)
+  // 2. Gestion du bouton "Retour" et synchronisation de l'URL
   useEffect(() => {
-    // Ne gérer les hash que si on est sur la page principale "/"
-    if (location.pathname === "/") {
-      const handleHashChange = () => {
-        const hash = window.location.hash;
-        if (hash === "#calculator") {
-          setCurrentPage("calculator");
-        } else if (hash === "#sources") {
-          setCurrentPage("sources");
-        } else {
-          setCurrentPage("landing");
-        }
-      };
-      window.addEventListener("hashchange", handleHashChange);
-      handleHashChange(); // Vérification au chargement
-      return () => window.removeEventListener("hashchange", handleHashChange);
+    if (location.pathname === "/calculator") {
+      setCurrentPage("calculator");
+    } else if (location.pathname === "/sources") {
+      setCurrentPage("sources");
+    } else if (location.pathname === "/") {
+      setCurrentPage("landing");
     }
   }, [location.pathname]);
 
-  const [resetKey, setResetKey] = useState(0);
-  
   const goToCalculator = () => {
-    window.location.hash = "#calculator";
+    navigate("/calculator");
     setCurrentPage("calculator");
-    setResetKey(prev => prev + 1);
+    setCalculatorKey((prev) => prev + 1);
     window.scrollTo(0, 0);
   };
 
   const goToHome = () => {
-    window.location.hash = "";
+    navigate("/");
     setCurrentPage("landing");
     window.scrollTo(0, 0);
   };
 
   const goToSources = () => {
-    window.location.hash = "#sources";
+    navigate("/sources");
     setCurrentPage("sources");
     window.scrollTo(0, 0);
   };
@@ -127,25 +118,20 @@ const App = () => {
         }}
       />
 
-      {/* LE HEADER : Appelé une seule fois ici, il sera présent sur toutes les routes */}
+      {/* HEADER */}
       <UnifiedHeader
         language={language}
         setLanguage={setLanguage}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
-        onLogoClick={() => {
-          if (location.pathname === "/") {
-            goToHome();
-          } else {
-            window.location.href = "/";
-          }
-        }}
+        onLogoClick={goToHome}
+        onNavigateToCalculator={goToCalculator}
       />
 
-      {/* LE CONTENU PRINCIPAL : flex-grow permet de pousser le footer vers le bas */}
+      {/* CONTENU PRINCIPAL */}
       <main className="pt-20 flex-grow">
         <Routes>
-          {/* Page principale avec système de hash */}
+          {/* Page principale */}
           <Route
             path="/"
             element={
@@ -157,7 +143,11 @@ const App = () => {
                   />
                 )}
                 {currentPage === "calculator" && (
-                  <Calculator onBackToHome={goToHome} language={language} />
+                  <Calculator
+                    key={calculatorKey}
+                    onBackToHome={goToHome}
+                    language={language}
+                  />
                 )}
                 {currentPage === "sources" && (
                   <DataSources language={language} />
@@ -173,9 +163,15 @@ const App = () => {
               <Calculator
                 key={calculatorKey}
                 language={language}
-                onBackToHome={() => (window.location.href = "/")}
+                onBackToHome={goToHome}
               />
             }
+          />
+
+          {/* Sources de données */}
+          <Route
+            path="/sources"
+            element={<DataSources language={language} />}
           />
 
           {/* Générateur de devis */}
@@ -209,7 +205,7 @@ const App = () => {
         </Routes>
       </main>
 
-      {/* LE FOOTER : Appelé une seule fois ici, il apparaîtra sur TOUTES les pages */}
+      {/* FOOTER */}
       <Footer language={language} />
     </div>
   );

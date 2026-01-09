@@ -14,9 +14,11 @@ const Footer = ({ language = "fr" }) => {
     legal: language === "fr" ? "Mentions légales" : "Legal notice",
     privacy: language === "fr" ? "Confidentialité" : "Privacy",
     tagline:
+      language === "fr" ? "Outils pour freelances" : "Tools for freelancers",
+    subTagline:
       language === "fr"
-        ? "Calculez votre tarif freelance"
-        : "Calculate your freelance rate",
+        ? "Calculez votre tarif basé sur des données réelles."
+        : "Calculate your rate based on real market data.",
     copyright:
       language === "fr" ? "Tous droits réservés." : "All rights reserved.",
   };
@@ -37,33 +39,57 @@ const Footer = ({ language = "fr" }) => {
     },
   ];
 
-  // URLs légales ANTI-ADBLOCK (pas de mots "legal", "privacy", "policy", "notice")
+  // URLs légales
   const legalUrls = {
     legal: language === "fr" ? "/mentions-legales" : "/mentions-legales-en",
     privacy: language === "fr" ? "/confidentialite" : "/confidentialite-en",
+  };
+
+  // Fonction pour remonter en haut de page au clic
+  const handleScrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <footer className="bg-gray-900 text-gray-300 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
-          {/* Colonne 1 : À propos */}
-          <div>
-            <h3 className="text-white font-bold text-lg mb-4">PricingPro</h3>
-            <p className="text-sm text-gray-400">{t.tagline}</p>
+          {/* Colonne 1 : BRANDING */}
+          <div className="col-span-1 space-y-4">
+            <Link
+              to="/"
+              onClick={handleScrollTop}
+              className="flex items-center gap-3 group"
+            >
+              {/* Le Logo */}
+              <img
+                src="/logo-square.png"
+                alt="Logo PricingPro"
+                className="w-10 h-10 rounded-xl shadow-sm object-contain"
+              />
+              {/* Le Texte */}
+              <div className="text-left">
+                <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                  PricingPro
+                </h3>
+                <p className="text-xs text-gray-400">{t.tagline}</p>
+              </div>
+            </Link>
+
+            {/* Sous-titre descriptif */}
+            <p className="text-sm text-gray-500 mt-2 max-w-sm md:max-w-[220px] leading-relaxed">
+              {t.subTagline}
+            </p>
           </div>
 
-          {/* Colonne 2 : Navigation */}
+          {/* Colonne 2 : Navigation (Liens directs sans #) */}
           <div>
             <h4 className="text-white font-semibold mb-4">{t.navigation}</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   to="/"
-                  onClick={() => {
-                    window.scrollTo(0, 0);
-                    window.location.hash = "";
-                  }}
+                  onClick={handleScrollTop}
                   className="hover:text-purple-400 transition-colors"
                 >
                   {t.home}
@@ -71,12 +97,8 @@ const Footer = ({ language = "fr" }) => {
               </li>
               <li>
                 <Link
-                  to="/"
-                  onClick={() => {
-                    setTimeout(() => {
-                      window.location.hash = "calculator";
-                    }, 100);
-                  }}
+                  to="/calculator"
+                  onClick={handleScrollTop}
                   className="hover:text-purple-400 transition-colors"
                 >
                   {t.calculator}
@@ -84,12 +106,8 @@ const Footer = ({ language = "fr" }) => {
               </li>
               <li>
                 <Link
-                  to="/"
-                  onClick={() => {
-                    setTimeout(() => {
-                      window.location.hash = "sources";
-                    }, 100);
-                  }}
+                  to="/sources"
+                  onClick={handleScrollTop}
                   className="hover:text-purple-400 transition-colors"
                 >
                   {t.dataSources}
@@ -106,6 +124,7 @@ const Footer = ({ language = "fr" }) => {
                 <li key={idx}>
                   <Link
                     to={profession.slug}
+                    onClick={handleScrollTop}
                     className="hover:text-purple-400 transition-colors"
                   >
                     {profession.name}
@@ -116,11 +135,7 @@ const Footer = ({ language = "fr" }) => {
               <li className="pt-2">
                 <Link
                   to="/"
-                  onClick={() => {
-                    setTimeout(() => {
-                      window.location.hash = "professions";
-                    }, 100);
-                  }}
+                  onClick={handleScrollTop}
                   className="text-purple-400 hover:text-purple-300 transition-colors font-semibold"
                 >
                   {t.allProfessions}

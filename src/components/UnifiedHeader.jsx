@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Globe, Moon, Sun, Calculator, FileText, Menu, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const UnifiedHeader = ({
   language,
@@ -8,6 +8,7 @@ const UnifiedHeader = ({
   darkMode,
   setDarkMode,
   onLogoClick,
+  onNavigateToCalculator,
 }) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,8 +29,12 @@ const UnifiedHeader = ({
   ];
 
   const handleNavigate = (path) => {
-    navigate(path);
-    setIsMenuOpen(false); // On ferme le menu quand on clique sur un lien
+    if (path === "/calculator" && onNavigateToCalculator) {
+      onNavigateToCalculator();
+    } else {
+      navigate(path);
+    }
+    setIsMenuOpen(false);
   };
 
   return (
@@ -65,7 +70,7 @@ const UnifiedHeader = ({
               {navItems.map((item) => (
                 <button
                   key={item.path}
-                  onClick={() => navigate(item.path)}
+                  onClick={() => handleNavigate(item.path)}
                   className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-all"
                 >
                   {item.icon}
