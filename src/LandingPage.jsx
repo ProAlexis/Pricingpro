@@ -13,7 +13,7 @@ import {
   FileText,
   Globe,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
 } from "lucide-react";
 
 const LandingPage = ({ onStartCalculator, language }) => {
@@ -41,7 +41,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
         title: "Découvrez votre vraie valeur",
         subtitle: "Pilotez votre activité freelance de A à Z",
         description:
-          "Accédez à 3500+ tarifs réels, créez vos devis personnalisés et téléchargez vos contrats juridiques en quelques clics.",
+          "Accédez à 3500+ tarifs réels pour découvrir la vraie valeur de vos services, créez vos devis personnalisés et téléchargez vos contrats juridiques en quelques clics.",
         cta: "Estimer mon tarif",
         badge: "✨ Accès gratuit · Devis & Contrats inclus · Sans inscription",
       },
@@ -81,13 +81,13 @@ const LandingPage = ({ onStartCalculator, language }) => {
           },
           {
             icon: "trending",
-            title: "3 Niveaux d'Expérience",
+            title: "3 niveaux d'expérience",
             description:
               "Junior, Confirmé, Senior - Des recommandations précises selon votre niveau",
           },
           {
             icon: "shield",
-            title: "Sans Engagement",
+            title: "Sans engagement",
             description:
               "Pas de carte bancaire, pas d'inscription. Accédez aux fonctionnalités de base immédiatement",
           },
@@ -99,7 +99,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
           },
           {
             icon: "chart",
-            title: "Insights Personnalisés",
+            title: "Insights personnalisés",
             description:
               "Recommandations concrètes pour augmenter vos tarifs de 20-50%",
           },
@@ -116,13 +116,13 @@ const LandingPage = ({ onStartCalculator, language }) => {
         steps: [
           {
             number: "1",
-            title: "Votre Profil",
+            title: "Votre profil",
             description:
               "Choisissez votre métier, localisation et niveau d'expérience",
           },
           {
             number: "2",
-            title: "Vos Compétences",
+            title: "Vos compétences",
             description:
               "Ajoutez vos compétences spécifiques pour un calcul précis",
           },
@@ -174,13 +174,13 @@ const LandingPage = ({ onStartCalculator, language }) => {
     },
     en: {
       hero: {
-        title: "Discover Your True Worth",
+        title: "Discover your true worth",
         subtitle: "Manage your freelance business from A to Z",
         description:
-          "Access 3500+ real market rates, create professional quotes, and download legal contract templates in just a few clicks.",
+          "Access 3500+ real market rates to find your true worth, create professional quotes, and download legal contract templates in just a few clicks.",
         cta: "Estimate my rate",
         badge:
-          "✨ Free Access · Quotes & Contracts Included · No Signup Required",
+          "✨ Free Access · Quotes & Contracts included · No signup required",
       },
       stats: {
         title: "Data that makes a difference",
@@ -195,7 +195,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
         list: [
           {
             icon: "database",
-            title: "Real Data",
+            title: "Real data",
             description: "3500+ real-world rates scraped in real-time",
           },
           {
@@ -218,31 +218,31 @@ const LandingPage = ({ onStartCalculator, language }) => {
           },
           {
             icon: "trending",
-            title: "3 Experience Levels",
+            title: "3 experience levels",
             description:
               "Junior, Mid-level, Senior - Precise recommendations based on your expertise level",
           },
           {
             icon: "shield",
-            title: "No Commitment",
+            title: "No commitment",
             description:
               "No credit card, no signup required. Access core features immediately",
           },
           {
             icon: "zap",
-            title: "Instant Results",
+            title: "Instant results",
             description:
               "Get results in under 3 seconds. Compare yourself to the market in real-time",
           },
           {
             icon: "chart",
-            title: "Personalized Insights",
+            title: "Personalized insights",
             description:
               "Concrete recommendations to increase your rates by 20-50%",
           },
           {
             icon: "calculator",
-            title: "Tax Optimization",
+            title: "Tax optimization",
             description:
               "Simulate social charges and net income based on your status (Self-employed, SASU, EURL).",
           },
@@ -253,13 +253,13 @@ const LandingPage = ({ onStartCalculator, language }) => {
         steps: [
           {
             number: "1",
-            title: "Your Profile",
+            title: "Your profile",
             description:
               "Choose your profession, location and experience level",
           },
           {
             number: "2",
-            title: "Your Skills",
+            title: "Your skills",
             description: "Add your specific skills for precise calculation",
           },
           {
@@ -650,7 +650,10 @@ const LandingPage = ({ onStartCalculator, language }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {professionsList
-              .slice(0, showAllProfessions ? professionsList.length : PROFESSIONS_LIMIT)
+              .slice(
+                0,
+                showAllProfessions ? professionsList.length : PROFESSIONS_LIMIT,
+              )
               .map((prof, idx) => {
                 const colors = colorClasses[prof.color];
                 return (
@@ -660,7 +663,9 @@ const LandingPage = ({ onStartCalculator, language }) => {
                     className={`group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 ${colors.border}`}
                   >
                     <div className="flex items-start gap-4">
-                      <div className={`p-3 rounded-xl group-hover:scale-110 transition-transform ${colors.bg}`}>
+                      <div
+                        className={`p-3 rounded-xl group-hover:scale-110 transition-transform ${colors.bg}`}
+                      >
                         <svg
                           className={`w-8 h-8 ${colors.text}`}
                           fill="none"
@@ -676,9 +681,11 @@ const LandingPage = ({ onStartCalculator, language }) => {
                         </svg>
                       </div>
                       <div className="flex-1">
-                        <h3 className={`text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors ${colors.groupText}`}>
+                        <span
+                          className={`text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors ${colors.groupText}`}
+                        >
                           {language === "fr" ? prof.fr : prof.en}
-                        </h3>
+                        </span>
                         <p className={`text-2xl font-bold mb-2 ${colors.text}`}>
                           {prof.price}€/{language === "fr" ? "jour" : "day"}
                         </p>
