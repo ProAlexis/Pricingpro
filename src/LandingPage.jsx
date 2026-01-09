@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"; // Ajout de useState ici
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useState, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
   TrendingUp,
   Database,
@@ -18,22 +18,12 @@ import {
 
 const LandingPage = ({ onStartCalculator, language }) => {
   const navigate = useNavigate();
-  const location = useLocation();
+
+  const professionsRef = useRef(null);
 
   // États pour le bouton "Voir Plus"
   const [showAllProfessions, setShowAllProfessions] = useState(false);
   const PROFESSIONS_LIMIT = 9;
-
-  useEffect(() => {
-    if (location.hash) {
-      const element = document.querySelector(location.hash);
-      if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 100);
-      }
-    }
-  }, [location]);
 
   const translations = {
     fr: {
@@ -629,9 +619,10 @@ const LandingPage = ({ onStartCalculator, language }) => {
         </div>
       </section>
 
-      {/* SECTION PROFESSIONS - GRID AVEC "VOIR PLUS" */}
+      {/* SECTION PROFESSIONS */}
       <section
         id="professions"
+        ref={professionsRef}
         className="py-20 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

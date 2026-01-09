@@ -1,6 +1,5 @@
 // Configuration centralisée de l'application
 export const config = {
-  // URL du site (automatiquement détectée)
   siteUrl:
     typeof window !== "undefined"
       ? window.location.origin

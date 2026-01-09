@@ -82,7 +82,7 @@ const Footer = ({ language = "fr" }) => {
             </p>
           </div>
 
-          {/* Colonne 2 : Navigation (Liens directs sans #) */}
+          {/* Colonne 2 : Navigation */}
           <div>
             <h4 className="text-white font-semibold mb-4">{t.navigation}</h4>
             <ul className="space-y-2 text-sm">
@@ -134,8 +134,7 @@ const Footer = ({ language = "fr" }) => {
               {/* Lien "Voir tous les métiers" */}
               <li className="pt-2">
                 <Link
-                  to="/"
-                  onClick={handleScrollTop}
+                  to="/#professions"
                   className="text-purple-400 hover:text-purple-300 transition-colors font-semibold"
                 >
                   {t.allProfessions}
@@ -144,7 +143,7 @@ const Footer = ({ language = "fr" }) => {
             </ul>
           </div>
 
-          {/* Colonne 4 : Contact & Légal (URLs ANTI-ADBLOCK) */}
+          {/* Colonne 4 : Contact & Légal */}
           <div>
             <h4 className="text-white font-semibold mb-4">{t.contact}</h4>
             <ul className="space-y-2 text-sm">

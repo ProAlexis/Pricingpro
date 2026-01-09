@@ -241,9 +241,9 @@ const DataSources = ({ language = "fr" }) => {
                     <Database className="w-6 h-6 text-purple-600 dark:text-purple-300" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-gray-900 dark:text-white">
+                    <span className="font-bold text-gray-900 dark:text-white">
                       {source.name}
-                    </h3>
+                    </span>
                     <span className="text-xs text-green-600 dark:text-green-400 font-medium">
                       {source.update}
                     </span>

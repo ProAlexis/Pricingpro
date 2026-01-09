@@ -433,7 +433,6 @@ export function generateRateAnalysisPDF({
 
   // Data source badge
   if (results.dataSource === "real" && results.sourceCount) {
-    // Dessiner un petit carré de vérification
     doc.setDrawColor(34, 197, 94); // Vert
     doc.setFillColor(34, 197, 94);
     doc.rect(18, yPosition - 4, 3, 3, "F");
@@ -448,7 +447,7 @@ export function generateRateAnalysisPDF({
     );
   }
 
-  // === FOOTER (Sur toutes les pages) ===
+  // === FOOTER ===
   const totalPages = doc.internal.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);

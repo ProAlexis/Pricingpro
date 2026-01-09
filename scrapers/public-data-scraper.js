@@ -12,12 +12,11 @@ import { getCountryFromCity } from "./geo-utils.js";
  * Toutes les données sont citées conformément aux licences CC BY 4.0 et Licence Ouverte 2.0
  */
 
-// DONNÉES RÉELLES MALT 2024-2025 (Source: Baromètre Malt)
 // TJM moyens par profession et niveau d'expérience
 const MALT_REAL_DATA_2025 = {
   "web-dev": {
     junior: { min: 300, avg: 400, max: 500 },
-    mid: { min: 450, avg: 562, max: 700 }, // TJM moyen confirmé : 562€ (source Malt)
+    mid: { min: 450, avg: 562, max: 700 },
     senior: { min: 650, avg: 750, max: 950 },
   },
   "mobile-dev": {
@@ -52,7 +51,7 @@ const MALT_REAL_DATA_2025 = {
   },
   "ui-designer": {
     junior: { min: 250, avg: 350, max: 450 },
-    mid: { min: 400, avg: 500, max: 650 }, // TJM moyen UX : 500€ (source Malt)
+    mid: { min: 400, avg: 500, max: 650 },
     senior: { min: 600, avg: 750, max: 1000 },
   },
   "graphic-designer": {
@@ -88,7 +87,7 @@ const MALT_REAL_DATA_2025 = {
   consultant: {
     junior: { min: 400, avg: 550, max: 750 },
     mid: { min: 650, avg: 850, max: 1150 },
-    senior: { min: 950, avg: 1250, max: 1800 }, // Consultants stratégie : 755€ moyenne (source Malt)
+    senior: { min: 950, avg: 1250, max: 1800 },
   },
 };
 
@@ -164,7 +163,6 @@ export async function scrapePublicDataRates() {
   )) {
     for (const [country, cities] of Object.entries(CITIES_BY_COUNTRY_REAL)) {
       for (const cityData of cities) {
-        // --- ÉTAPE 1 : ON RÉCUPÈRE LA GÉO UNE FOIS PAR VILLE ---
         let geoData = geoCache[cityData.name];
         if (!geoData) {
           geoData = await getCountryFromCity(cityData.name);
@@ -174,7 +172,6 @@ export async function scrapePublicDataRates() {
         for (const experienceLevel of experienceLevels) {
           const data = experienceData[experienceLevel];
 
-          // Appliquer le multiplicateur géographique
           const rate_daily = Math.round(data.avg * cityData.multiplier);
           const rate_hourly = Math.round(rate_daily / 8);
 

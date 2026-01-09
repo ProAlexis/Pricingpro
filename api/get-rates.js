@@ -31,8 +31,10 @@ export default async function handler(req, res) {
       query = query.eq("experience_level", experience_level);
 
     // Filtrer par pays
-    if (countryName) {
-      query = query.eq("country", countryName);
+    if (countryName && countryName !== "unknown") {
+      query = query.ilike("country", countryName);
+    } else if (cityName) {
+      query = query.ilike("city", cityName);
     }
 
     const { data, error } = await query;

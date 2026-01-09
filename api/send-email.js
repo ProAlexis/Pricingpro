@@ -1,126 +1,130 @@
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  if (req.method === 'OPTIONS') {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { email, results, formData, language = 'fr' } = req.body;
+    const { email, results, formData, language = "fr" } = req.body;
 
     if (!email || !results || !formData) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     // Validation email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
+      return res.status(400).json({ error: "Invalid email format" });
     }
 
     // Traductions
     const translations = {
       fr: {
-        subject: '🎯 Votre Analyse de Tarifs Personnalisée - PricingPro',
-        greeting: 'Bonjour',
-        intro: 'Voici votre analyse complète basée sur votre profil :',
-        profile: 'Votre Profil',
-        profession: 'Profession',
-        location: 'Localisation',
-        experience: 'Expérience',
-        experienceLevel: 'Niveau',
-        skills: 'Compétences',
-        results: 'Vos Tarifs Recommandés',
-        hourly: 'Horaire',
-        daily: 'Journalier',
-        monthly: 'Mensuel',
-        market: 'Comparaison Marché',
-        min: 'Minimum',
-        avg: 'Moyenne',
-        max: 'Maximum',
-        breakdown: 'Détail du Calcul',
-        base: 'Tarif de base',
-        expBonus: 'Prime d\'expérience',
-        skillsBonus: 'Prime compétences',
-        locationAdj: 'Ajustement géographique',
-        total: 'Total recommandé',
-        advice: 'Conseils Personnalisés',
-        footer: 'Cette analyse est basée sur 1,620+ tarifs réels du marché (Baromètre Malt, Free-Work IT, Stack Overflow).',
-        cta: 'Calculer de nouveaux tarifs',
-        thanks: 'Merci d\'utiliser PricingPro !',
-        dataSource: 'Données issues de sources officielles publiques'
+        subject: "🎯 Votre analyse de tarifs personnalisée - PricingPro",
+        greeting: "Bonjour",
+        intro: "Voici votre analyse complète basée sur votre profil :",
+        profile: "Votre Profil",
+        profession: "Profession",
+        location: "Localisation",
+        experience: "Expérience",
+        experienceLevel: "Niveau",
+        skills: "Compétences",
+        results: "Vos tarifs recommandés",
+        hourly: "Horaire",
+        daily: "Journalier",
+        monthly: "Mensuel",
+        market: "Comparaison marché",
+        min: "Minimum",
+        avg: "Moyenne",
+        max: "Maximum",
+        breakdown: "Détail du calcul",
+        base: "Tarif de base",
+        expBonus: "Prime d'expérience",
+        skillsBonus: "Prime compétences",
+        locationAdj: "Ajustement géographique",
+        total: "Total recommandé",
+        advice: "Conseils personnalisés",
+        footer: "Cette analyse est basée sur 3,500+ tarifs réels du marché.",
+        cta: "Calculer de nouveaux tarifs",
+        thanks: "Merci d'utiliser PricingPro !",
+        dataSource: "Données issues de sources officielles publiques",
       },
       en: {
-        subject: '🎯 Your Personalized Rate Analysis - PricingPro',
-        greeting: 'Hello',
-        intro: 'Here is your complete analysis based on your profile:',
-        profile: 'Your Profile',
-        profession: 'Profession',
-        location: 'Location',
-        experience: 'Experience',
-        experienceLevel: 'Level',
-        skills: 'Skills',
-        results: 'Your Recommended Rates',
-        hourly: 'Hourly',
-        daily: 'Daily',
-        monthly: 'Monthly',
-        market: 'Market Comparison',
-        min: 'Minimum',
-        avg: 'Average',
-        max: 'Maximum',
-        breakdown: 'Rate Breakdown',
-        base: 'Base rate',
-        expBonus: 'Experience bonus',
-        skillsBonus: 'Skills bonus',
-        locationAdj: 'Location adjustment',
-        total: 'Recommended total',
-        advice: 'Personalized Advice',
-        footer: 'This analysis is based on 1,620+ real market rates (Malt Barometer, Free-Work IT, Stack Overflow).',
-        cta: 'Calculate new rates',
-        thanks: 'Thank you for using PricingPro!',
-        dataSource: 'Data from official public sources'
-      }
+        subject: "🎯 Your personalized rate analysis - PricingPro",
+        greeting: "Hello",
+        intro: "Here is your complete analysis based on your profile:",
+        profile: "Your profile",
+        profession: "Profession",
+        location: "Location",
+        experience: "Experience",
+        experienceLevel: "Level",
+        skills: "Skills",
+        results: "Your recommended rates",
+        hourly: "Hourly",
+        daily: "Daily",
+        monthly: "Monthly",
+        market: "Market comparison",
+        min: "Minimum",
+        avg: "Average",
+        max: "Maximum",
+        breakdown: "Rate breakdown",
+        base: "Base rate",
+        expBonus: "Experience bonus",
+        skillsBonus: "Skills bonus",
+        locationAdj: "Location adjustment",
+        total: "Recommended total",
+        advice: "Personalized advice",
+        footer: "This analysis is based on 3,500+ real market rates.",
+        cta: "Calculate new rates",
+        thanks: "Thank you for using PricingPro!",
+        dataSource: "Data from official public sources",
+      },
     };
 
     const t = translations[language];
 
     // Mapper les professions
     const professionLabels = {
-      'web-dev': { fr: 'Développeur Web', en: 'Web Developer' },
-      'mobile-dev': { fr: 'Développeur Mobile', en: 'Mobile Developer' },
-      'data-analyst': { fr: 'Data Analyst', en: 'Data Analyst' },
-      'ui-designer': { fr: 'Designer UI/UX', en: 'UI/UX Designer' },
+      "web-dev": { fr: "Développeur Web", en: "Web Developer" },
+      "mobile-dev": { fr: "Développeur Mobile", en: "Mobile Developer" },
+      "data-analyst": { fr: "Data Analyst", en: "Data Analyst" },
+      "ui-designer": { fr: "Designer UI/UX", en: "UI/UX Designer" },
       // ... autres professions
     };
 
     const locationLabels = {
-      france: { fr: 'France', en: 'France' },
-      portugal: { fr: 'Portugal', en: 'Portugal' },
-      uk: { fr: 'Royaume-Uni', en: 'United Kingdom' },
-      germany: { fr: 'Allemagne', en: 'Germany' },
-      usa: { fr: 'États-Unis', en: 'United States' },
-      spain: { fr: 'Espagne', en: 'Spain' }
+      france: { fr: "France", en: "France" },
+      portugal: { fr: "Portugal", en: "Portugal" },
+      uk: { fr: "Royaume-Uni", en: "United Kingdom" },
+      germany: { fr: "Allemagne", en: "Germany" },
+      usa: { fr: "États-Unis", en: "United States" },
+      spain: { fr: "Espagne", en: "Spain" },
     };
 
+    const expKey = formData.experienceLevel?.toLowerCase();
     const experienceLevelLabels = {
-      junior: { fr: 'Junior (0-2 ans)', en: 'Junior (0-2 years)' },
-      mid: { fr: 'Confirmé (3-7 ans)', en: 'Mid-level (3-7 years)' },
-      senior: { fr: 'Senior (8+ ans)', en: 'Senior (8+ years)' }
+      junior: { fr: "Junior (0-2 ans)", en: "Junior (0-2 years)" },
+      mid: { fr: "Confirmé (3-7 ans)", en: "Mid-level (3-7 years)" },
+      senior: { fr: "Senior (8+ ans)", en: "Senior (8+ years)" },
     };
 
-    const professionLabel = professionLabels[formData.profession]?.[language] || formData.profession;
-    const locationLabel = locationLabels[formData.location]?.[language] || formData.location;
-    const experienceLevelLabel = experienceLevelLabels[formData.experienceLevel]?.[language] || formData.experienceLevel;
+    const professionLabel =
+      professionLabels[formData.profession]?.[language] || formData.profession;
+    const locationLabel =
+      locationLabels[formData.location]?.[language] || formData.location;
+    const experienceLevelLabel =
+      experienceLevelLabels[expKey]?.[language] || formData.experienceLevel;
 
     // Construire le HTML
     const htmlContent = `
@@ -144,7 +148,7 @@ export default async function handler(req, res) {
                 🎯 PricingPro
               </h1>
               <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 16px; opacity: 0.9;">
-                ${t.subject.replace('🎯 ', '')}
+                ${t.subject.replace("🎯 ", "")}
               </p>
             </td>
           </tr>
@@ -196,19 +200,23 @@ export default async function handler(req, res) {
                           ${t.experience}:
                         </td>
                         <td style="padding: 8px 0; font-size: 14px; color: #111827; font-weight: 600;">
-                          ${formData.experience} ${language === 'fr' ? 'ans' : 'years'}
+                          ${formData.experience} ${language === "fr" ? "ans" : "years"}
                         </td>
                       </tr>
-                      ${formData.skills && formData.skills.length > 0 ? `
+                      ${
+                        formData.skills && formData.skills.length > 0
+                          ? `
                       <tr>
                         <td style="padding: 8px 0; font-size: 14px; color: #6b7280; vertical-align: top;">
                           ${t.skills}:
                         </td>
                         <td style="padding: 8px 0; font-size: 14px; color: #111827; font-weight: 600;">
-                          ${formData.skills.join(', ')}
+                          ${formData.skills.join(", ")}
                         </td>
                       </tr>
-                      ` : ''}
+                      `
+                          : ""
+                      }
                     </table>
                   </td>
                 </tr>
@@ -330,16 +338,20 @@ export default async function handler(req, res) {
                           +${results.breakdown.skills}€
                         </td>
                       </tr>
-                      ${results.breakdown.location !== 0 ? `
+                      ${
+                        results.breakdown.location !== 0
+                          ? `
                       <tr>
                         <td style="padding: 8px 0; font-size: 14px; color: #6b7280;">
                           ${t.locationAdj}:
                         </td>
-                        <td style="padding: 8px 0; font-size: 14px; color: ${results.breakdown.location >= 0 ? '#059669' : '#dc2626'}; font-weight: 600; text-align: right;">
-                          ${results.breakdown.location >= 0 ? '+' : ''}${results.breakdown.location}€
+                        <td style="padding: 8px 0; font-size: 14px; color: ${results.breakdown.location >= 0 ? "#059669" : "#dc2626"}; font-weight: 600; text-align: right;">
+                          ${results.breakdown.location >= 0 ? "+" : ""}${results.breakdown.location}€
                         </td>
                       </tr>
-                      ` : ''}
+                      `
+                          : ""
+                      }
                       <tr style="border-top: 2px solid #3b82f6;">
                         <td style="padding: 12px 0 0 0; font-size: 16px; color: #1e40af; font-weight: bold;">
                           ${t.total}:
@@ -384,7 +396,7 @@ export default async function handler(req, res) {
                 ${t.thanks}
               </p>
               <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-                © 2026 PricingPro. ${language === 'fr' ? 'Tous droits réservés.' : 'All rights reserved.'}
+                © 2026 PricingPro. ${language === "fr" ? "Tous droits réservés." : "All rights reserved."}
               </p>
             </td>
           </tr>
@@ -399,22 +411,21 @@ export default async function handler(req, res) {
 
     // Envoyer l'email via Resend
     const data = await resend.emails.send({
-      from: 'PricingPro <noreply@pricingpro.fr>',
+      from: "PricingPro <noreply@pricingpro.fr>",
       to: [email],
       subject: t.subject,
       html: htmlContent,
     });
 
-    return res.status(200).json({ 
-      success: true, 
-      messageId: data.id 
+    return res.status(200).json({
+      success: true,
+      messageId: data.id,
     });
-
   } catch (error) {
-    console.error('Error sending email:', error);
-    return res.status(500).json({ 
-      error: 'Failed to send email',
-      details: error.message 
+    console.error("Error sending email:", error);
+    return res.status(500).json({
+      error: "Failed to send email",
+      details: error.message,
     });
   }
 }

@@ -1,7 +1,6 @@
 import { getCountryFromCity } from "./geo-utils.js";
 
 // Données Glassdoor simulées (salaires convertis en TJM)
-// En production, vous scrapez vraiment Glassdoor avec Puppeteer
 const GLASSDOOR_SALARY_DATA = {
   "web-dev": {
     junior: { annual: 35000, daily: 175 },

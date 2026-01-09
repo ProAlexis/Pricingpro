@@ -142,7 +142,7 @@ export function generateQuotePDF(quoteData, language = "fr") {
   yPos += 5;
 
   // 3. GESTION DE L'ADRESSE
-  // En portage on affiche l'adresse de la société, sinon la tienne
+  // En portage on affiche l'adresse de la société, sinon l'adresse du freelance
   const addressToDisplay =
     quoteData.legalStatus === "portage"
       ? quoteData.companyPortageAddress || quoteData.freelanceAddress

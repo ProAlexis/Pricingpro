@@ -142,7 +142,7 @@ export const TooltipContent = {
         <p className="font-semibold mb-1">Pourquoi c'est important ?</p>
         <p>
           Votre profession détermine le tarif de base du marché. Nous analysons
-          1000+ tarifs réels pour chaque métier.
+          3500+ tarifs réels pour chaque métier.
         </p>
       </div>
     ),
@@ -150,7 +150,7 @@ export const TooltipContent = {
       <div>
         <p className="font-semibold mb-1">Why is this important?</p>
         <p>
-          Your profession determines the base market rate. We analyze 1000+ real
+          Your profession determines the base market rate. We analyze 3500+ real
           rates for each profession.
         </p>
       </div>

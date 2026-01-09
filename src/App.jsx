@@ -4,7 +4,6 @@ import LandingPage from "./LandingPage";
 import Calculator from "./Calculator";
 import UnifiedHeader from "./components/UnifiedHeader";
 import DataSources from "./components/DataSources";
-import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "react-hot-toast";
 import Footer from "./components/Footer";
 
@@ -17,6 +16,31 @@ import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 // Import pages FR & EN
 import ProfessionTemplate from "./pages/ProfessionTemplate";
 import GenerateurDevis from "./pages/GenerateurDevis";
+
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (pathname === "/") {
+      document.title = "PricingPro - Outils pour Freelance";
+    }
+
+    if (hash) {
+      const timer = setTimeout(() => {
+        const id = hash.replace("#", "");
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
+
+  return null;
+}
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState("landing");
@@ -84,7 +108,6 @@ const App = () => {
   const goToHome = () => {
     navigate("/");
     setCurrentPage("landing");
-    window.scrollTo(0, 0);
   };
 
   const goToSources = () => {

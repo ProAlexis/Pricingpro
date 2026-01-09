@@ -1,9 +1,7 @@
-// src/pages/ProfessionTemplate.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { professionsData } from "../data/professionData";
 
-// On importe ton composant UI existant qui contient tout le design
 import ProfessionPage from "./ProfessionPage";
 
 const ProfessionTemplate = () => {
@@ -15,12 +13,12 @@ const ProfessionTemplate = () => {
     const key = Object.keys(professionsData).find((k) => {
       const p = professionsData[k];
 
-      // Est-ce un URL français ?
+      // URL français
       if (p.slug.fr === slug) {
         setDetectedLang("fr");
         return true;
       }
-      // Est-ce un URL anglais ?
+      // URL anglais
       if (p.slug.en === slug) {
         setDetectedLang("en");
         return true;
