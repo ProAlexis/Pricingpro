@@ -52,9 +52,9 @@ const UnifiedHeader = ({
               className="w-10 h-10 rounded-xl shadow-lg object-contain"
             />
             <div className="text-left">
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+              <span className="text-xl font-bold text-gray-900 dark:text-white">
                 PricingPro
-              </h1>
+              </span>
               <p className="text-xs text-gray-600 dark:text-gray-400">
                 {language === "fr"
                   ? "Outils pour freelances"

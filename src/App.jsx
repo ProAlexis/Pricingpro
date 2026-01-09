@@ -52,6 +52,28 @@ const App = () => {
     }
   }, [location.pathname]);
 
+  // Gestion dynamique de la langue pour le SEO
+  useEffect(() => {
+    document.documentElement.lang = language; // Change <html lang="fr"> en "en"
+    if (language === "en") {
+      document.title = "PricingPro - Tools for freelancers";
+      document
+        .querySelector('meta[name="description"]')
+        .setAttribute(
+          "content",
+          "Calculate your ideal freelance rate based on market data.",
+        );
+    } else {
+      document.title = "PricingPro - Outils pour Freelance";
+      document
+        .querySelector('meta[name="description"]')
+        .setAttribute(
+          "content",
+          "Découvrez combien facturer en tant que freelance avec PricingPro.",
+        );
+    }
+  }, [language]);
+
   const goToCalculator = () => {
     navigate("/calculator");
     setCurrentPage("calculator");
