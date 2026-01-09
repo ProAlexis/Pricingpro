@@ -188,7 +188,10 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
           children: [
             // Titre principal
             new Paragraph({
-              text: "CONTRAT DE PRESTATION DE SERVICES",
+              text:
+                language === "fr"
+                  ? "CONTRAT DE PRESTATION DE SERVICES"
+                  : "SERVICE AGREEMENT",
               heading: HeadingLevel.TITLE,
               alignment: AlignmentType.CENTER,
               spacing: { before: 0, after: 400 },
@@ -304,7 +307,7 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                 : "The parties agree on a compensation of:",
             ),
             createParagraph(
-              `${language === "fr" ? "- Tarif journalier :" : "- Daily rate:"} ${formData?.dailyRate || "[MONTANT]"}€ HT/jour`,
+              `${language === "fr" ? "- Tarif journalier :" : "- Daily rate:"} ${formData?.dailyRate || "[AMOUNT]"}€ HT${language === "fr" ? "/jour" : "/day"}`,
             ),
 
             // ARTICLE 4 - OBLIGATIONS
@@ -640,7 +643,7 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
             ),
             createParagraph(userInfo.company || ""),
             createParagraph(
-              `${language === "fr" ? "SIRET :" : "Business ID :"} ${userInfo.siret || (language === "fr" ? "[À COMPLÉTER]" : "[TO COMPLETE]")}`,
+              `${language === "fr" ? "SIRET :" : "Business ID:"} ${userInfo.siret || (language === "fr" ? "[À COMPLÉTER]" : "[TO BE COMPLETED]")}`,
             ),
             createParagraph(
               userInfo.address ||
@@ -685,74 +688,125 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
           children: [
             // Titre
             new Paragraph({
-              text: "MENTIONS LÉGALES",
+              text: language === "fr" ? "MENTIONS LÉGALES" : "LEGAL NOTICE",
               heading: HeadingLevel.TITLE,
               alignment: AlignmentType.CENTER,
               spacing: { before: 0, after: 600 },
             }),
 
             // Sections
-            createHeading("Éditeur du site", HeadingLevel.HEADING_2),
-            createParagraph(`Nom : ${userInfo.name || "[VOTRE NOM]"}`),
-            userInfo.company
-              ? createParagraph(`Entreprise : ${userInfo.company}`)
-              : createParagraph(""),
-            createParagraph(`SIRET : ${userInfo.siret || "[VOTRE SIRET]"}`),
-            createParagraph(
-              `Adresse : ${userInfo.address || "[VOTRE ADRESSE]"}`,
-            ),
-            createParagraph(`Email : ${userInfo.email || "[VOTRE EMAIL]"}`),
-            createParagraph(
-              `Téléphone : ${userInfo.phone || "[VOTRE TÉLÉPHONE]"}`,
-            ),
-            createParagraph(""),
-            legalStatus === "auto-entrepreneur"
-              ? createParagraph(
-                  "Auto-entrepreneur - Immatriculation à l'URSSAF",
-                )
-              : createParagraph(""),
-            legalStatus === "sasu"
-              ? createParagraph("SASU - Immatriculation au RCS")
-              : createParagraph(""),
-            legalStatus === "eurl"
-              ? createParagraph("EURL - Immatriculation au RCS")
-              : createParagraph(""),
-
-            createHeading("Directeur de publication", HeadingLevel.HEADING_2),
-            createParagraph(userInfo.name || "[VOTRE NOM]"),
-
-            createHeading("Hébergeur", HeadingLevel.HEADING_2),
-            createParagraph("[NOM DE L'HÉBERGEUR]"),
-            createParagraph("[ADRESSE DE L'HÉBERGEUR]"),
-            createParagraph("[TÉLÉPHONE DE L'HÉBERGEUR]"),
-
-            createHeading("Propriété intellectuelle", HeadingLevel.HEADING_2),
-            createParagraph(
-              "L'ensemble du contenu de ce site (textes, images, vidéos) est protégé par le droit d'auteur.",
-            ),
-            createParagraph(
-              "Toute reproduction est interdite sans autorisation écrite.",
-            ),
-
             createHeading(
-              "Données personnelles (RGPD)",
+              language === "fr" ? "Éditeur du site" : "Site Publisher",
               HeadingLevel.HEADING_2,
             ),
             createParagraph(
-              "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données.",
+              `${language === "fr" ? "Nom :" : "Name:"} ${userInfo.name || (language === "fr" ? "[VOTRE NOM]" : "[YOUR NAME]")}`,
             ),
-            createParagraph(`Contact : ${userInfo.email || "[VOTRE EMAIL]"}`),
-
-            createHeading("Cookies", HeadingLevel.HEADING_2),
+            userInfo.company
+              ? createParagraph(
+                  `${language === "fr" ? "Entreprise :" : "Company:"} ${userInfo.company}`,
+                )
+              : createParagraph(""),
             createParagraph(
-              "Ce site utilise des cookies pour améliorer l'expérience utilisateur.",
+              `${language === "fr" ? "SIRET :" : "Business ID:"} ${userInfo.siret || (language === "fr" ? "[VOTRE SIRET]" : "[BUSINESS ID]")}`,
             ),
             createParagraph(
-              "Vous pouvez les désactiver dans les paramètres de votre navigateur.",
+              `${language === "fr" ? "Adresse :" : "Address:"} ${userInfo.address || (language === "fr" ? "[VOTRE ADRESSE]" : "[YOUR ADDRESS]")}`,
+            ),
+            createParagraph(
+              `Email : ${userInfo.email || (language === "fr" ? "[VOTRE EMAIL]" : "[YOUR EMAIL]")}`,
+            ),
+            createParagraph(
+              `${language === "fr" ? "Téléphone :" : "Phone:"} ${userInfo.phone || (language === "fr" ? "[VOTRE TÉLÉPHONE]" : "[YOUR PHONE]")}`,
             ),
 
-            createParagraph(""), // Ligne vide
-            createParagraph(`Dernière mise à jour : ${date}`),
+            createParagraph(""),
+
+            legalStatus === "auto-entrepreneur"
+              ? createParagraph(
+                  language === "fr"
+                    ? "Auto-entrepreneur - Immatriculation à l'URSSAF"
+                    : "Sole Trader (Auto-entrepreneur) - Registered with URSSAF",
+                )
+              : createParagraph(""),
+
+            createHeading(
+              language === "fr"
+                ? "Directeur de publication"
+                : "Publication Director",
+              HeadingLevel.HEADING_2,
+            ),
+            createParagraph(
+              userInfo.name ||
+                (language === "fr" ? "[VOTRE NOM]" : "[YOUR NAME]"),
+            ),
+
+            createHeading(
+              language === "fr" ? "Hébergeur" : "Hosting Provider",
+              HeadingLevel.HEADING_2,
+            ),
+            createParagraph(
+              language === "fr"
+                ? "[NOM DE L'HÉBERGEUR]"
+                : "[HOSTING PROVIDER NAME]",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "[ADRESSE DE L'HÉBERGEUR]"
+                : "[HOSTING PROVIDER ADDRESS]",
+            ),
+
+            createHeading(
+              language === "fr"
+                ? "Propriété intellectuelle"
+                : "Intellectual Property",
+              HeadingLevel.HEADING_2,
+            ),
+            createParagraph(
+              language === "fr"
+                ? "L'ensemble du contenu de ce site (textes, images, vidéos) est protégé par le droit d'auteur."
+                : "All content on this site (text, images, videos) is protected by copyright.",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "Toute reproduction est interdite sans autorisation écrite."
+                : "Any reproduction is prohibited without prior written authorization.",
+            ),
+
+            createHeading(
+              language === "fr"
+                ? "Données personnelles (RGPD)"
+                : "Personal Data (GDPR)",
+              HeadingLevel.HEADING_2,
+            ),
+            createParagraph(
+              language === "fr"
+                ? "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données."
+                : "In accordance with GDPR, you have the right to access, rectify, and delete your data.",
+            ),
+            createParagraph(
+              `Contact : ${userInfo.email || (language === "fr" ? "[VOTRE EMAIL]" : "[YOUR EMAIL]")}`,
+            ),
+
+            createHeading(
+              language === "fr" ? "Cookies" : "Cookies",
+              HeadingLevel.HEADING_2,
+            ),
+            createParagraph(
+              language === "fr"
+                ? "Ce site utilise des cookies pour améliorer l'expérience utilisateur."
+                : "This site uses cookies to improve the user experience.",
+            ),
+            createParagraph(
+              language === "fr"
+                ? "Vous pouvez les désactiver dans les paramètres de votre navigateur."
+                : "You can disable them in your browser settings.",
+            ),
+
+            createParagraph(""),
+            createParagraph(
+              `${language === "fr" ? "Dernière mise à jour :" : "Last updated:"} ${date}`,
+            ),
           ],
         },
       ],
@@ -777,7 +831,10 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
           children: [
             // Titre
             new Paragraph({
-              text: "ACCORD DE CONFIDENTIALITÉ (NDA)",
+              text:
+                language === "fr"
+                  ? "ACCORD DE CONFIDENTIALITÉ (NDA)"
+                  : "NON-DISCLOSURE AGREEMENT (NDA)",
               heading: HeadingLevel.TITLE,
               alignment: AlignmentType.CENTER,
               spacing: { before: 0, after: 200 },
@@ -786,7 +843,7 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
               text:
                 language === "fr"
                   ? "ACCORD DE NON-DIVULGATION"
-                  : "NON-DISCLOSURE AGREEMENT",
+                  : "CONFIDENTIALITY AGREEMENT",
               alignment: AlignmentType.CENTER,
               spacing: { after: 600 },
             }),
@@ -803,10 +860,13 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
               language === "fr" ? "PARTIE 1 :" : "PARTY 1:",
               "",
             ),
-            createParagraph(userInfo.name || "[VOTRE NOM]"),
+            createParagraph(
+              userInfo.name ||
+                (language === "fr" ? "[VOTRE NOM]" : "[YOUR NAME]"),
+            ),
             createParagraph(userInfo.company || ""),
             createParagraph(
-              `${language === "fr" ? "Adresse :" : "Address:"} ${userInfo.address || "[À COMPLÉTER]"}`,
+              `${language === "fr" ? "Adresse :" : "Address:"} ${userInfo.address || (language === "fr" ? "[À COMPLÉTER]" : "[TO BE COMPLETED]")}`,
             ),
 
             createParagraph(""), // Ligne vide
@@ -815,10 +875,16 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
               language === "fr" ? "PARTIE 2 :" : "PARTY 2:",
               "",
             ),
-            createParagraph(clientInfo.name || "[NOM DE LA PARTIE 2]"),
-            createParagraph(clientInfo.company || "[SOCIÉTÉ]"),
             createParagraph(
-              `${language === "fr" ? "Adresse :" : "Address:"} ${clientInfo.address || "[ADRESSE]"}`,
+              clientInfo.name ||
+                (language === "fr" ? "[NOM DE LA PARTIE 2]" : "[PARTY 2 NAME]"),
+            ),
+            createParagraph(
+              clientInfo.company ||
+                (language === "fr" ? "[SOCIÉTÉ]" : "[COMPANY]"),
+            ),
+            createParagraph(
+              `${language === "fr" ? "Adresse :" : "Address:"} ${clientInfo.address || (language === "fr" ? "[ADRESSE]" : "[ADDRESS]")}`,
             ),
 
             createParagraph(""), // Ligne vide
@@ -922,14 +988,14 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
             ),
 
             // Signatures
-            createParagraph(""), // Ligne vide
-            createParagraph(""), // Ligne vide
+            createParagraph(""),
+            createParagraph(""),
             createParagraph(
               language === "fr"
                 ? `Fait en deux exemplaires à [VILLE], le ${date}`
                 : `Done in duplicate in [CITY], on ${date}`,
             ),
-            createParagraph(""), // Ligne vide
+            createParagraph(""),
 
             new Paragraph({
               children: [
@@ -964,9 +1030,9 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
     try {
       let doc;
       const templateNames = {
-        mission: "Contrat_Mission",
-        cgv: "CGV",
-        mentions: "Mentions_Legales",
+        mission: language === "fr" ? "Contrat_Mission" : "Mission_Contract",
+        cgv: language === "fr" ? "CGV" : "Terms_and_Conditions",
+        mentions: language === "fr" ? "Mentions_Legales" : "Legal_Notice",
         nda: "NDA",
       };
 
@@ -1079,7 +1145,7 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                     setUserInfo({ ...userInfo, name: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="Jean Dupont"
+                  placeholder={language === "fr" ? "Jean Dupont" : "John Doe"}
                 />
               </div>
 
@@ -1094,7 +1160,9 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                     setUserInfo({ ...userInfo, company: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="Ma Société SARL"
+                  placeholder={
+                    language === "fr" ? "Ma Société SARL" : "My Company Ltd"
+                  }
                 />
               </div>
 
@@ -1109,7 +1177,11 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                     setUserInfo({ ...userInfo, siret: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="123 456 789 00012"
+                  placeholder={
+                    language === "fr"
+                      ? "siret (ex: 123 456 789 00012)"
+                      : "Tax ID / Business ID (e.g., 123456789)"
+                  }
                 />
               </div>
 
@@ -1124,7 +1196,11 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                     setUserInfo({ ...userInfo, email: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="contact@exemple.fr"
+                  placeholder={
+                    language === "fr"
+                      ? "contact@exemple.fr"
+                      : "contact@example.com"
+                  }
                 />
               </div>
 
@@ -1139,7 +1215,11 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                     setUserInfo({ ...userInfo, address: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="123 rue Example, 75001 Paris"
+                  placeholder={
+                    language === "fr"
+                      ? "123 rue exemple, 75001 Paris"
+                      : "123 Business Ave, New York, NY 10001"
+                  }
                 />
               </div>
 
@@ -1154,7 +1234,9 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                     setUserInfo({ ...userInfo, phone: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="+33 6 12 34 56 78"
+                  placeholder={
+                    language === "fr" ? "+33 6 12 34 56 78" : "+1 202-555-0123"
+                  }
                 />
               </div>
             </div>
@@ -1175,7 +1257,9 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                     setClientInfo({ ...clientInfo, name: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="M. Jean Client"
+                  placeholder={
+                    language === "fr" ? "Marie Martin" : "Jane Smith"
+                  }
                 />
               </div>
 
@@ -1190,7 +1274,11 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                     setClientInfo({ ...clientInfo, company: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="Client SA"
+                  placeholder={
+                    language === "fr"
+                      ? "Entreprise SARL Martin"
+                      : "Company LLC Smith"
+                  }
                 />
               </div>
 
@@ -1205,7 +1293,11 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                     setClientInfo({ ...clientInfo, siret: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="987 654 321 00012"
+                  placeholder={
+                    language === "fr"
+                      ? "siret (ex: 123 456 789 00012)"
+                      : "Tax ID / Business ID (e.g., 123456789)"
+                  }
                 />
               </div>
 
@@ -1220,7 +1312,11 @@ const ContractTemplates = ({ formData, legalStatus, language = "fr" }) => {
                     setClientInfo({ ...clientInfo, address: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="456 Avenue du Client, Paris"
+                  placeholder={
+                    language === "fr"
+                      ? "123 rue exemple, 75001 Paris"
+                      : "123 Business Ave, New York, NY 10001"
+                  }
                 />
               </div>
             </div>

@@ -31,7 +31,6 @@ const ExportData = ({ results, formData, language = "fr" }) => {
       .map((header) => {
         const value = obj[header];
         if (value === null || value === undefined) return "";
-        // Échapper les guillemets et entourer de guillemets si nécessaire
         const stringValue = String(value);
         if (
           stringValue.includes(",") ||
@@ -190,7 +189,7 @@ const ExportData = ({ results, formData, language = "fr" }) => {
     setTimeout(() => setExported(false), 2000);
   };
 
-  // Exporter en format Excel (HTML table qui s'ouvre dans Excel)
+  // Exporter en format Excel
   const exportToExcel = () => {
     const history = JSON.parse(
       localStorage.getItem("pricingpro_history") || "[]",

@@ -142,7 +142,9 @@ const SocialChargesCalculator = ({
       {/* Breakdown */}
       <div className="bg-white dark:bg-gray-800 rounded-lg p-4 space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600 dark:text-gray-400">Brut mensuel</span>
+          <span className="text-gray-600 dark:text-gray-400">
+            {language === "fr" ? "Brut mensuel" : "Monthly Gross"}
+          </span>
           <span className="font-semibold text-gray-900 dark:text-white">
             {monthlyRate.toLocaleString()}€
           </span>

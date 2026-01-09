@@ -70,7 +70,6 @@ const EmailCapture = ({ results, formData, language }) => {
     }
 
     if (!email || !validateEmail(email)) {
-      // ... ta logique de validation email existante ...
       return;
     }
 
@@ -90,7 +89,7 @@ const EmailCapture = ({ results, formData, language }) => {
           results,
           formData,
           language,
-          captchaToken: token, // 4. ON ENVOIE LE TOKEN AU SERVEUR
+          captchaToken: token,
           timestamp: new Date().toISOString(),
         }),
       });
@@ -99,7 +98,7 @@ const EmailCapture = ({ results, formData, language }) => {
         setStatus("success");
         setMessage(t.success);
         setEmail("");
-        setToken(null); // On réinitialise le token après succès
+        setToken(null);
 
         setTimeout(() => {
           setStatus("idle");

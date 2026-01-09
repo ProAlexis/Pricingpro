@@ -50,7 +50,7 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
   // Charger l'historique depuis localStorage
   useEffect(() => {
     loadHistory();
-  }, []);
+  }, [isOpen]);
 
   const loadHistory = () => {
     try {
@@ -61,32 +61,6 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
       }
     } catch (error) {
       console.error("Error loading history:", error);
-    }
-  };
-
-  // Sauvegarder un calcul (appelé depuis Calculator)
-  const saveCalculation = (results, formData) => {
-    try {
-      const newEntry = {
-        id: Date.now(),
-        date: new Date().toISOString(),
-        results,
-        formData,
-      };
-
-      const savedHistory = localStorage.getItem("pricingpro_history");
-      let currentHistory = savedHistory ? JSON.parse(savedHistory) : [];
-
-      // Garder seulement les 10 derniers calculs
-      currentHistory = [newEntry, ...currentHistory].slice(0, 10);
-
-      localStorage.setItem(
-        "pricingpro_history",
-        JSON.stringify(currentHistory),
-      );
-      setHistory(currentHistory);
-    } catch (error) {
-      console.error("Error saving calculation:", error);
     }
   };
 
@@ -264,7 +238,9 @@ const CalculationHistory = ({ language, onLoadCalculation }) => {
                           <p className="font-semibold text-gray-900 dark:text-white">
                             {entry.formData.skills.length > 0
                               ? entry.formData.skills.join(", ")
-                              : "Aucune"}
+                              : language === "fr"
+                                ? "Aucune"
+                                : "None"}
                           </p>
                         </div>
                       </div>

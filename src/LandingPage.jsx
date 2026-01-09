@@ -20,7 +20,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // États pour le bouton Voir Plus
+  // États pour le bouton "Voir Plus"
   const [showAllProfessions, setShowAllProfessions] = useState(false);
   const PROFESSIONS_LIMIT = 9;
 
@@ -629,7 +629,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
         </div>
       </section>
 
-      {/* SECTION PROFESSIONS - GRID AVEC VOIR PLUS */}
+      {/* SECTION PROFESSIONS - GRID AVEC "VOIR PLUS" */}
       <section
         id="professions"
         className="py-20 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"

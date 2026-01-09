@@ -148,7 +148,7 @@ const QuoteGenerator = ({
         name: "Jean Dupont",
         email: "contact@exemple.fr",
         phone: "+33 6 12 34 56 78",
-        address: "123 rue Exemple, 75001 Paris",
+        address: "123 rue exemple, 75001 Paris",
         siret: "siret (ex: 123 456 789 00012)",
         vatNumber: "N° de TVA Intracommunautaire (ex: FR 12...)",
         capital: "Capital social (ex: 1000)",
