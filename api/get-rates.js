@@ -6,13 +6,37 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY,
 );
 
-export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+const RATE_LIMIT = 10;
+const RATE_LIMIT_WINDOW = 60 * 1000;
+const rateLimitStore = new Map();
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
+export default async function handler(req, res) {
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+    req.headers["x-real-ip"] ||
+    req.connection.remoteAddress;
+
+  const now = Date.now();
+  const windowKey = `${ip}:${Math.floor(now / RATE_LIMIT_WINDOW)}`;
+
+  let data = rateLimitStore.get(windowKey) || {
+    count: 0,
+    reset: now + RATE_LIMIT_WINDOW,
+  };
+
+  if (data.count >= RATE_LIMIT) {
+    res.status(429).json({
+      error: "Trop de requêtes. Réessaye dans 1 minute.",
+      retryAfter: Math.ceil((data.reset - now) / 1000),
+    });
+    return;
   }
+
+  data.count++;
+  rateLimitStore.set(windowKey, data);
+
+  res.setHeader("X-RateLimit-Remaining", RATE_LIMIT - data.count);
+  res.setHeader("X-RateLimit-Reset", data.reset);
 
   const { profession, location, experience_level } = req.query;
 
