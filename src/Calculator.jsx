@@ -618,9 +618,9 @@ const Calculator = ({ onBackToHome, language }) => {
                 <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
                   <Briefcase className="w-5 h-5 text-purple-600 dark:text-purple-300" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                   {t.step1Title}
-                </h3>
+                </p>
               </div>
 
               <div className="space-y-4">
@@ -795,9 +795,9 @@ const Calculator = ({ onBackToHome, language }) => {
                 <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center">
                   <Award className="w-5 h-5 text-pink-600 dark:text-pink-300" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                   {t.step2Title}
-                </h3>
+                </p>
               </div>
 
               <div className="space-y-4">
@@ -937,9 +937,9 @@ const Calculator = ({ onBackToHome, language }) => {
                 <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
                   <DollarSign className="w-5 h-5 text-green-600 dark:text-green-300" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                   {t.yourRate}
-                </h3>
+                </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
@@ -974,10 +974,10 @@ const Calculator = ({ onBackToHome, language }) => {
 
               {/* Market Comparison */}
               <div className="mb-8">
-                <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+                <p className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
                   <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-300" />
                   {t.marketComparison}
-                </h4>
+                </p>
                 <div className="space-y-3">
                   <div className="flex items-center gap-4">
                     <span className="text-sm font-medium w-32 text-gray-700 dark:text-gray-300">
@@ -1049,9 +1049,9 @@ const Calculator = ({ onBackToHome, language }) => {
 
               {/* Rate Breakdown */}
               <div className="border-t dark:border-gray-700 pt-6">
-                <h4 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                <p className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
                   {t.rateBreakdown}
-                </h4>
+                </p>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">
@@ -1123,10 +1123,10 @@ const Calculator = ({ onBackToHome, language }) => {
 
             {/* Insights */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-8">
-              <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+              <p className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
                 <Users className="w-5 h-5 text-purple-600 dark:text-purple-300" />
                 {t.insights}
-              </h4>
+              </p>
               <div className="space-y-4">
                 {getInsights().map((insight, idx) => (
                   <div

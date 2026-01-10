@@ -776,9 +776,9 @@ const LandingPage = ({ onStartCalculator, language }) => {
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-4 text-purple-600 dark:text-purple-400">
                   {getIcon(feature.icon)}
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+                <p className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                   {feature.title}
-                </h3>
+                </p>
                 <p className="text-gray-600 dark:text-gray-400">
                   {feature.description}
                 </p>
@@ -803,9 +803,9 @@ const LandingPage = ({ onStartCalculator, language }) => {
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                   {step.number}
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+                <p className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                   {step.title}
-                </h3>
+                </p>
                 <p className="text-gray-600 dark:text-gray-400">
                   {step.description}
                 </p>
@@ -889,11 +889,11 @@ const LandingPage = ({ onStartCalculator, language }) => {
           </h2>
           <div className="space-y-6">
             <div className="border-l-4 border-purple-600 pl-4">
-              <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+              <p className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                 {language === "fr"
                   ? "Comment PricingPro calcule-t-il les tarifs ?"
                   : "How does PricingPro calculate rates?"}
-              </h3>
+              </p>
               <p className="text-gray-600 dark:text-gray-400">
                 {language === "fr"
                   ? "PricingPro analyse 3500+ tarifs réels collectés depuis Malt, Glassdoor et Upwork. Notre algorithme prend en compte votre profession, localisation, niveau d'expérience et compétences pour vous donner une recommandation précise."
@@ -902,11 +902,11 @@ const LandingPage = ({ onStartCalculator, language }) => {
             </div>
 
             <div className="border-l-4 border-purple-600 pl-4">
-              <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+              <p className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                 {language === "fr"
                   ? "Quelles professions sont couvertes ?"
                   : "Which professions are covered?"}
-              </h3>
+              </p>
               <p className="text-gray-600 dark:text-gray-400">
                 {language === "fr"
                   ? "Développeur Web, Mobile, Full-Stack, Backend, DevOps, Data Analyst, Data Scientist, Designer UI/UX, Graphiste, Rédacteur, Consultant Marketing, Expert SEO, Chef de Projet, Product Manager, Consultant Business."
@@ -915,11 +915,11 @@ const LandingPage = ({ onStartCalculator, language }) => {
             </div>
 
             <div className="border-l-4 border-purple-600 pl-4">
-              <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+              <p className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                 {language === "fr"
                   ? "Est-ce vraiment gratuit ?"
                   : "Is it really free?"}
-              </h3>
+              </p>
               <p className="text-gray-600 dark:text-gray-400">
                 {language === "fr"
                   ? "Oui ! L'accès aux fonctionnalités principales (calculateur de tarifs, données de marché, génération de devis et contrats) est gratuit. Pas de carte bancaire, pas d'inscription nécessaire."
