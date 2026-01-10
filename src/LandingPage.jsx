@@ -28,10 +28,10 @@ const LandingPage = ({ onStartCalculator, language }) => {
   const translations = {
     fr: {
       hero: {
-        title: "Découvrez votre vraie valeur",
+        title: "Découvrir votre vraie valeur",
         subtitle: "Pilotez votre activité freelance de A à Z",
         description:
-          "Accédez à 3500+ tarifs réels pour découvrir la vraie valeur de vos services, créez vos devis personnalisés et téléchargez vos contrats juridiques en quelques clics.",
+          "Accédez à 3500+ tarifs réels pour découvrir votre vraie valeur, Estimez vos revenus, créez vos devis et téléchargez vos contrats.",
         cta: "Estimer mon tarif",
         badge: "✨ Accès gratuit · Devis & Contrats inclus · Sans inscription",
       },
@@ -167,7 +167,7 @@ const LandingPage = ({ onStartCalculator, language }) => {
         title: "Discover your true worth",
         subtitle: "Manage your freelance business from A to Z",
         description:
-          "Access 3500+ real market rates to find your true worth, create professional quotes, and download legal contract templates in just a few clicks.",
+          "Access 3500+ real rates to discover your true worth. Estimate your income, create quotes, and download your contracts.",
         cta: "Estimate my rate",
         badge:
           "✨ Free Access · Quotes & Contracts included · No signup required",
