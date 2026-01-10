@@ -537,21 +537,17 @@ const Calculator = ({ onBackToHome, language }) => {
       icon: "💡",
       text:
         language === "fr"
-          ? `Les ${professionLabel}s ${
+          ? `Un ${professionLabel} ${
               formData.experienceLevel === "junior"
-                ? "juniors"
+                ? "junior"
                 : formData.experienceLevel === "senior"
-                  ? "seniors"
-                  : "confirmés"
-            } facturent généralement entre ${results.market.min}€ et ${
-              results.market.max
-            }€/jour.`
-          : `${
+                  ? "senior"
+                  : "confirmé"
+            } facture généralement entre ${results.market.min}€ et ${results.market.max}€/jour.`
+          : `A ${
               formData.experienceLevel.charAt(0).toUpperCase() +
               formData.experienceLevel.slice(1)
-            } ${professionLabel}s typically charge between €${
-              results.market.min
-            } and €${results.market.max}/day.`,
+            } ${professionLabel} typically charges between €${results.market.min} and €${results.market.max}/day.`,
     });
 
     if (formData.location === "portugal") {

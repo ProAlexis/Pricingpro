@@ -973,7 +973,7 @@ export const professionsData = {
         {
           question: "Quelle est la différence entre DevOps et SRE ?",
           answer:
-            "Un DevOps se concentre sur l'automatisation CI/CD et l'infrastructure. Un SRE (Site Reliability Engineer) se focalise sur la fiabilité, la performance et le monitoring en production. Les SRE facturent généralement 50-100€/j de plus (550-600€).",
+            "Un DevOps se concentre sur l'automatisation CI/CD et l'infrastructure. Un SRE (Site Reliability Engineer) se focalise sur la fiabilité, la performance et le monitoring en production. Un SRE facture généralement 50-100€/j de plus (550-600€).",
         },
         {
           question: "Quelles certifications sont valorisées ?",
