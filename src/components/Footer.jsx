@@ -63,7 +63,7 @@ const Footer = ({ language = "fr" }) => {
             >
               {/* Le Logo */}
               <img
-                src="/logo-square.png"
+                src="/logo-square.webp"
                 alt="Logo PricingPro"
                 className="w-10 h-10 rounded-xl shadow-sm object-contain"
               />

@@ -47,7 +47,7 @@ const UnifiedHeader = ({
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
             <img
-              src="/logo-square.png"
+              src="/logo-square.webp"
               alt="Logo PricingPro"
               className="w-10 h-10 rounded-xl shadow-lg object-contain"
             />
