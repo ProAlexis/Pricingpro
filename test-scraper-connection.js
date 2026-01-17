@@ -15,7 +15,7 @@ console.log('🔍 Testing Scraper Connection & Permissions...\n');
 console.log('📋 Step 1: Checking Environment Variables');
 const requiredEnvVars = [
   'SUPABASE_URL',
-  'SUPABASE_ANON_KEY'
+  'SUPABASE_SERVICE_ROLE_KEY'  // Le scraper a besoin de la clé admin
 ];
 
 let envOk = true;
@@ -37,10 +37,11 @@ console.log('\n✅ All environment variables found\n');
 
 // 2. Tester la connexion Supabase
 console.log('📋 Step 2: Testing Supabase Connection');
+console.log('🔑 Using SERVICE_ROLE key (bypasses RLS for scraper operations)\n');
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 try {

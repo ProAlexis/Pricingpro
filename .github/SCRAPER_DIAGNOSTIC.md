@@ -14,7 +14,7 @@ Vérifiez que les secrets suivants sont configurés dans GitHub :
 
 **Secrets requis :**
 - `SUPABASE_URL` : URL de votre projet Supabase
-- `SUPABASE_ANON_KEY` : Clé publique (anon) Supabase
+- `SUPABASE_SERVICE_ROLE_KEY` : **Clé admin (service_role)** - Nécessaire pour bypass RLS et faire des INSERT/DELETE en masse
 
 ### 2. **Permissions Supabase**
 
@@ -73,7 +73,7 @@ Le scraper peut prendre 2-5 minutes. Si > 6 minutes → timeout.
 # 1. Créer un fichier .env local avec vos clés
 cat > .env << EOF
 SUPABASE_URL=votre_url_supabase
-SUPABASE_ANON_KEY=votre_cle_anon
+SUPABASE_SERVICE_ROLE_KEY=votre_cle_service_role
 EOF
 
 # 2. Installer les dépendances

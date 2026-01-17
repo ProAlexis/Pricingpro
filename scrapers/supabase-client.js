@@ -2,13 +2,17 @@ import { createClient } from "@supabase/supabase-js";
 import "dotenv/config";
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
+// Pour le scraper, on a besoin de la clé SERVICE_ROLE qui bypass le RLS
+// (nécessaire pour DELETE et INSERT en masse)
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   console.error("❌ URL:", supabaseUrl);
   console.error("❌ Key:", supabaseKey ? "Received (hidden)" : "Missed");
   throw new Error("Missing Supabase credentials in .env file");
 }
+
+console.log("🔑 Using key type:", process.env.SUPABASE_SERVICE_ROLE_KEY ? "SERVICE_ROLE (admin)" : "ANON (limited)");
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
