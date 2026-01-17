@@ -6,6 +6,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import SEO from "../components/SEO";
 
 const GenerateurDevis = ({ language = "fr" }) => {
   const navigate = useNavigate();
@@ -83,6 +84,18 @@ const GenerateurDevis = ({ language = "fr" }) => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 pt-10">
+      {/* SEO Meta Tags */}
+      <SEO
+        title={language === 'fr'
+          ? "Générateur de Devis Freelance Gratuit | PDF Professionnel - PricingPro"
+          : "Free Freelance Quote Generator | Professional PDF - PricingPro"}
+        description={language === 'fr'
+          ? "Créez, personnalisez et téléchargez vos devis en PDF gratuitement. Conforme 2026, professionnel et instantané pour freelances."
+          : "Create, customize and download your quotes in PDF for free. 2026 compliant, professional and instant for freelancers."}
+        canonical="https://pricingpro.fr/generateur-devis-freelance"
+        lang={language}
+      />
+
       {/* --- HERO SECTION --- */}
       <section className="max-w-5xl mx-auto px-6 py-16 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 font-medium text-sm mb-6">

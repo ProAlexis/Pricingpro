@@ -16,6 +16,7 @@ import {
   FileText,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import SEO from "./components/SEO";
 import EmailCapture from "./components/EmailCapture";
 import { SocialChargesCalculator } from "./components/SocialChargesCalculator";
 import { generateRateAnalysisPDF } from "../services/pdf-service";
@@ -606,6 +607,18 @@ const Calculator = ({ onBackToHome, language }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* SEO Meta Tags */}
+      <SEO
+        title={language === 'fr'
+          ? "Calculateur de Tarif Freelance | Estimez votre TJM - PricingPro"
+          : "Freelance Rate Calculator | Estimate your Daily Rate - PricingPro"}
+        description={language === 'fr'
+          ? "Calculez votre tarif freelance personnalisé basé sur 3500+ données réelles. TJM, taux horaire et mensuel selon votre expérience et localisation."
+          : "Calculate your personalized freelance rate based on 3500+ real data points. Daily, hourly and monthly rates based on your experience and location."}
+        canonical="https://pricingpro.fr/calculator"
+        lang={language}
+      />
+
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
         {step === 1 && (

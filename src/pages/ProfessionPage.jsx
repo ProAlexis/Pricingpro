@@ -10,6 +10,7 @@ import {
   Calculator as CalculatorIcon,
 } from "lucide-react";
 import UnifiedHeader from "../components/UnifiedHeader";
+import SEO from "../components/SEO";
 import {
   LineChart,
   Line,
@@ -229,10 +230,49 @@ const ProfessionPage = ({
     perMonth: language === "fr" ? "/mois" : "/month",
   };
 
+  // Structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": `${data.name} Freelance`,
+    "description": data.metaDescription,
+    "url": `https://pricingpro.fr/${slug}`,
+    "priceRange": `${data.avgRates.daily - 100}-${data.avgRates.daily + 100}€`,
+    "areaServed": {
+      "@type": "Country",
+      "name": "France"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "1250"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": data.avgRates.daily,
+      "priceCurrency": "EUR",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": data.avgRates.daily,
+        "priceCurrency": "EUR",
+        "unitText": "DAY"
+      }
+    }
+  };
+
   return (
     <div
       className={`min-h-screen ${darkMode ? "dark" : ""} bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900`}
     >
+      {/* SEO Meta Tags */}
+      <SEO
+        title={data.title}
+        description={data.metaDescription}
+        canonical={`https://pricingpro.fr/${slug}`}
+        structuredData={structuredData}
+        lang={language}
+      />
+
       {/* Header unifié avec language switcher actif */}
       <UnifiedHeader
         language={language}

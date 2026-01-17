@@ -65,11 +65,19 @@ try {
   // Test d'insertion (puis suppression immédiate)
   console.log("📝 Testing INSERT permission on market_rates...");
   const testData = {
+<<<<<<< HEAD
     profession: "test-connection",
     country: "test",
     city: "test",
     location: "test",
     experience_level: "test",
+=======
+    profession: 'test-connection',
+    country: 'test',
+    city: 'test',
+    location: 'test', // Ajout du champ location (obligatoire)
+    experience_level: 'test',
+>>>>>>> 98adb83 (fix: add missing location field in test data)
     rate_daily: 0,
     rate_hourly: 0,
     source: "test",

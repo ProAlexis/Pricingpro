@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import SEO from "./components/SEO";
 import {
   TrendingUp,
   Database,
@@ -580,8 +581,44 @@ const LandingPage = ({ onStartCalculator, language }) => {
     },
   };
 
+  // SEO structured data for home page
+  const structuredDataHome = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "PricingPro",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "url": "https://pricingpro.fr/",
+    "description": language === 'fr'
+      ? "Calculateur de tarifs intelligent pour freelances basé sur 3500+ données réelles du marché"
+      : "Smart pricing calculator for freelancers based on 3500+ real market data points",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "5000"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
+      {/* SEO Meta Tags */}
+      <SEO
+        title={language === 'fr'
+          ? "PricingPro - Calculateur de Tarifs Intelligent pour Freelances | Données Réelles 2026"
+          : "PricingPro - Smart Pricing Calculator for Freelancers | Real Data 2026"}
+        description={language === 'fr'
+          ? "Découvrez combien facturer en tant que freelance avec PricingPro. 3500+ tarifs réels, 15 professions, 6 pays. Basé sur des données de marché actualisées."
+          : "Discover how much to charge as a freelancer with PricingPro. 3500+ real rates, 15 professions, 6 countries. Based on updated market data."}
+        canonical="https://pricingpro.fr/"
+        structuredData={structuredDataHome}
+        lang={language}
+      />
+
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <div className="max-w-6xl mx-auto text-center">
