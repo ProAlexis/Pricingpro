@@ -8,5 +8,55 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
+  ],
+  "functions": {
+    "api/save-email.js": {
+      "maxDuration": 10,
+      "memory": 512
+    },
+    "api/send-email.js": {
+      "maxDuration": 10,
+      "memory": 512
+    },
+    "api/get-rates.js": {
+      "maxDuration": 5,
+      "memory": 256
+    },
+    "api/get-rate-trends.js": {
+      "maxDuration": 5,
+      "memory": 256
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-DNS-Prefetch-Control",
+          "value": "on"
+        }
+      ]
+    }
   ]
 }

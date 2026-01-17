@@ -17,23 +17,38 @@ export default async function handler(req, res) {
   const { profession, location, experience_level } = req.query;
 
   try {
+    // Sanitization des inputs pour éviter les injections
+    const sanitizeInput = (input) => {
+      if (!input) return null;
+      // Retire les caractères potentiellement dangereux
+      return String(input).replace(/[^\w\s-]/g, '').trim();
+    };
+
+    const sanitizedProfession = sanitizeInput(profession);
+    const sanitizedLocation = sanitizeInput(location);
+    const sanitizedExperience = sanitizeInput(experience_level);
+
     // 1. Identification du pays via geo-utils
-    const geoData = await getCountryFromCity(location);
-    const countryName = geoData?.country || location?.toLowerCase();
+    const geoData = await getCountryFromCity(sanitizedLocation);
+    const countryName = geoData?.country || sanitizedLocation?.toLowerCase();
+    const cityName = geoData?.city || sanitizedLocation;
 
     // 2. Construction de la requête
     let query = supabase.from("market_rates").select("*");
 
-    if (profession) {
-      query = query.eq("profession", profession);
+    if (sanitizedProfession) {
+      query = query.eq("profession", sanitizedProfession);
     }
-    if (experience_level)
-      query = query.eq("experience_level", experience_level);
+    if (sanitizedExperience) {
+      query = query.eq("experience_level", sanitizedExperience);
+    }
 
-    // Filtrer par pays
+    // Filtrer par pays ou ville
     if (countryName && countryName !== "unknown") {
+      // Priorité au pays si identifié
       query = query.ilike("country", countryName);
-    } else if (cityName) {
+    } else if (cityName && cityName !== "unknown") {
+      // Fallback sur la ville si pas de pays
       query = query.ilike("city", cityName);
     }
 

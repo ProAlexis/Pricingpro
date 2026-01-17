@@ -25,9 +25,20 @@ export default async function handler(req, res) {
   try {
     const { email, results, formData, timestamp, captchaToken } = req.body;
 
-    // Validation basique email
-    if (!email || !email.includes("@")) {
-      return res.status(400).json({ error: "Invalid email address" });
+    // Validation robuste de l'email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email address format" });
+    }
+
+    // Protection contre les emails trop longs (DoS)
+    if (email.length > 254) {
+      return res.status(400).json({ error: "Email address too long" });
+    }
+
+    // Validation des données obligatoires
+    if (!results || !formData) {
+      return res.status(400).json({ error: "Missing required data (results or formData)" });
     }
 
     // Vérification Turnstile
@@ -58,16 +69,27 @@ export default async function handler(req, res) {
 
     console.log("✅ Turnstile verified (Human detected)");
 
-    // Préparer les données à insérer
+    // Fonction de sanitization pour éviter XSS
+    const sanitizeText = (text) => {
+      if (!text) return null;
+      return String(text)
+        .replace(/[<>\"']/g, '') // Retire les caractères HTML/JS dangereux
+        .trim()
+        .slice(0, 200); // Limite la longueur
+    };
+
+    // Préparer les données à insérer avec sanitization
     const emailData = {
       email: email.toLowerCase().trim(),
-      profession: formData?.profession || null,
-      location: formData?.location || null,
-      experience_level: formData?.experienceLevel || null,
+      profession: sanitizeText(formData?.profession) || null,
+      location: sanitizeText(formData?.location) || null,
+      experience_level: sanitizeText(formData?.experienceLevel) || null,
       years_experience: formData?.experience
         ? parseInt(formData.experience)
         : null,
-      skills: formData?.skills || [],
+      skills: Array.isArray(formData?.skills)
+        ? formData.skills.map(s => sanitizeText(s)).filter(Boolean).slice(0, 20)
+        : [],
       recommended_rate_daily: results?.daily || null,
       recommended_rate_hourly: results?.hourly || null,
       recommended_rate_monthly: results?.monthly || null,

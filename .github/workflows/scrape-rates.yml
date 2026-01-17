@@ -8,6 +8,7 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    timeout-minutes: 15 # Timeout de sécurité
 
     steps:
       - name: Checkout code
@@ -17,15 +18,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run multi-source scraper (Malt + Glassdoor + Upwork)
+      - name: Test Supabase connection
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-        run: node run-scraper.js 2>&1 | tee scraper-output.log
+        run: |
+          echo "🔍 Testing database connection..."
+          node test-scraper-connection.js 2>&1 | tee connection-test.log
+        continue-on-error: true
+
+      - name: Run multi-source scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          echo "🚀 Starting scraper..."
+          echo "⏰ Start time: $(date)"
+          node run-scraper.js 2>&1 | tee scraper-output.log
+          echo "⏰ End time: $(date)"
 
       - name: Notify on success
         if: success()
@@ -40,4 +55,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: scraper-logs
-          path: scraper-output.log
+          path: |
+            scraper-output.log
+            connection-test.log
