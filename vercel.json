@@ -3,7 +3,6 @@
   "installCommand": "npm ci",
   "framework": "vite",
   "outputDirectory": "dist",
-  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/api/:path*",
