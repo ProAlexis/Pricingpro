@@ -1,32 +1,68 @@
 import { Resend } from "resend";
+import rateLimit from "../lib/rate-limit.js";
+import { handleCors } from "../lib/cors.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+// Rate limiter : 3 emails par minute par IP
+const limiter = rateLimit({ interval: 60000, limit: 3 });
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+export default async function handler(req, res) {
+  // CORS sécurisé
+  if (handleCors(req, res)) return;
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { email, results, formData, language = "fr" } = req.body;
+    // Rate limiting
+    await limiter.check(req, res);
 
+    const {
+      email,
+      results,
+      formData,
+      language = "fr",
+      captchaToken,
+    } = req.body;
+
+    // Validation des champs requis
     if (!email || !results || !formData) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     // Validation email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email) || email.length > 254) {
       return res.status(400).json({ error: "Invalid email format" });
     }
+
+    // ⚠️ Vérification Turnstile CAPTCHA
+    if (!captchaToken) {
+      return res.status(400).json({ error: "Captcha token is missing" });
+    }
+
+    const verifyUrl =
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
+    const verificationResponse = await fetch(verifyUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `secret=${encodeURIComponent(process.env.TURNSTILE_SECRET_KEY)}&response=${encodeURIComponent(captchaToken)}`,
+    });
+
+    const verificationData = await verificationResponse.json();
+
+    if (!verificationData.success) {
+      console.error(
+        "❌ Turnstile verification failed:",
+        verificationData["error-codes"],
+      );
+      return res.status(403).json({ error: "Captcha verification failed" });
+    }
+
+    console.log("✅ Turnstile verified (Human detected)");
 
     // Traductions
     const translations = {
@@ -422,6 +458,13 @@ export default async function handler(req, res) {
       messageId: data.id,
     });
   } catch (error) {
+    // Rate limit exceeded
+    if (error.message === "Rate limit exceeded") {
+      return res.status(429).json({
+        error: "Too many requests. Please try again later.",
+      });
+    }
+
     console.error("Error sending email:", error);
     return res.status(500).json({
       error: "Failed to send email",

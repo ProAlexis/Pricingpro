@@ -1,21 +1,18 @@
 import { createClient } from "@supabase/supabase-js";
 import { sendRateAnalysisEmail } from "../services/email-service.js";
+import rateLimit from "../lib/rate-limit.js";
+import { handleCors } from "../lib/cors.js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
+  process.env.SUPABASE_ANON_KEY,
 );
 
-export default async function handler(req, res) {
-  // CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+const limiter = rateLimit({ interval: 60000, limit: 5 });
 
-  // Handle preflight
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+export default async function handler(req, res) {
+  // CORS sécurisé
+  if (handleCors(req, res)) return;
 
   // Only allow POST
   if (req.method !== "POST") {
@@ -23,6 +20,9 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Rate limiting
+    await limiter.check(req, res);
+
     const { email, results, formData, timestamp, captchaToken } = req.body;
 
     // Validation robuste de l'email
@@ -38,7 +38,9 @@ export default async function handler(req, res) {
 
     // Validation des données obligatoires
     if (!results || !formData) {
-      return res.status(400).json({ error: "Missing required data (results or formData)" });
+      return res
+        .status(400)
+        .json({ error: "Missing required data (results or formData)" });
     }
 
     // Vérification Turnstile
@@ -53,7 +55,7 @@ export default async function handler(req, res) {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `secret=${encodeURIComponent(
-        process.env.TURNSTILE_SECRET_KEY
+        process.env.TURNSTILE_SECRET_KEY,
       )}&response=${encodeURIComponent(captchaToken)}`,
     });
 
@@ -62,7 +64,7 @@ export default async function handler(req, res) {
     if (!verificationData.success) {
       console.error(
         "❌ Turnstile verification failed:",
-        verificationData["error-codes"]
+        verificationData["error-codes"],
       );
       return res.status(403).json({ error: "Captcha verification failed" });
     }
@@ -73,7 +75,7 @@ export default async function handler(req, res) {
     const sanitizeText = (text) => {
       if (!text) return null;
       return String(text)
-        .replace(/[<>\"']/g, '') // Retire les caractères HTML/JS dangereux
+        .replace(/[<>\"']/g, "") // Retire les caractères HTML/JS dangereux
         .trim()
         .slice(0, 200); // Limite la longueur
     };
@@ -88,7 +90,10 @@ export default async function handler(req, res) {
         ? parseInt(formData.experience)
         : null,
       skills: Array.isArray(formData?.skills)
-        ? formData.skills.map(s => sanitizeText(s)).filter(Boolean).slice(0, 20)
+        ? formData.skills
+            .map((s) => sanitizeText(s))
+            .filter(Boolean)
+            .slice(0, 20)
         : [],
       recommended_rate_daily: results?.daily || null,
       recommended_rate_hourly: results?.hourly || null,
@@ -144,6 +149,13 @@ export default async function handler(req, res) {
       data: data,
     });
   } catch (error) {
+    // Rate limit exceeded
+    if (error.message === "Rate limit exceeded") {
+      return res.status(429).json({
+        error: "Too many requests. Please try again later.",
+      });
+    }
+
     console.error("Error saving email:", error);
     return res.status(500).json({
       error: "Failed to save email",
