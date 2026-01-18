@@ -45,6 +45,49 @@ const ProfessionPage = ({
   const data = profession[language];
   const slug = profession.slug[language];
 
+  // --- SEO LOGIC ---
+  const currentYear = new Date().getFullYear();
+
+  // 1. Titre optimisé
+  const optimizedTitle =
+    language === "fr"
+      ? `Tarif ${data.name} Freelance ${currentYear} : Quel TJM facturer ? (Grille Complète)`
+      : `${data.name} Freelance Rates ${currentYear}: Daily Rate & Salary Guide`;
+
+  // 2. Meta description optimisée
+  const optimizedDescription =
+    language === "fr"
+      ? `Combien gagne un ${data.name} freelance ? Découvrez le TJM moyen ${currentYear} (${data.avgRates.daily}€/j), la grille tarifaire par expérience (Junior à Senior) et les compétences les plus payantes.`
+      : `How much does a freelance ${data.name} earn? Discover the average daily rate for ${currentYear} (€${data.avgRates.daily}/day), rates by experience, and top paying skills in France.`;
+
+  // 3. FAQ Dynamique
+  const dynamicFaq = [
+    {
+      question:
+        language === "fr"
+          ? `Quel est le TJM moyen d'un ${data.name} en ${currentYear} ?`
+          : `What is the average daily rate for a ${data.name} in ${currentYear}?`,
+      answer:
+        language === "fr"
+          ? `En ${currentYear}, le tarif journalier moyen pour un ${data.name} est de ${data.avgRates.daily}€. Ce montant varie généralement entre ${data.avgRates.daily - 100}€ pour les profils juniors et peut dépasser ${data.avgRates.daily + 150}€ pour les experts confirmés.`
+          : `In ${currentYear}, the average daily rate for a ${data.name} is €${data.avgRates.daily}. This typically ranges from €${data.avgRates.daily - 100} for juniors to over €${data.avgRates.daily + 150} for experts.`,
+    },
+    {
+      question:
+        language === "fr"
+          ? `Quel chiffre d'affaires mensuel pour un ${data.name} ?`
+          : `What is the monthly revenue for a freelance ${data.name}?`,
+      answer:
+        language === "fr"
+          ? `Sur la base d'un temps plein (20 jours facturés), un ${data.name} peut générer un chiffre d'affaires mensuel brut d'environ ${data.avgRates.monthly}€. C'est un indicateur clé pour calculer votre salaire net après charges.`
+          : `Based on full-time work (20 billable days), a ${data.name} can generate a gross monthly revenue of approximately €${data.avgRates.monthly}.`,
+    },
+  ];
+
+  // Merge dynamic FAQs with static FAQs
+  const allFaqs = [...dynamicFaq, ...(data.faq || [])];
+  // ----------------
+
   // Gestion du Dark Mode
   useEffect(() => {
     if (darkMode) {
@@ -58,7 +101,6 @@ const ProfessionPage = ({
   // Gestion du changement de langue
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
-    // Redirect to the URL for the new language
     const newSlug = profession.slug[newLang];
     navigate(`/${newSlug}`);
   };
@@ -78,25 +120,20 @@ const ProfessionPage = ({
         const response = await fetch(`/api/get-rate-trends?${params}`);
         const result = await response.json();
 
-        // 🔥 SÉCURITÉ : On vérifie qu'on a assez de recul temporel
         if (result.trend && result.trend.length >= 2) {
           const firstDate = new Date(result.trend[0].date).getTime();
           const lastDate = new Date(
             result.trend[result.trend.length - 1].date,
           ).getTime();
 
-          // Si les dates sont différentes (au moins 15 jours d'écart)
           const daysDiff = (lastDate - firstDate) / (1000 * 60 * 60 * 24);
 
           if (daysDiff >= 15) {
-            // ✅ On a de vraies données historiques
             setTrendData(data);
           } else {
-            // ❌ Pas assez d'écart temporel
             setTrendData({ trend: [], evolution: null });
           }
         } else {
-          // ❌ Pas assez de points de données
           setTrendData({ trend: [], evolution: null });
         }
       } catch (err) {
@@ -112,15 +149,13 @@ const ProfessionPage = ({
 
   // SEO: Update page title and meta
   useEffect(() => {
-    document.title = data.title;
+    document.title = optimizedTitle;
 
-    // Update meta description
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", data.metaDescription);
+      metaDesc.setAttribute("content", optimizedDescription);
     }
 
-    // Add/update canonical
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
       canonical = document.createElement("link");
@@ -133,8 +168,8 @@ const ProfessionPage = ({
     const schema = {
       "@context": "https://schema.org",
       "@type": "Article",
-      headline: data.h1,
-      description: data.metaDescription,
+      headline: optimizedTitle,
+      description: optimizedDescription,
       inLanguage: language,
       author: {
         "@type": "Organization",
@@ -157,7 +192,6 @@ const ProfessionPage = ({
     scriptTag.text = JSON.stringify(schema);
     scriptTag.id = "profession-schema";
 
-    // Remove old schema if exists
     const oldSchema = document.getElementById("profession-schema");
     if (oldSchema) {
       document.head.removeChild(oldSchema);
@@ -171,7 +205,7 @@ const ProfessionPage = ({
         document.head.removeChild(schemaToRemove);
       }
     };
-  }, [slug, data.title, data.metaDescription, data.h1, language]);
+  }, [slug, optimizedTitle, optimizedDescription, language]);
 
   const handleLogoClick = () => {
     navigate("/");
@@ -184,14 +218,16 @@ const ProfessionPage = ({
         ? "Calculer mon tarif personnalisé"
         : "Calculate my personalized rate",
     avgRatesTitle:
-      language === "fr" ? "Tarif moyen en 2026" : "Average rate in 2026",
+      language === "fr"
+        ? `Tarif moyen en ${currentYear}`
+        : `Average rate in ${currentYear}`,
     hourlyRate: language === "fr" ? "Tarif Horaire" : "Hourly Rate",
     dailyRate: language === "fr" ? "Tarif Journalier (TJM)" : "Daily Rate",
     monthlyRate: language === "fr" ? "Tarif Mensuel" : "Monthly Rate",
     dataNote:
       language === "fr"
-        ? "💡 Données 2026 : Ces tarifs sont basés sur l'analyse de 3500+ missions réelles et rapports officiels (Malt, Stack Overflow, Glassdoor, Upwork et données publiques institutionnelles)."
-        : "💡 2026 Data: These rates are based on the analysis of 3,500+ real freelance missions and official reports (Malt, Stack Overflow, Glassdoor, Upwork, and institutional public data).",
+        ? `💡 Données ${currentYear} : Ces tarifs sont basés sur l'analyse de 3500+ missions réelles et rapports officiels (Malt, Stack Overflow, Glassdoor, Upwork et données publiques institutionnelles).`
+        : `💡 ${currentYear} Data: These rates are based on the analysis of 3,500+ real freelance missions and official reports (Malt, Stack Overflow, Glassdoor, Upwork, and institutional public data).`,
     experienceTitle:
       language === "fr" ? "Tarif selon l'expérience" : "Rate by experience",
     locationTitle:
@@ -230,12 +266,12 @@ const ProfessionPage = ({
     perMonth: language === "fr" ? "/mois" : "/month",
   };
 
-  // Structured data for SEO
+  // Structured data for SEO (ProfessionalService)
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: `${data.name} Freelance`,
-    description: data.metaDescription,
+    description: optimizedDescription,
     url: `https://pricingpro.fr/${slug}`,
     priceRange: `${data.avgRates.daily - 100}-${data.avgRates.daily + 100}€`,
     areaServed: {
@@ -261,8 +297,8 @@ const ProfessionPage = ({
     >
       {/* SEO Meta Tags */}
       <SEO
-        title={data.title}
-        description={data.metaDescription}
+        title={optimizedTitle}
+        description={optimizedDescription}
         canonical={`https://pricingpro.fr/${slug}`}
         structuredData={structuredData}
         lang={language}
@@ -297,7 +333,6 @@ const ProfessionPage = ({
             {data.intro}
           </p>
 
-          {/* CTA Button */}
           <Link
             to="/#calculator"
             onClick={() => window.scrollTo(0, 0)}
@@ -367,7 +402,6 @@ const ProfessionPage = ({
               </p>
             </div>
 
-            {/* Badge d'évolution dynamique calculé par ton API */}
             {trendData?.evolution && (
               <div
                 className={`px-4 py-2 rounded-xl flex items-center gap-2 ${
@@ -395,7 +429,6 @@ const ProfessionPage = ({
                   : "Analyzing market data..."}
               </div>
             ) : trendData?.trend?.length > 0 ? (
-              /* Si on a des données, on affiche le graphique Recharts */
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={trendData.trend}>
                   <CartesianGrid
@@ -444,16 +477,13 @@ const ProfessionPage = ({
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              /* --- ICI LE DESIGN IDENTIQUE AU CALCULATEUR --- */
               <div className="h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 p-8 text-center">
                 <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   {language === "fr"
                     ? "Pas encore d'historique disponible"
                     : "No historical data available yet"}
                 </h4>
-
                 <p className="text-sm text-gray-600 dark:text-gray-400 max-w-xs mx-auto">
                   {language === "fr"
                     ? "Les données d'évolution seront disponibles après plusieurs mises à jour hebdomadaires."
@@ -579,14 +609,14 @@ const ProfessionPage = ({
           </div>
         </div>
 
-        {/* FAQ */}
+        {/* FAQ - Modified to use allFaqs */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
             {t.faqTitle}
           </h2>
 
           <div className="space-y-6">
-            {data.faq.map((item, idx) => (
+            {allFaqs.map((item, idx) => (
               <div key={idx}>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                   {item.question}
