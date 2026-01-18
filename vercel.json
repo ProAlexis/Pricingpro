@@ -15,20 +15,16 @@
   ],
   "functions": {
     "api/save-email.js": {
-      "maxDuration": 10,
-      "memory": 512
+      "maxDuration": 10
     },
     "api/send-email.js": {
-      "maxDuration": 10,
-      "memory": 512
+      "maxDuration": 10
     },
     "api/get-rates.js": {
-      "maxDuration": 5,
-      "memory": 256
+      "maxDuration": 5
     },
     "api/get-rate-trends.js": {
-      "maxDuration": 5,
-      "memory": 256
+      "maxDuration": 5
     }
   },
   "headers": [
