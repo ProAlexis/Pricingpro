@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 import rateLimit from "../lib/rate-limit.js";
 import { handleCors } from "../lib/cors.js";
+import { secureLog } from "../lib/logger.js";
+import { validateEmail } from "../lib/validators.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -32,9 +34,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Validation email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email) || email.length > 254) {
+    // Validation email stricte
+    if (!validateEmail(email)) {
       return res.status(400).json({ error: "Invalid email format" });
     }
 
@@ -55,14 +56,14 @@ export default async function handler(req, res) {
     const verificationData = await verificationResponse.json();
 
     if (!verificationData.success) {
-      console.error(
-        "❌ Turnstile verification failed:",
+      secureLog.error(
+        "Turnstile verification failed:",
         verificationData["error-codes"],
       );
       return res.status(403).json({ error: "Captcha verification failed" });
     }
 
-    console.log("✅ Turnstile verified (Human detected)");
+    secureLog.info("✅ Turnstile verified");
 
     // Traductions
     const translations = {
@@ -465,7 +466,7 @@ export default async function handler(req, res) {
       });
     }
 
-    console.error("Error sending email:", error);
+    secureLog.error("Error sending email:", error);
     return res.status(500).json({
       error: "Failed to send email",
       details: error.message,

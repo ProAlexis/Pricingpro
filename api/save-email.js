@@ -2,6 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import { sendRateAnalysisEmail } from "../services/email-service.js";
 import rateLimit from "../lib/rate-limit.js";
 import { handleCors } from "../lib/cors.js";
+import { secureLog } from "../lib/logger.js";
+import { validateEmail } from "../lib/validators.js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -26,14 +28,8 @@ export default async function handler(req, res) {
     const { email, results, formData, timestamp, captchaToken } = req.body;
 
     // Validation robuste de l'email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
+    if (!validateEmail(email)) {
       return res.status(400).json({ error: "Invalid email address format" });
-    }
-
-    // Protection contre les emails trop longs (DoS)
-    if (email.length > 254) {
-      return res.status(400).json({ error: "Email address too long" });
     }
 
     // Validation des données obligatoires
@@ -61,15 +57,16 @@ export default async function handler(req, res) {
 
     const verificationData = await verificationResponse.json();
 
+    // LIGNE 65-67 : Remplacer
     if (!verificationData.success) {
-      console.error(
-        "❌ Turnstile verification failed:",
+      secureLog.error(
+        "Turnstile verification failed:",
         verificationData["error-codes"],
       );
       return res.status(403).json({ error: "Captcha verification failed" });
     }
 
-    console.log("✅ Turnstile verified (Human detected)");
+    secureLog.info("✅ Turnstile verified");
 
     // Fonction de sanitization pour éviter XSS
     const sanitizeText = (text) => {
@@ -113,15 +110,15 @@ export default async function handler(req, res) {
       .select();
 
     if (error) {
-      console.error("Supabase error:", error);
+      secureLog.error("Supabase error:", error);
       throw error;
     }
 
-    console.log("✅ Email lead saved:", email);
+    secureLog.info("✅ Email lead saved:", email);
 
     // Envoyer l'email avec Resend
     try {
-      console.log("📧 Attempting to send email to:", email);
+      secureLog.info("📧 Attempting to send email to:", email);
 
       const emailResult = await sendRateAnalysisEmail({
         email,
@@ -130,17 +127,15 @@ export default async function handler(req, res) {
         language: req.body.language || "fr",
       });
 
-      console.log("📬 Email result:", JSON.stringify(emailResult));
+      secureLog.info("📬 Email result:", JSON.stringify(emailResult));
 
       if (emailResult.success) {
-        console.log("✅ Analysis email sent successfully to:", email);
+        secureLog.info("✅ Analysis email sent successfully to:", email);
       } else {
-        console.error("❌ Failed to send email:", emailResult.error);
+        secureLog.error("❌ Failed to send email:", emailResult.error);
       }
     } catch (emailError) {
-      console.error("❌ Email sending error:", emailError.message);
-      console.error("❌ Error stack:", emailError.stack);
-      // Ne pas bloquer la réponse si l'email échoue
+      secureLog.error("❌ Email sending error:", emailError);
     }
 
     return res.status(200).json({
@@ -156,7 +151,7 @@ export default async function handler(req, res) {
       });
     }
 
-    console.error("Error saving email:", error);
+    secureLog.error("Error saving email:", error);
     return res.status(500).json({
       error: "Failed to save email",
       details: error.message,
