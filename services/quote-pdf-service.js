@@ -1,6 +1,5 @@
-import jsPDF from "jspdf";
-
-export function generateQuotePDF(quoteData, language = "fr") {
+export async function generateQuotePDF(quoteData, language = "fr") {
+  const { default: jsPDF } = await import("jspdf");
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
@@ -88,12 +87,12 @@ export function generateQuotePDF(quoteData, language = "fr") {
     `${labels.quoteNumber}: ${quoteData.quoteNumber}`,
     pageWidth - 15,
     yPos,
-    { align: "right" }
+    { align: "right" },
   );
   yPos += 6;
 
   const today = new Date().toLocaleDateString(
-    language === "fr" ? "fr-FR" : "en-US"
+    language === "fr" ? "fr-FR" : "en-US",
   );
   doc.text(`${labels.date}: ${today}`, pageWidth - 15, yPos, {
     align: "right",
@@ -104,11 +103,11 @@ export function generateQuotePDF(quoteData, language = "fr") {
   validDate.setDate(validDate.getDate() + quoteData.validityDays);
   doc.text(
     `${labels.validUntil}: ${validDate.toLocaleDateString(
-      language === "fr" ? "fr-FR" : "en-US"
+      language === "fr" ? "fr-FR" : "en-US",
     )}`,
     pageWidth - 15,
     yPos,
-    { align: "right" }
+    { align: "right" },
   );
 
   // Section FROM (Freelance ou Portage)
@@ -182,14 +181,14 @@ export function generateQuotePDF(quoteData, language = "fr") {
           quoteData.capital
         }€`,
         15,
-        yPos
+        yPos,
       );
       yPos += 5;
     } else {
       doc.text(
         labels.legalStatus[quoteData.legalStatus] || quoteData.legalStatus,
         15,
-        yPos
+        yPos,
       );
       yPos += 5;
     }
@@ -198,7 +197,7 @@ export function generateQuotePDF(quoteData, language = "fr") {
     doc.text(
       labels.legalStatus[quoteData.legalStatus] || quoteData.legalStatus,
       15,
-      yPos
+      yPos,
     );
     yPos += 5;
   }
@@ -239,7 +238,7 @@ export function generateQuotePDF(quoteData, language = "fr") {
   doc.setTextColor(100, 100, 100);
   const descLines = doc.splitTextToSize(
     quoteData.missionDescription,
-    pageWidth - 30
+    pageWidth - 30,
   );
   doc.text(descLines, 15, yPos);
   yPos += descLines.length * 5 + 2;
@@ -272,7 +271,7 @@ export function generateQuotePDF(quoteData, language = "fr") {
     `${quoteData.totalHT.toLocaleString("fr-FR").replace(/\s/g, " ")}€`,
     pageWidth - 25,
     yPos,
-    { align: "right" }
+    { align: "right" },
   );
 
   yPos += 8;
@@ -294,7 +293,7 @@ export function generateQuotePDF(quoteData, language = "fr") {
     `${quoteData.totalHT.toLocaleString("fr-FR").replace(/\s/g, " ")}€`,
     pageWidth - 25,
     yPos,
-    { align: "right" }
+    { align: "right" },
   );
   doc.setFont(undefined, "normal");
   yPos += 8;
@@ -308,7 +307,7 @@ export function generateQuotePDF(quoteData, language = "fr") {
       `${quoteData.totalTVA.toLocaleString("fr-FR").replace(/\s/g, " ")}€`,
       pageWidth - 25,
       yPos,
-      { align: "right" }
+      { align: "right" },
     );
     yPos += 8;
   }
@@ -332,7 +331,7 @@ export function generateQuotePDF(quoteData, language = "fr") {
     `${quoteData.totalTTC.toLocaleString("fr-FR").replace(/\s/g, " ")}€`,
     pageWidth - 25,
     yPos + 3,
-    { align: "right" }
+    { align: "right" },
   );
   doc.setFont(undefined, "normal");
 
@@ -351,8 +350,8 @@ export function generateQuotePDF(quoteData, language = "fr") {
     quoteData.paymentTerms === "100%"
       ? "100% à la livraison"
       : quoteData.paymentTerms === "50/50"
-      ? "50% d'acompte, 50% à la livraison"
-      : "30% d'acompte, 70% à la livraison";
+        ? "50% d'acompte, 50% à la livraison"
+        : "30% d'acompte, 70% à la livraison";
   doc.text(paymentText, 15, yPos);
 
   // Mention légale pour Auto-entrepreneur
@@ -363,7 +362,7 @@ export function generateQuotePDF(quoteData, language = "fr") {
       "TVA non applicable, art. 293 B du CGI",
       pageWidth / 2,
       pageHeight - 40,
-      { align: "center" }
+      { align: "center" },
     );
   }
 
@@ -379,7 +378,7 @@ export function generateQuotePDF(quoteData, language = "fr") {
   doc.save(
     `Devis_${quoteData.quoteNumber}_${quoteData.clientName.replace(
       /\s/g,
-      "_"
-    )}.pdf`
+      "_",
+    )}.pdf`,
   );
 }

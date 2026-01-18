@@ -1,13 +1,13 @@
-import jsPDF from "jspdf";
-
 /**
  * Générer un PDF d'analyse de tarifs
  */
-export function generateRateAnalysisPDF({
+export async function generateRateAnalysisPDF({
   results,
   formData,
   language = "fr",
 }) {
+  const { default: jsPDF } = await import("jspdf");
+
   const translations = {
     fr: {
       title: "Analyse de tarifs personnalisée",

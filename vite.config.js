@@ -9,17 +9,24 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            if (id.includes("lucide-react")) {
-              return "icons";
+            if (id.includes("docx")) return "vendor-docx";
+            if (
+              id.includes("jspdf") ||
+              id.includes("html2canvas") ||
+              id.includes("pako")
+            ) {
+              return "vendor-pdf";
             }
-            if (id.includes("@supabase")) {
-              return "supabase";
+            if (id.includes("recharts") || id.includes("d3")) {
+              return "vendor-charts";
             }
-            return "vendor";
+            if (id.includes("@supabase")) return "vendor-supabase";
+
+            return "vendor-core";
           }
         },
       },
     },
-    chunkSizeWarningLimit: 800,
+    chunkSizeWarningLimit: 1000,
   },
 });
