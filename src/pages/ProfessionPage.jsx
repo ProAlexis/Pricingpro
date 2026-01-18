@@ -234,30 +234,25 @@ const ProfessionPage = ({
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
-    "name": `${data.name} Freelance`,
-    "description": data.metaDescription,
-    "url": `https://pricingpro.fr/${slug}`,
-    "priceRange": `${data.avgRates.daily - 100}-${data.avgRates.daily + 100}€`,
-    "areaServed": {
+    name: `${data.name} Freelance`,
+    description: data.metaDescription,
+    url: `https://pricingpro.fr/${slug}`,
+    priceRange: `${data.avgRates.daily - 100}-${data.avgRates.daily + 100}€`,
+    areaServed: {
       "@type": "Country",
-      "name": "France"
+      name: "France",
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "reviewCount": "1250"
-    },
-    "offers": {
+    offers: {
       "@type": "Offer",
-      "price": data.avgRates.daily,
-      "priceCurrency": "EUR",
-      "priceSpecification": {
+      price: data.avgRates.daily,
+      priceCurrency: "EUR",
+      priceSpecification: {
         "@type": "UnitPriceSpecification",
-        "price": data.avgRates.daily,
-        "priceCurrency": "EUR",
-        "unitText": "DAY"
-      }
-    }
+        price: data.avgRates.daily,
+        priceCurrency: "EUR",
+        unitText: "DAY",
+      },
+    },
   };
 
   return (

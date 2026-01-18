@@ -585,35 +585,35 @@ const LandingPage = ({ onStartCalculator, language }) => {
   const structuredDataHome = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "PricingPro",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Any",
-    "url": "https://pricingpro.fr/",
-    "description": language === 'fr'
-      ? "Calculateur de tarifs intelligent pour freelances basé sur 3500+ données réelles du marché"
-      : "Smart pricing calculator for freelancers based on 3500+ real market data points",
-    "offers": {
+    name: "PricingPro",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Any",
+    url: "https://pricingpro.fr/",
+    description:
+      language === "fr"
+        ? "Calculateur de tarifs intelligent pour freelances basé sur 3500+ données réelles du marché"
+        : "Smart pricing calculator for freelancers based on 3500+ real market data points",
+    offers: {
       "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "EUR"
+      price: "0",
+      priceCurrency: "EUR",
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "ratingCount": "5000"
-    }
   };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* SEO Meta Tags */}
       <SEO
-        title={language === 'fr'
-          ? "PricingPro - Calculateur de Tarifs Intelligent pour Freelances | Données Réelles 2026"
-          : "PricingPro - Smart Pricing Calculator for Freelancers | Real Data 2026"}
-        description={language === 'fr'
-          ? "Découvrez combien facturer en tant que freelance avec PricingPro. 3500+ tarifs réels, 15 professions, 6 pays. Basé sur des données de marché actualisées."
-          : "Discover how much to charge as a freelancer with PricingPro. 3500+ real rates, 15 professions, 6 countries. Based on updated market data."}
+        title={
+          language === "fr"
+            ? "PricingPro - Calculateur de Tarifs Intelligent pour Freelances | Données Réelles 2026"
+            : "PricingPro - Smart Pricing Calculator for Freelancers | Real Data 2026"
+        }
+        description={
+          language === "fr"
+            ? "Découvrez combien facturer en tant que freelance avec PricingPro. 3500+ tarifs réels, 15 professions, 6 pays. Basé sur des données de marché actualisées."
+            : "Discover how much to charge as a freelancer with PricingPro. 3500+ real rates, 15 professions, 6 countries. Based on updated market data."
+        }
         canonical="https://pricingpro.fr/"
         structuredData={structuredDataHome}
         lang={language}
