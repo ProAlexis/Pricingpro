@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { getCountryFromCity } from "../scrapers/geo-utils.js";
 import rateLimit from "../lib/rate-limit.js";
 import { handleCors } from "../lib/cors.js";
+import { secureLog } from "../lib/logger.js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -98,7 +99,7 @@ export default async function handler(req, res) {
       });
     }
 
-    console.error("Error fetching rates:", error);
+    secureLog.error("Error fetching rates:", error);
     return res.status(500).json({ error: "Failed to fetch rates" });
   }
 }
