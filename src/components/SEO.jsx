@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 
 /**
  * SEO Component - Dynamically updates meta tags for each route
- * Fixes Google Search Console "Page avec redirection" by setting proper canonical URLs
  */
 const SEO = ({
   title,
