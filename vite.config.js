@@ -9,11 +9,17 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
+            if (id.includes("lucide-react")) {
+              return "icons";
+            }
+            if (id.includes("@supabase")) {
+              return "supabase";
+            }
             return "vendor";
           }
         },
       },
     },
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 800,
   },
 });
