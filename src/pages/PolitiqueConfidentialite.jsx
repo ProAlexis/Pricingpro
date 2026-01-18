@@ -230,8 +230,9 @@ const PolitiqueConfidentialite = () => {
                   className="text-purple-600 hover:underline"
                 >
                   contact@pricingpro.fr
-                </a><br />
-                <strong>Adress :</strong> [Sceaux, France]
+                </a>
+                <br />
+                <strong>Adress :</strong> Paris, France
               </p>
               <p className="text-gray-600 dark:text-gray-400 mt-4">
                 If you believe your rights are not being respected, you may file
